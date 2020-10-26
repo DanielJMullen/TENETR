@@ -8,6 +8,7 @@ make_external_datasets(
   extENH,
   extNDR,
   consensusENH,
+  consensusNDR,
   extENH_directory,
   extNDR_directory,
   output_directory,
@@ -20,6 +21,8 @@ make_external_datasets(
 \item{extNDR}{Set TRUE or FALSE depending on if user has open chromatin datasets they would like to analyze}
 
 \item{consensusENH}{Set TRUE or FALSE depending on if user would like to use consensus enhancer data from TENETR.data for analysis.}
+
+\item{consensusNDR}{Set TRUE or FALSE depending on if user would like to use consensus open chromatin data from TENETR.data for analysis.}
 
 \item{extENH_directory}{Set a path to a directory containing either .bed, .narrowPeak, .broadPeak, or .gappedPeak files with enhancer datasets. This must be supplied and extENH set to TRUE for this analysis.}
 

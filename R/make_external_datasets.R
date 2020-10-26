@@ -12,6 +12,7 @@
 #' @param extENH Set TRUE or FALSE depending on if user has enhancer datasets they would like to analyze.
 #' @param extNDR Set TRUE or FALSE depending on if user has open chromatin datasets they would like to analyze
 #' @param consensusENH Set TRUE or FALSE depending on if user would like to use consensus enhancer data from TENETR.data for analysis.
+#' @param consensusNDR Set TRUE or FALSE depending on if user would like to use consensus open chromatin data from TENETR.data for analysis.
 #' @param extENH_directory Set a path to a directory containing either .bed, .narrowPeak, .broadPeak, or .gappedPeak files with enhancer datasets. This must be supplied and extENH set to TRUE for this analysis.
 #' @param extNDR_directory Set a path to a directory containing either .bed, .narrowPeak, .broadPeak, or .gappedPeak files with open chromatin datasets. This must be supplied and extNDR set to TRUE for this analysis.
 #' @param output_directory Set a path to a directory where you want TENETR data to be exported to. Function will create a step1 folder in that directory and subfolders containing function output datasets.
@@ -24,6 +25,7 @@ make_external_datasets <- function(
   extENH,
   extNDR,
   consensusENH,
+  consensusNDR,
   extENH_directory,
   extNDR_directory,
   output_directory,
@@ -388,6 +390,93 @@ make_external_datasets <- function(
         ncolumns = 1
       )
 
+    }
+  }
+
+  ## If consensus NDR (open chromatin) files are used run this section:
+  if(consensusNDR==TRUE){
+
+    ## Create a directory in the output folder to deposit files:
+    dir.create(
+      paste(
+        output_directory,
+        'step1/',
+        'consensusNDR',
+        sep=''
+      )
+    )
+
+    ## Create a granges object from the consensus enhancer regions:
+    bedlike_file_granges <- GenomicRanges::makeGRangesFromDataFrame(
+      df= TENETR.data::consensus_open_chromatin_regions,
+      keep.extra.columns = FALSE,
+      starts.in.df.are.0based = FALSE
+    )
+
+    ## Name the peaks after the chromosome, start, and end positions
+    names(bedlike_file_granges) <- paste(
+      TENETR.data::consensus_open_chromatin_regions$chr,
+      ':',
+      TENETR.data::consensus_open_chromatin_regions$start,
+      '-',
+      TENETR.data::consensus_open_chromatin_regions$end,
+      sep=''
+    )
+
+    ## Get the names of the CpGs that overlapped with the bed file:
+    CpG_overlap_with_bedlike <- hg38_450_annotations_no_NA_granges_df[
+      unique(
+        S4Vectors::subjectHits(
+          suppressWarnings(
+            GenomicRanges::findOverlaps(
+              bedlike_file_granges,
+              hg38_450_annotations_granges
+            )
+          )
+        )
+      ),
+      'names'
+    ]
+
+    ## Sort the CpGs and write to file:
+    CpG_overlap_with_bedlike_sorted <- sort(CpG_overlap_with_bedlike)
+
+    ## Write the unique sorted CpGs out to the file containing the overlap data:
+    if(
+      !file.exists(
+        paste(
+          output_directory,
+          'consensusNDR.probelist.txt',
+          sep=''
+        )
+      )
+    ){
+
+      write(
+        CpG_overlap_with_bedlike_sorted,
+        file= paste(
+          output_directory,
+          'step1/',
+          'consensusNDR/',
+          'consensusNDR.probelist.txt',
+          sep=''
+        ),
+        ncolumns = 1
+      )
+
+    } else{
+
+      write(
+        CpG_overlap_with_bedlike_sorted,
+        file= paste(
+          output_directory,
+          'step1/',
+          'consensusNDR/',
+          'consensusNDR.TENETR.data.probelist.txt',
+          sep=''
+        ),
+        ncolumns = 1
+      )
     }
   }
 }
