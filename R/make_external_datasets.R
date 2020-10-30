@@ -53,7 +53,7 @@ make_external_datasets <- function(
     paste(
       output_directory,
       'step1/',
-      sep='/'
+      sep=''
     )
   )
 
