@@ -159,13 +159,13 @@ get_pairs_z_score <- function(
     if(hypermeth_pairs==TRUE & hypometh_pairs==TRUE){
 
       metDataHyper <- ifelse(
-        hypermethDataT>hypercutoff,
+        hypermethDataT>hypermethcutoff,
         1,
         0
       )
 
       metDataHypo <- ifelse(
-        hypomethDataT<hypocutoff,
+        hypomethDataT<hypomethcutoff,
         1,
         0
       )
