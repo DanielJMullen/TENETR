@@ -12,7 +12,7 @@
 #' @param hypometh_pairs Set to TRUE/FALSE depending on if you want to calculate z-scores for hypomethylated probes.
 #' @param hypermeth_pairs Set to TRUE/FALSE depending on if you want to calculate z-scores for hypermethylated probes.
 #' @param usecaseonly Set to TRUE/FALSE depending on if you want to include the control/normal samples with the experimental/tumor samples when calculating hyper/hypomethylated groups and z-scores.
-#' @param TF_only Set to TRUE/FALSE to determine if you only want to consider genes that are accepted transcription factors in The Human Transcriptoin Factors by Lambert et al (2018) when calculating z-scores.
+#' @param TF_only Set to TRUE/FALSE to determine if you only want to consider genes that are accepted transcription factors in The Human Transcription Factors by Lambert et al (2018) when calculating z-scores.
 #' @param hypomethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypomethylated probes.
 #' @param hypermethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes.
 #' @param minExp Sets the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups.
@@ -350,7 +350,7 @@ get_pairs_z_score <- function(
 
       ## Use the function to calculate z-scores for all genes to the probe:
       TESTSR$Z.real <- sapply(
-        TESTSR$geneSymbol,
+        TESTSR$geneID,
         internal_gene_function
       )
 
