@@ -15,7 +15,7 @@ get_diffmeth_regions(
 )
 }
 \arguments{
-\item{TENET_directory}{Set a path to the directory that contains step1 results from make_external_datasets function as well as the .rda file containing methylation and expression data.}
+\item{TENET_directory}{Set a path to the directory that contains the step1 directory created by make_external_datasets function as well as the .rda file containing methylation and expression data.}
 
 \item{TSS_dist}{Set a number to be the buffer in base pairs from GENCODE v22-annotated transcription start sites for DNA methylation probes to not be considered enhancer probes.}
 
