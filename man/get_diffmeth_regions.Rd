@@ -27,10 +27,10 @@ get_diffmeth_regions(
 
 \item{hypermethcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes. Should be set lower than the unmethcutoff.}
 
-\item{minExp}{Sets the minimum number of experimental (tumor) samples to be considered for the hypo/hypermethylated groups.}
+\item{minExp}{Sets the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups.}
 }
 \value{
-Returns several objects including a .rda file with matrices of methylation data for the four quadrants in control (normal) and experimental (tumor) samples. Also outputs a simple .txt file containing metrics on the number of probes found in different categories.
+Returns several objects including a .rda file with matrices of methylation data for the four quadrants in control/normal and experimental/tumor samples. Also outputs a simple .txt file containing metrics on the number of probes found in different categories.
 }
 \description{
 This is the step2 function of the TENETR package.
@@ -40,6 +40,6 @@ datasets from the step1 make_external_datasets function as well as
 a specified distance from GENCODE v22 transcript TSS.
 After identifying enhancer DNA methylation probes, the function classifies
 them as methylated/unmethylated or hypermethylated/hypomethylated based on
-their differential methylation between the control (normal) and
-experimental (tumor) samples, based on input parameters from the user
+their differential methylation between the control/normal and
+experimental/tumor samples, based on input parameters from the user
 }

@@ -1,7 +1,7 @@
 #' make_external_datasets
 #'
 #' This is the step1 function of the TENETR package.
-#' This function allows users to use bed-like files (see: https://genome.ucsc.edu/FAQ/FAQformat.html#format1)
+#' This function allows users to use bed-like files see: https://genome.ucsc.edu/FAQ/FAQformat.html#format1
 #' which contain either enhancer or open chromatin data contained within given directories
 #' or to use pre developed consensus enhancer and open chromatin datasets from many cell/tissue types
 #' from the TENETR.data package, and identify the hg38-annotated HM450 DNA methylation probes

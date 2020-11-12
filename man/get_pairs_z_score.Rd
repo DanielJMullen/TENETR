@@ -23,7 +23,7 @@ get_pairs_z_score(
 
 \item{hypermeth_pairs}{Set to TRUE/FALSE depending on if you want to calculate z-scores for hypermethylated probes.}
 
-\item{usecaseonly}{Set to TRUE/FALSE depending on if you want to include the control (normal) samples with the experimental (tumor) samples when calculating hyper/hypomethylated groups and z-scores.}
+\item{usecaseonly}{Set to TRUE/FALSE depending on if you want to include the control/normal samples with the experimental/tumor samples when calculating hyper/hypomethylated groups and z-scores.}
 
 \item{TF_only}{Set to TRUE/FALSE to determine if you only want to consider genes that are accepted transcription factors in The Human Transcriptoin Factors by Lambert et al (2018) when calculating z-scores.}
 
@@ -31,7 +31,7 @@ get_pairs_z_score(
 
 \item{hypermethcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes.}
 
-\item{minExp}{Sets the minimum number of experimental (tumor) samples to be considered for the hypo/hypermethylated groups.}
+\item{minExp}{Sets the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups.}
 
 \item{core_count}{Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.}
 }
