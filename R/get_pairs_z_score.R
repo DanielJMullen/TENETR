@@ -382,15 +382,35 @@ get_pairs_z_score <- function(
 
   }
 
-  ## Now let's sapply the function:
-  parallel::mclapply(
-    rownames(metDataHypo),
-    z_score_calc,
-    expData_internal= expData,
-    metData_internal= metDataHypo,
-    hyper_hypo= 'hypo',
-    TF_only= TRUE,
-    minExp_value= minExp,
-    mc.cores= core_count
-  )
+  if(hypermeth_pairs==TRUE){
+
+    ## Now let's lapply the function if hypermeth analysis is selected:
+    parallel::mclapply(
+      rownames(metDataHyper),
+      z_score_calc,
+      expData_internal= expData,
+      metData_internal= metDataHyper,
+      hyper_hypo= 'hyper',
+      TF_only= TRUE,
+      minExp_value= minExp,
+      mc.cores= core_count
+    )
+
+  }
+
+  if(hypometh_pairs==TRUE){
+
+    ## Now let's lapply the function if hypometh analysis is selected:
+    parallel::mclapply(
+      rownames(metDataHypo),
+      z_score_calc,
+      expData_internal= expData,
+      metData_internal= metDataHypo,
+      hyper_hypo= 'hypo',
+      TF_only= TRUE,
+      minExp_value= minExp,
+      mc.cores= core_count
+    )
+
+  }
 }
