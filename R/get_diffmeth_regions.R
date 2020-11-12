@@ -11,7 +11,7 @@
 #' experimental (tumor) samples, based on input parameters from the user
 #'
 #'
-#' @param TENET_directory Set a path to the directory that contains step1 results from make_external_datasets function as well as the .rda file containing methylation and expression data.
+#' @param TENET_directory Set a path to the directory that contains the step1 directory created by make_external_datasets function as well as the .rda file containing methylation and expression data.
 #' @param TSS_dist Set a number to be the buffer in base pairs from GENCODE v22-annotated transcription start sites for DNA methylation probes to not be considered enhancer probes.
 #' @param methcutoff Set a number from 0 to 1 to be the beta-value cutoff for methylated probes.
 #' @param hypomethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypomethylated probes. Should be set lower than the methcutoff.
@@ -48,7 +48,7 @@ get_diffmeth_regions <- function(
     )
   )
 
-  ## Create a step1 directory to deposit overlapped probe files:
+  ## Create a step2 directory to deposit overlapped probe files:
   dir.create(
     paste(
       TENET_directory,
