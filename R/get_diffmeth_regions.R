@@ -16,7 +16,7 @@
 #' @param methcutoff Set a number from 0 to 1 to be the beta-value cutoff for methylated probes.
 #' @param hypomethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypomethylated probes. Should be set lower than the methcutoff.
 #' @param unmethcutoff Set a number from 0 to 1 to be the beta-value cutoff for unmethylated probes.
-#' @param hypermethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes. Should be set lower than the unmethcutoff.
+#' @param hypermethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes. Should be set higher than the unmethcutoff.
 #' @param minExp Sets the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups.
 #' @return Returns several objects including a .rda file with matrices of methylation data for the four quadrants in control/normal and experimental/tumor samples. Also outputs a simple .txt file containing metrics on the number of probes found in different categories.
 #' @export

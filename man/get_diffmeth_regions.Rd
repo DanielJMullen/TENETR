@@ -25,7 +25,7 @@ get_diffmeth_regions(
 
 \item{unmethcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for unmethylated probes.}
 
-\item{hypermethcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes. Should be set lower than the unmethcutoff.}
+\item{hypermethcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes. Should be set higher than the unmethcutoff.}
 
 \item{minExp}{Sets the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups.}
 }
