@@ -27,10 +27,6 @@ get_pairs_z_score(
 
 \item{TF_only}{Set to TRUE/FALSE to determine if you only want to consider genes that are accepted transcription factors in The Human Transcription Factors by Lambert et al (2018) when calculating z-scores.}
 
-\item{hypomethcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for hypomethylated probes.}
-
-\item{hypermethcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes.}
-
 \item{minExp}{Sets the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups.}
 
 \item{core_count}{Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.}
@@ -43,6 +39,6 @@ This is the step3 function of the TENETR package.
 This function takes the identified hyper and hypomethylated probes
 from step2 get_diffmeth_regions function and calculates a zscore comparing
 the mean expression of each gene in groups that are hyper/hypomethylated for
-each probe and those that are not, and permutates this across all
+each probe, according to hypermeth and hypometh and those that are not, and permutates this across all
 hyper/hypomethylated probes
 }

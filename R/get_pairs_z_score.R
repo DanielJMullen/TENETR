@@ -4,7 +4,7 @@
 #' This function takes the identified hyper and hypomethylated probes
 #' from step2 get_diffmeth_regions function and calculates a zscore comparing
 #' the mean expression of each gene in groups that are hyper/hypomethylated for
-#' each probe and those that are not, and permutates this across all
+#' each probe, according to hypermeth and hypometh and those that are not, and permutates this across all
 #' hyper/hypomethylated probes
 #'
 #'
@@ -13,8 +13,6 @@
 #' @param hypermeth_pairs Set to TRUE/FALSE depending on if you want to calculate z-scores for hypermethylated probes.
 #' @param usecaseonly Set to TRUE/FALSE depending on if you want to include the control/normal samples with the experimental/tumor samples when calculating hyper/hypomethylated groups and z-scores.
 #' @param TF_only Set to TRUE/FALSE to determine if you only want to consider genes that are accepted transcription factors in The Human Transcription Factors by Lambert et al (2018) when calculating z-scores.
-#' @param hypomethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypomethylated probes.
-#' @param hypermethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes.
 #' @param minExp Sets the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
 #' @return Currently returns tab-delimited ".txt"zscore_all_genes_rda.txt" for each probe of the selected types analyzed, containing the zscore
@@ -111,7 +109,9 @@ get_pairs_z_score <- function(
     'metDataN',
     'metDataT',
     'unmethDataN',
-    'unmethDataT'
+    'unmethDataT',
+    'hypermethcutoff',
+    'hypomethcutoff'
   )
 
   ## Index an empty vector with the positions of objects that should be present

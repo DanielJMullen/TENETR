@@ -979,7 +979,7 @@ get_diffmeth_regions <- function(
 
     ## Now let's save the final dataset:
     save(
-      metDataT, metDataN, expDataT, expDataN, enhmetDataT, enhmetDataN, methDataT, methDataN, hypomethDataT, hypomethDataN, unmethDataT, unmethDataN, hypermethDataT, hypermethDataN,
+      metDataT, metDataN, expDataT, expDataN, enhmetDataT, enhmetDataN, methDataT, methDataN, hypomethDataT, hypomethDataN, unmethDataT, unmethDataN, hypermethDataT, hypermethDataN, hypermethcutoff, hypomethcutoff,
       file= paste(
         TENET_directory,
         'step2/',
