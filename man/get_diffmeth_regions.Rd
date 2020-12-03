@@ -11,7 +11,8 @@ get_diffmeth_regions(
   hypomethcutoff,
   unmethcutoff,
   hypermethcutoff,
-  minExp
+  minExp,
+  use_purity_data
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ get_diffmeth_regions(
 \item{hypermethcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes. Should be set higher than the unmethcutoff.}
 
 \item{minExp}{Sets the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups.}
+
+\item{use_purity_data}{Set TRUE or FALSE to use purity datasets, as .rda files containing DNA methylation values supplied by the user in a 'purity' subdirectory in the TENET_directory, to select for DNA methylation probes not potentially due to differences in cell type purity.}
 }
 \value{
 Returns several objects including a .rda file with matrices of methylation data for the four quadrants in control/normal and experimental/tumor samples. Also outputs a simple .txt file containing metrics on the number of probes found in different categories.
