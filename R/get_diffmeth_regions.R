@@ -642,55 +642,55 @@ get_diffmeth_regions <- function(
 
     ## First get quadrant probes if purity data isn't specified:
     if(use_purity_data==FALSE){
-      
+
       ## Let's identify which of the probes of interest were found in the
       ## resulting methylation datasets:
       probes_of_interest_matched <- intersect(
         probes_of_interest,
         matched_probes
       )
-      
+
       ## For each of these probes, calculate the mean methylation
       ## in tumor and normal samples:
       probelist_df <- data.frame(
         probe= probes_of_interest_matched,
         stringsAsFactors = FALSE
       )
-      
+
       probelist_df$mean_normal <- apply(
         metDataN[
           probes_of_interest_matched,
-        ], 
-        1, 
-        mean, 
+        ],
+        1,
+        mean,
         na.rm=T
       )
-      
+
       probelist_df$mean_tumor <- apply(
         metDataT[
           probes_of_interest_matched,
-        ], 
-        1, 
-        mean, 
+        ],
+        1,
+        mean,
         na.rm=T
       )
-      
+
       ## Remove the probes with NaN values:
       probelist_df_present <- probelist_df[
         complete.cases(probelist_df),
       ]
-      
+
       ## Create methylation datasets with only the non-NaN enhancer probes:
       metDataN_present <- metDataN[
         probelist_df_present$probe,
       ]
-      
+
       metDataT_present <- metDataT[
         probelist_df_present$probe,
       ]
-    
+
       ## Now let's get the methylated quadrant probes:
-      
+
       ## First get a copy of the experimental (tumor) data for probes
       ## with average methylation above the methcutoff
       ## in normal and tumor samples:
@@ -705,7 +705,7 @@ get_diffmeth_regions <- function(
           rownames(metDataT_present)
         ),
       ]
-  
+
       ## Then for each experimental (tumor) sample,
       ## identify if it individually is below the methcutoff
       temp_t_cat <- ifelse(
@@ -713,7 +713,7 @@ get_diffmeth_regions <- function(
         1,
         0
       )
-  
+
       ## For each of these probes, then calculate the number of individual
       ## experimental (tumor) samples below the methcutoff
       length_temp_t_cat <- apply(
@@ -722,7 +722,7 @@ get_diffmeth_regions <- function(
         sum,
         na.rm=T
       )
-  
+
       ## Create a new matrix with the experimental (tumor) methylation data
       ## for probes that have a number of individual samples below the methcutoff
       ## less than the minExp value.
@@ -732,19 +732,19 @@ get_diffmeth_regions <- function(
           length_temp_t_cat<minExp
         ),
       ]
-  
+
       ## Now lets create dataframes with this methylated data:
       methDataT <- temp_t1
-  
+
       methDataN <- metDataN[
         match(
           rownames(methDataT),
           rownames(metDataN)
         ),
       ]
-  
+
       ## Now let's get the hypomethylated quadrant probes:
-  
+
       ## First get a copy of the experimental (tumor) data for probes
       ## with average methylation above the methcutoff
       ## in just the normal samples:
@@ -759,7 +759,7 @@ get_diffmeth_regions <- function(
           rownames(metDataT_present)
         ),
       ]
-  
+
       ## Then for each experimental (tumor) sample,
       ## identify if it individually is below the hypomethcutoff
       temp_t_cat <- ifelse(
@@ -767,7 +767,7 @@ get_diffmeth_regions <- function(
         1,
         0
       )
-  
+
       ## For each of these probes, then calculate the number of individual
       ## experimental (tumor) samples below the hypomethcutoff
       length_temp_t_cat <- apply(
@@ -776,7 +776,7 @@ get_diffmeth_regions <- function(
         sum,
         na.rm=T
       )
-  
+
       ## Create a new matrix with the experimental (tumor) methylation data
       ## for probes that have a number of individual samples below the hypomethcutoff
       ## greater than the minExp value.
@@ -786,19 +786,19 @@ get_diffmeth_regions <- function(
           length_temp_t_cat>minExp
         ),
       ]
-  
+
       ## Now lets create dataframes with this hypomethylated data:
       hypomethDataT <- temp_t1
-  
+
       hypomethDataN <- metDataN[
         match(
           rownames(hypomethDataT),
           rownames(metDataN)
         ),
       ]
-  
+
       ## Now let's get the unmethylated quadrant probes:
-  
+
       ## First get a copy of the experimental (tumor) data for probes
       ## with average methylation blow the unmethcutoff
       ## in normal and tumor samples:
@@ -813,7 +813,7 @@ get_diffmeth_regions <- function(
           rownames(metDataT_present)
         ),
       ]
-  
+
       ## Then for each experimental (tumor) sample,
       ## identify if it individually is above the unmethcutoff
       temp_t_cat <- ifelse(
@@ -821,7 +821,7 @@ get_diffmeth_regions <- function(
         1,
         0
       )
-  
+
       ## For each of these probes, then calculate the number of individual
       ## experimental (tumor) samples above the unmethcutoff
       length_temp_t_cat <- apply(
@@ -830,7 +830,7 @@ get_diffmeth_regions <- function(
         sum,
         na.rm=T
       )
-  
+
       ## Create a new matrix with the experimental (tumor) methylation data
       ## for probes that have a number of individual samples below the hypomethcutoff
       ## greater than the minExp value.
@@ -840,19 +840,19 @@ get_diffmeth_regions <- function(
           length_temp_t_cat<minExp
         ),
       ]
-  
+
       ## Now lets create dataframes with this hypomethylated data:
       unmethDataT <- temp_t1
-  
+
       unmethDataN <- metDataN[
         match(
           rownames(unmethDataT),
           rownames(metDataN)
         ),
       ]
-  
+
       ## Now let's get the hypermethylated quadrant probes:
-  
+
       ## First get a copy of the experimental (tumor) data for probes
       ## with average methylation blow the unmethcutoff
       ## in normal samples:
@@ -867,7 +867,7 @@ get_diffmeth_regions <- function(
           rownames(metDataT_present)
         ),
       ]
-  
+
       ## Then for each experimental (tumor) sample,
       ## identify if it individually is above the hypermethcutoff
       temp_t_cat <- ifelse(
@@ -875,7 +875,7 @@ get_diffmeth_regions <- function(
         1,
         0
       )
-  
+
       ## For each of these probes, then calculate the number of individual
       ## experimental (tumor) samples above the hypermethcutoff
       length_temp_t_cat <- apply(
@@ -884,7 +884,7 @@ get_diffmeth_regions <- function(
         sum,
         na.rm=T
       )
-  
+
       ## Create a new matrix with the experimental (tumor) methylation data
       ## for probes that have a number of individual samples above the hypermethcutoff
       ## greater than the minExp value.
@@ -894,108 +894,108 @@ get_diffmeth_regions <- function(
           length_temp_t_cat>minExp
         ),
       ]
-  
+
       ## Now lets create dataframes with this hypomethylated data:
       hypermethDataT <- temp_t1
-  
+
       hypermethDataN <- metDataN[
         match(
           rownames(hypermethDataT),
           rownames(metDataN)
         ),
       ]
-      
+
     } else if(use_purity_data==TRUE){
-        
+
       ## Save a variable with the purity subdirectory:
       purity_subdirectory_path <- paste(
         TENET_directory,
         'purity',
         sep=''
       )
-      
+
       ## Check to make sure the user has supplied a 'purity' subdirectory:
       ## If subdirectory isn't found return an error.
       if(!dir.exists(purity_subdirectory_path)){
-        
+
         stop(
           'The purity subdirectory in the provided TENET_directory was not found, although purity information was specified. Please put .rda files containing methylation data from other cell types for purity analyses in a separate subdirectory in the TENET_directory called "purity"'
         )
-        
+
       }
-      
+
       ## Let's list all the files in the purity subdirectory:
       purity_file_list <- list.files(
         purity_subdirectory_path,
         pattern=".rda",
         full.names = TRUE
       )
-      
+
       purity_file_list_trunc <- list.files(
         purity_subdirectory_path,
         pattern=".rda",
         full.names = FALSE
       )
-      
+
       ## Make sure .rda files have been loaded:
       if(length(purity_file_list)==0){
-        
+
         stop(
           'No purity .rda files were found in the purity subdirectory, although purity information was specified. Please put .rda files containing methylation data from other cell types for purity analyses in a separate subdirectory in the TENET_directory called "purity"'
         )
-        
+
       }
-      
+
       ## For each .rda file, load it and check the contents:
-      
+
       ## First initialize an empty vector to contain name of objects in each
       ## .rda file:
       purity_rda_content_vector <- c()
-      
+
       ## For each of the .rdas, load them, and check what was loaded and add it
       ## to the purity_rda_content_vector variable:
       for(purity_rda_file in purity_file_list){
-        
+
         ## Create a snapshot of the environment to compare as .rdas are loaded:
         environment_snapshot <- ls()
-        
+
         ## Load the .rda file:
         load(purity_rda_file)
-        
+
         ## Check the new environment:
         new_environment_snapshot <- ls()
-        
+
         ## Identify the objects loaded in the .rda file:
         purity_rda_objects_loaded <- setdiff(
-          new_environment_snapshot, 
+          new_environment_snapshot,
           environment_snapshot
         )
-        
+
         ## Remove the environment_snapshot variable from the objects loaded:
         purity_rda_objects_loaded <- purity_rda_objects_loaded[
           !purity_rda_objects_loaded=='environment_snapshot'
         ]
-        
+
         ## Add the loaded objects to the purity_rda_content_vector:
         purity_rda_content_vector <- c(
           purity_rda_content_vector,
           purity_rda_objects_loaded
         )
-        
+
         ## Remove the purity_rda_objects_loaded object:
         rm(purity_rda_objects_loaded)
       }
-      
-      ## Make sure that the objects loaded in the rdas is equal to 
+
+      ## Make sure that the objects loaded in the rdas is equal to
       ## the number of rdas present (i.e. 1 data object per rda):
       if(length(purity_rda_content_vector)!=length(purity_file_list)){
-        
+
         stop(
           'The number of data objects loaded from the .rda files placed in the purity subdirectory are not equal to the number of .rda files discovered. Please ensure each of the purity .rda files included have only a single data object in each.'
         )
       }
-      
-      ## Initialize empty vectors to contain probe information from the 
+
+      ## Initialize empty vectors to contain probe information from the
       ## different analysis quadrants as well as all the probes that overlapped
       ## each purity dataset:
       purity_dataset_probe_overlap_list <- list()
@@ -1003,21 +1003,21 @@ get_diffmeth_regions <- function(
       purity_hypomethylated_probe_vector <- list()
       purity_unmethylated_probe_vector <- list()
       purity_hypermethylated_probe_vector <- list()
-      
+
       ## Now for each of the loaded purity datasets, let's get a vector of the
       ## probes in them that match with the HM450 probe annotation:
       for(i in 1:length(purity_rda_content_vector)){
-        
+
         ## Next match the genes in the expression datasets with those
         ## from the GENCODE v22 annotation:
         matched_probes_purity_dataset <- intersect(
           hg38_450_annotations_no_NA_granges_df$names,
           rownames(get(purity_rda_content_vector[i]))
         )
-        
+
         ## If no probes are found, return an error message
         if(length(matched_probes_purity_dataset)==0){
-          
+
           stop(
             paste(
               'No HM450 probes were found in the',
@@ -1027,27 +1027,27 @@ get_diffmeth_regions <- function(
             )
           )
         }
-        
+
         ## Let's identify which of the probes of interest were found in the
         ## resulting methylation datasets:
         probes_of_interest_matched <- intersect(
           probes_of_interest,
           matched_probes
         )
-      
-        ## Now check to make sure there are overlapping probes between the 
+
+        ## Now check to make sure there are overlapping probes between the
         ## uploaded control/normal and experimental/tumor methylation datasets
         ## and the purity dataset:
         matched_probes_three_datasets <- intersect(
           matched_probes_purity_dataset,
           probes_of_interest_matched
         )
-        
-        ## If no probes were found overlapping the purity datasets 
+
+        ## If no probes were found overlapping the purity datasets
         ## and the control/normal and experimental/tumor methylation datasets
-        ## return an error. 
+        ## return an error.
         if(length(matched_probes_three_datasets)==0){
-          
+
           stop(
             paste(
               'No HM450 probes were found overlapping between the',
@@ -1056,53 +1056,53 @@ get_diffmeth_regions <- function(
               sep=' '
             )
           )
-          
+
         }
-        
-        ## For each of these probes overlapped between the three datasets, 
+
+        ## For each of these probes overlapped between the three datasets,
         ## calculate the mean methylation in tumor and normal samples:
         probelist_df <- data.frame(
           probe= matched_probes_three_datasets,
           stringsAsFactors = FALSE
         )
-      
+
         probelist_df$mean_normal <- apply(
           metDataN[
             matched_probes_three_datasets,
-          ], 
-          1, 
-          mean, 
+          ],
+          1,
+          mean,
           na.rm=T
         )
-        
+
         probelist_df$mean_tumor <- apply(
           metDataT[
             matched_probes_three_datasets,
-          ], 
-          1, 
-          mean, 
+          ],
+          1,
+          mean,
           na.rm=T
         )
-        
+
         probelist_df$mean_purity <- apply(
           get(purity_rda_content_vector[i])[
             matched_probes_three_datasets,
           ],
-          1, 
-          mean, 
+          1,
+          mean,
           na.rm=T
         )
-      
+
         ## Remove the probes with NaN values:
         probelist_df_present <- probelist_df[
           complete.cases(probelist_df),
         ]
-          
-        ## Check to make sure there are still probes present and return an 
-        ## error if there aren't. If there are some, add them to the 
-        ## purity_dataset_probe_overlap_list list. 
+
+        ## Check to make sure there are still probes present and return an
+        ## error if there aren't. If there are some, add them to the
+        ## purity_dataset_probe_overlap_list list.
         if(length(rownames(probelist_df_present))==0){
-          
+
           stop(
             paste(
               'No non-NA HM450 probes were found overlapping between the',
@@ -1111,25 +1111,25 @@ get_diffmeth_regions <- function(
               sep=' '
             )
           )
-          
+
         } else{
-          
+
           ## Add them to the list if they have overlap:
           purity_dataset_probe_overlap_list[[i]] <- probelist_df_present$probe
-          
+
         }
-        
+
         ## Create methylation datasets with only the non-NaN enhancer probes:
         metDataN_present <- metDataN[
           probelist_df_present$probe,
         ]
-        
+
         metDataT_present <- metDataT[
           probelist_df_present$probe,
         ]
-        
+
         ## First let's get the methylated quadrant probes:
-        
+
         ## First get a copy of the experimental (tumor) data for probes
         ## with average methylation above the methcutoff
         ## in normal and tumor samples:
@@ -1144,7 +1144,7 @@ get_diffmeth_regions <- function(
             rownames(metDataT_present)
           ),
         ]
-        
+
         ## Then for each experimental (tumor) sample,
         ## identify if it individually is below the methcutoff
         temp_t_cat <- ifelse(
@@ -1152,7 +1152,7 @@ get_diffmeth_regions <- function(
           1,
           0
         )
-        
+
         ## For each of these probes, then calculate the number of individual
         ## experimental (tumor) samples below the methcutoff
         length_temp_t_cat <- apply(
@@ -1161,8 +1161,8 @@ get_diffmeth_regions <- function(
           sum,
           na.rm=T
         )
-        
-        ## Get the probes which have fewer than minExp samples and save them 
+
+        ## Get the probes which have fewer than minExp samples and save them
         ## as the methylated probes:
         purity_methylated_probe_vector[[i]] <- rownames(
           temp_t[
@@ -1171,9 +1171,9 @@ get_diffmeth_regions <- function(
             ),
           ]
         )
-        
+
         ## Now let's get the hypomethylated quadrant probes:
-        
+
         ## First get a copy of the experimental (tumor) data for probes
         ## with average methylation above the methcutoff
         ## in just the normal samples and purity dataset:
@@ -1182,13 +1182,13 @@ get_diffmeth_regions <- function(
             probelist_df_present[
               which(
                 probelist_df_present$mean_normal>methcutoff & probelist_df_present$mean_purity>methcutoff
-              ), 
+              ),
               'probe'
             ],
             rownames(metDataT_present)
           ),
         ]
-        
+
         ## Then for each experimental (tumor) sample,
         ## identify if it individually is below the hypomethcutoff
         temp_t_cat <- ifelse(
@@ -1196,7 +1196,7 @@ get_diffmeth_regions <- function(
           1,
           0
         )
-        
+
         ## For each of these probes, then calculate the number of individual
         ## experimental (tumor) samples below the hypomethcutoff
         length_temp_t_cat <- apply(
@@ -1205,8 +1205,8 @@ get_diffmeth_regions <- function(
           sum,
           na.rm=T
         )
-        
-        ## Get the probes which have more than minExp samples and save them 
+
+        ## Get the probes which have more than minExp samples and save them
         ## as the hypomethylated probes:
         purity_hypomethylated_probe_vector[[i]] <- rownames(
           temp_t[
@@ -1215,9 +1215,9 @@ get_diffmeth_regions <- function(
             ),
           ]
         )
-        
+
         ## Now let's get the unmethylated quadrant probes:
-        
+
         ## First get a copy of the experimental (tumor) data for probes
         ## with average methylation blow the unmethcutoff
         ## in normal and tumor samples:
@@ -1232,7 +1232,7 @@ get_diffmeth_regions <- function(
             rownames(metDataT_present)
           ),
         ]
-        
+
         ## Then for each experimental (tumor) sample,
         ## identify if it individually is above the unmethcutoff
         temp_t_cat <- ifelse(
@@ -1240,7 +1240,7 @@ get_diffmeth_regions <- function(
           1,
           0
         )
-        
+
         ## For each of these probes, then calculate the number of individual
         ## experimental (tumor) samples above the unmethcutoff
         length_temp_t_cat <- apply(
@@ -1249,8 +1249,8 @@ get_diffmeth_regions <- function(
           sum,
           na.rm=T
         )
-        
-        ## Get the probes which have less than minExp samples and save them 
+
+        ## Get the probes which have less than minExp samples and save them
         ## as the unmethylated probes:
         purity_unmethylated_probe_vector[[i]] <- rownames(
           temp_t[
@@ -1259,9 +1259,9 @@ get_diffmeth_regions <- function(
             ),
           ]
         )
-        
+
         ## Now let's get the hypermethylated quadrant probes:
-        
+
         ## First get a copy of the experimental (tumor) data for probes
         ## with average methylation blow the unmethcutoff
         ## in normal samples and purity samples:
@@ -1276,7 +1276,7 @@ get_diffmeth_regions <- function(
             rownames(metDataT_present)
           ),
         ]
-        
+
         ## Then for each experimental (tumor) sample,
         ## identify if it individually is above the hypermethcutoff
         temp_t_cat <- ifelse(
@@ -1284,7 +1284,7 @@ get_diffmeth_regions <- function(
           1,
           0
         )
-        
+
         ## For each of these probes, then calculate the number of individual
         ## experimental (tumor) samples above the hypermethcutoff
         length_temp_t_cat <- apply(
@@ -1293,8 +1293,8 @@ get_diffmeth_regions <- function(
           sum,
           na.rm=T
         )
-        
-        ## Get the probes which have more than minExp samples and save them 
+
+        ## Get the probes which have more than minExp samples and save them
         ## as the hypermethylated probes:
         purity_hypermethylated_probe_vector[[i]] <- rownames(
           temp_t[
@@ -1304,7 +1304,7 @@ get_diffmeth_regions <- function(
           ]
         )
       }
-      
+
       ## Now that we have assembled lists of the quadrant probes,
       ## as well as all the probes analyzed between each purity file
       ## identify those in common between each as the final datasets:
@@ -1312,85 +1312,85 @@ get_diffmeth_regions <- function(
         intersect,
         purity_dataset_probe_overlap_list
       )
-      
+
       purity_consensus_methylated_probes <- Reduce(
         intersect,
         purity_methylated_probe_vector
       )
-      
+
       purity_consensus_hypomethylated_probes <- Reduce(
         intersect,
         purity_hypomethylated_probe_vector
       )
-      
+
       purity_consensus_unmethylated_probes <- Reduce(
         intersect,
         purity_unmethylated_probe_vector
       )
-      
+
       purity_consensus_hypermethylated_probes <- Reduce(
         intersect,
         purity_hypermethylated_probe_vector
       )
-      
-      ## Now using these consensus probes, create methylation dataframes 
-      ## for control (normal) and experimental (tumor) samples 
-      ## for just the probes in each quadrant as well as all 
+
+      ## Now using these consensus probes, create methylation dataframes
+      ## for control (normal) and experimental (tumor) samples
+      ## for just the probes in each quadrant as well as all
       ## enhancer probes that were analyzed:
-      
+
       ## Start with enhancer probes common in all datasets:
       metDataT_present <- metDataT[
         purity_consensus_probes,
       ]
-      
+
       metDataN_present <- metDataN[
         match(
           rownames(metDataT_present),
           rownames(metDataN)
         ),
       ]
-      
+
       ## methylated:
       methDataT <- metDataT[
         purity_consensus_methylated_probes,
       ]
-      
+
       methDataN <- metDataN[
         match(
           rownames(methDataT),
           rownames(metDataN)
         ),
       ]
-      
+
       ## hypomethylated:
       hypomethDataT <- metDataT[
         purity_consensus_hypomethylated_probes,
       ]
-      
+
       hypomethDataN <- metDataN[
         match(
           rownames(hypomethDataT),
           rownames(metDataN)
         ),
       ]
-      
+
       ## unmethylated:
       unmethDataT <- metDataT[
         purity_consensus_unmethylated_probes,
       ]
-      
+
       unmethDataN <- metDataN[
         match(
           rownames(unmethDataT),
           rownames(metDataN)
         ),
       ]
-      
+
       ## hypermethylated:
       hypermethDataT <- metDataT[
         purity_consensus_hypermethylated_probes,
       ]
-      
+
       hypermethDataN <- metDataN[
         match(
           rownames(hypermethDataT),
@@ -1444,7 +1444,7 @@ get_diffmeth_regions <- function(
 
     unmethDataN <- unmethDataN[which(substring(rownames(unmethDataN),1,2)=='cg'),]
     unmethDataT <- unmethDataT[which(substring(rownames(unmethDataT),1,2)=='cg'),]
-  
+
     ## Create a dataset with the number of different types of probes found
     ## as well as the total number of genes and probes analyzed
     ## and create a metadata table for it:
@@ -1491,7 +1491,7 @@ get_diffmeth_regions <- function(
 
     ## Now let's save the final dataset:
     save(
-      metDataT, metDataN, expDataT, expDataN, enhmetDataT, enhmetDataN, methDataT, methDataN, hypomethDataT, hypomethDataN, unmethDataT, unmethDataN, hypermethDataT, hypermethDataN, hypermethcutoff, hypomethcutoff,
+      metDataT, metDataN, expDataT, expDataN, enhmetDataT, enhmetDataN, methDataT, methDataN, hypomethDataT, hypomethDataN, unmethDataT, unmethDataN, hypermethDataT, hypermethDataN, hypermethcutoff, hypomethcutoff, minExp,
       file= paste(
         TENET_directory,
         'step2/',

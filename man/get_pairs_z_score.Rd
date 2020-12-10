@@ -6,28 +6,26 @@
 \usage{
 get_pairs_z_score(
   TENET_directory,
-  hypometh_pairs,
   hypermeth_pairs,
+  hypometh_pairs,
   usecaseonly,
   TF_only,
-  hypomethcutoff,
-  hypermethcutoff,
-  minExp,
+  significant_p_value,
   core_count
 )
 }
 \arguments{
 \item{TENET_directory}{Set a path to the directory that contains step2 results from get_diffmeth_regions function. This function will also create a new step3 folder there containing the results.}
 
-\item{hypometh_pairs}{Set to TRUE/FALSE depending on if you want to calculate z-scores for hypomethylated probes.}
-
 \item{hypermeth_pairs}{Set to TRUE/FALSE depending on if you want to calculate z-scores for hypermethylated probes.}
+
+\item{hypometh_pairs}{Set to TRUE/FALSE depending on if you want to calculate z-scores for hypomethylated probes.}
 
 \item{usecaseonly}{Set to TRUE/FALSE depending on if you want to include the control/normal samples with the experimental/tumor samples when calculating hyper/hypomethylated groups and z-scores.}
 
 \item{TF_only}{Set to TRUE/FALSE to determine if you only want to consider genes that are accepted transcription factors in The Human Transcription Factors by Lambert et al (2018) when calculating z-scores.}
 
-\item{minExp}{Sets the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups.}
+\item{significant_p_value}{Set p-value to identify significant Z-scores for gene expression values selected between hyper/hypomethylated tumor/experimental samples and those that are not.}
 
 \item{core_count}{Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.}
 }

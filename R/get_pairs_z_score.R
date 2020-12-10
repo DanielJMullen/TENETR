@@ -13,20 +13,18 @@
 #' @param hypermeth_pairs Set to TRUE/FALSE depending on if you want to calculate z-scores for hypermethylated probes.
 #' @param usecaseonly Set to TRUE/FALSE depending on if you want to include the control/normal samples with the experimental/tumor samples when calculating hyper/hypomethylated groups and z-scores.
 #' @param TF_only Set to TRUE/FALSE to determine if you only want to consider genes that are accepted transcription factors in The Human Transcription Factors by Lambert et al (2018) when calculating z-scores.
-#' @param minExp Sets the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups.
+#' @param significant_p_value Set p-value to identify significant Z-scores for gene expression values selected between hyper/hypomethylated tumor/experimental samples and those that are not.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
 #' @return Currently returns tab-delimited ".txt"zscore_all_genes_rda.txt" for each probe of the selected types analyzed, containing the zscore
 #' @export
 
 get_pairs_z_score <- function(
   TENET_directory,
-  hypometh_pairs,
   hypermeth_pairs,
+  hypometh_pairs,
   usecaseonly,
   TF_only,
-  hypomethcutoff,
-  hypermethcutoff,
-  minExp,
+  significant_p_value,
   core_count
 ){
 
@@ -111,7 +109,8 @@ get_pairs_z_score <- function(
     'unmethDataN',
     'unmethDataT',
     'hypermethcutoff',
-    'hypomethcutoff'
+    'hypomethcutoff',
+    'minExp'
   )
 
   ## Index an empty vector with the positions of objects that should be present
@@ -272,12 +271,92 @@ get_pairs_z_score <- function(
   ## Clear the gtf file:
   rm(gencode_v22_gtf)
 
+  ## Now lets sort the expData alpanumerically:
+  expData <- expData[
+    order(
+      rownames(expData)
+    ),
+  ]
+
+  ## Now let's generate codex files listing the order of hyper/hypometh probes:
+  if(hypermeth_pairs==TRUE){
+
+    write(
+      rownames(metDataHyper),
+      file= paste(
+        TENET_directory,
+        'step3/',
+        'hypermeth_probe_names_ordered.txt',
+        sep=''
+      ),
+      ncolumns= 1,
+      append= FALSE,
+      sep= "\t"
+    )
+
+  }
+
+  if(hypometh_pairs==TRUE){
+
+    write(
+      rownames(metDataHypo),
+      file= paste(
+        TENET_directory,
+        'step3/',
+        'hypometh_probe_names_ordered.txt',
+        sep=''
+      ),
+      ncolumns= 1,
+      append= FALSE,
+      sep= "\t"
+    )
+
+  }
+
+  ## If looking only at TF genes, subset expData to just those genes:
+  if(TF_only==TRUE){
+
+    ## Get the names of the human transcription factors:
+    Human_TF <- TENETR.data::human_transcription_factors_dataset[
+      TENETR.data::human_transcription_factors_dataset$Is.TF.=='Yes',
+      "Ensembl.ID"
+    ]
+
+    ## Identify those present in the expression data
+    Human_TF_present <- Human_TF[
+      Human_TF %in% rownames(expData)
+    ]
+
+    ## Subset the expression data to just those genes:
+    expData <- expData[
+      Human_TF_present[order(Human_TF_present)],
+    ]
+  }
+
+  ## Now print out a list of the genes remaining in expData:
+  write(
+    rownames(expData),
+    file= paste(
+      TENET_directory,
+      'step3/',
+      'gene_names_ordered.txt',
+      sep=''
+    ),
+    ncolumns= 1,
+    append= FALSE,
+    sep= "\t"
+  )
+
+  ## Determine a significant z-score from the input p-value:
+  significant_z_score <- qnorm(
+    1-significant_p_value
+  )
+
   ## Now lets write a function to calculate z scores for expression of each gene
   ## between groups that are hyper/hypomethylated for each probe, and those that
   ## aren't:
   z_score_calc <- function(
     DNA_methylation_probe,
-    expData_internal,
     metData_internal,
     hyper_hypo,
     minExp_value,
@@ -286,34 +365,16 @@ get_pairs_z_score <- function(
 
     ## Create dataframe with gene IDs and names:
     TESTSR=data.frame(
-      probe= DNA_methylation_probe,
-      geneID= rownames(expData_internal),
+      geneID= rownames(expData),
       stringsAsFactors = FALSE
     )
     rownames(TESTSR) <- TESTSR$geneID
 
-    ## Subset to only TFs if analysis is selected:
-    if(TF_only_internal==TRUE){
-
-      Human_TF <- TENETR.data::human_transcription_factors_dataset[
-        TENETR.data::human_transcription_factors_dataset$Is.TF.=='Yes',
-        "Ensembl.ID"
-      ]
-
-      Human_TF_present <- Human_TF[
-        Human_TF %in% rownames(TESTSR)
-      ]
-
-      TESTSR <- TESTSR[
-        Human_TF_present,
-      ]
-    }
-
     ## Split the methylation dataset based on  whether or not the probe
     ## was hypomethylated in each sample:
     T_P_probe <- metData_internal[
-        DNA_methylation_probe,
-      ]
+      DNA_methylation_probe,
+    ]
 
     T_P_probe <- T_P_probe[
       !is.na(T_P_probe)
@@ -330,19 +391,25 @@ get_pairs_z_score <- function(
         internal_gene_ID
       ){
 
-        P_gene_1 <- expData_internal[
+        P_gene_1 <- expData[
           internal_gene_ID,
           names(T_P_probe_1)
         ]
 
-        P_gene_0 <- expData_internal[
+        P_gene_0 <- expData[
           internal_gene_ID,
           names(T_P_probe_0)
         ]
 
         z_score_internal <- (
           (mean(P_gene_0, na.rm=T) - mean(P_gene_1, na.rm=T))/
-          (sd(P_gene_1, na.rm=T))
+            (sd(P_gene_1, na.rm=T))
+        )
+
+        ## Round the Z_score to 6 digits to conserve memory
+        z_score_internal <- round(
+          z_score_internal,
+          6
         )
 
         return(z_score_internal)
@@ -354,19 +421,33 @@ get_pairs_z_score <- function(
         internal_gene_function
       )
 
+      ## Isolate genes with only significant Zscores:
+      TESTSR <- TESTSR[
+        (
+          (TESTSR$Z.real > significant_z_score) |
+          (TESTSR$Z.real < -significant_z_score)
+        ),
+      ]
+
+      ## Remove values with infinite Z scores;
+      TESTSR <- TESTSR[
+        !is.infinite(TESTSR$Z.real),
+      ]
+
+      ## Remove values with NaN Z scores:
+      TESTSR <- TESTSR[
+        !is.nan(TESTSR$Z.real),
+      ]
+
       ## Write out the file:
       write.table(
         TESTSR,
         file= paste(
-          paste(
-            TENET_directory,
-            'step3/',
-            hyper_hypo,
-            sep=''
-          ),
-          unique(TESTSR$probe),
-          "zscore_all_genes_rda.txt",
-          sep ="_"
+          TENET_directory,
+          'step3/',
+          DNA_methylation_probe,
+          '_zscores.txt',
+          sep=''
         ),
         row.names=F,
         col.names=F,
@@ -388,10 +469,9 @@ get_pairs_z_score <- function(
     parallel::mclapply(
       rownames(metDataHyper),
       z_score_calc,
-      expData_internal= expData,
       metData_internal= metDataHyper,
       hyper_hypo= 'hyper',
-      TF_only= TRUE,
+      TF_only_internal= TRUE,
       minExp_value= minExp,
       mc.cores= core_count
     )
@@ -404,13 +484,340 @@ get_pairs_z_score <- function(
     parallel::mclapply(
       rownames(metDataHypo),
       z_score_calc,
-      expData_internal= expData,
       metData_internal= metDataHypo,
       hyper_hypo= 'hypo',
-      TF_only= TRUE,
+      TF_only_internal= TRUE,
       minExp_value= minExp,
       mc.cores= core_count
     )
 
   }
+
+  ## Once the files have been generated, clear the workspace
+  ## and dump memory:
+  rm(
+    list=setdiff(
+      ls(),
+      c(
+        "TENET_directory",
+        "hypermeth_pairs",
+        "hypometh_pairs",
+        "significant_z_score"
+      )
+    )
+  )
+
+  gc()
+
+  ## Create a list of the files generated previously
+  list_files <- list.files(
+    paste(
+      TENET_directory,
+      'step3/',
+      sep=''
+    ),
+    full.names = TRUE
+  )
+
+  ## Find the file containing the list of hypermeth probes
+  ## and load it:
+  hypermeth_probes_file <- grep(
+    'hypermeth_probe_names_ordered',
+    list_files,
+    value=TRUE
+  )
+
+  hypermeth_probes <- read.delim(
+    hypermeth_probes_file,
+    sep='\t',
+    header= FALSE,
+    stringsAsFactors = FALSE
+  )
+
+  ## Create a listing of all the hypermeth files with
+  ## z scores that were created:
+  hypermeth_z_scores_files <- paste(
+    TENET_directory,
+    'step3/',
+    hypermeth_probes$V1,
+    '_zscores.txt',
+    sep=''
+  )
+
+  ## Create an empty data frame containing gene IDs
+  ## and Z scores (initially)
+  hyper_z_scores <- data.frame(
+    'geneID'= character(),
+    'Zscore'= numeric(),
+    'probeID'= character(),
+    stringsAsFactors = FALSE
+  )
+
+  ## Find the file containing the list of hypometh probes
+  ## and load it:
+  hypometh_probes_file <- grep(
+    'hypometh_probe_names_ordered',
+    list_files,
+    value=TRUE
+  )
+
+  hypometh_probes <- read.delim(
+    hypometh_probes_file,
+    sep='\t',
+    header= FALSE,
+    stringsAsFactors = FALSE
+  )
+
+  ## Create a listing of all the hypometh files with
+  ## z scores that were created:
+  hypometh_z_scores_files <- paste(
+    TENET_directory,
+    'step3/',
+    hypometh_probes$V1,
+    '_zscores.txt',
+    sep=''
+  )
+
+  ## Create an empty data frame containing gene IDs
+  ## and Z scores (initially)
+  hypo_z_scores <- data.frame(
+    'geneID'= character(),
+    'Zscore'= numeric(),
+    'probeID'= character(),
+    stringsAsFactors = FALSE
+  )
+
+  ## Find the file containing the list of genes of interest
+  ## and load it:
+  genes_file <- grep(
+    'gene_names_ordered',
+    list_files,
+    value=TRUE
+  )
+
+  genes_present <- read.delim(
+    genes_file,
+    sep='\t',
+    header= FALSE,
+    stringsAsFactors = FALSE
+  )
+
+  ## If hypermeth analysis is selected, load the significant
+  ## hypermeth z scores
+  if(hypermeth_pairs==TRUE){
+
+    hyper_file_combiner <- function(file_path){
+
+      ## If the file isn't empty, load it:
+      if(
+        (file.info(file_path)$size)>0
+      ){
+
+        ## Load the file:
+        file_placeholder <- read.delim(
+          file_path,
+          header= FALSE,
+          sep='\t',
+          stringsAsFactors = FALSE
+        )
+
+        ## Add a probe ID column:
+        file_placeholder$probeID <- rep(
+          sub(
+            '_zscores.*',
+            '',
+            basename(
+              file_path
+            )
+          ),
+          nrow(
+            file_placeholder
+          )
+        )
+
+        ## Combine the file with the hyper dataset:
+        hyper_z_scores <<- rbind(
+          hyper_z_scores,
+          file_placeholder
+        )
+
+        rm(file_placeholder)
+
+      }
+    }
+
+    ## Now load the files and data into the previously
+    ## created hyper_z_scores dataframe:
+    parallel::mclapply(
+      hypermeth_z_scores_files,
+      hyper_file_combiner,
+      mc.cores= core_count
+    )
+
+    ## Rename the columns for the time being:
+    colnames(hyper_z_scores) <- c(
+      'geneID',
+      'Zscore',
+      'probeID'
+    )
+
+    ## Reorganize the columns:
+    hyper_z_scores <- hyper_z_scores[
+      c(
+        'probeID',
+        'geneID',
+        'Zscore'
+      )
+    ]
+
+    ## Separate into two dataframes based on Z score:
+    hyper.Gplus_z_scores <- hyper_z_scores[
+      hyper_z_scores$Zscore<0,
+    ]
+
+    hyper.Gminus_z_scores <- hyper_z_scores[
+      hyper_z_scores$Zscore>0,
+    ]
+
+    ## Save the two dataframes to the output folder:
+    ## Write out the file:
+    write.table(
+      hyper.Gplus_z_scores,
+      file= paste(
+        TENET_directory,
+        'step3/',
+        'hyper_Gplus_link_zscores.txt',
+        sep=''
+      ),
+      row.names=F,
+      col.names=F,
+      quote=F,
+      sep="\t"
+    )
+
+    write.table(
+      hyper.Gminus_z_scores,
+      file= paste(
+        TENET_directory,
+        'step3/',
+        'hyper_Gminus_link_zscores.txt',
+        sep=''
+      ),
+      row.names=F,
+      col.names=F,
+      quote=F,
+      sep="\t"
+    )
+
+  }
+
+  ## If hypometh analysis is selected, load the significant
+  ## hypometh z scores
+  if(hypometh_pairs==TRUE){
+
+    hypo_file_combiner <- function(file_path){
+
+      ## If the file isn't empty, load it:
+      if(
+        (file.info(file_path)$size)>0
+      ){
+
+        ## Load the file:
+        file_placeholder <- read.delim(
+          file_path,
+          header= FALSE,
+          sep='\t',
+          stringsAsFactors = FALSE
+        )
+
+        ## Add a probe ID column:
+        file_placeholder$probeID <- rep(
+          sub(
+            '_zscores.*',
+            '',
+            basename(
+              file_path
+            )
+          ),
+          nrow(
+            file_placeholder
+          )
+        )
+
+        ## Combine the file with the hypo dataset:
+        hypo_z_scores <<- rbind(
+          hypo_z_scores,
+          file_placeholder
+        )
+
+        rm(file_placeholder)
+
+      }
+    }
+
+    ## Now load the files and data into the previously
+    ## created hypo_z_scores dataframe:
+    parallel::mclapply(
+      hypometh_z_scores_files,
+      hypo_file_combiner,
+      mc.cores= core_count
+    )
+
+    ## Rename the columns for the time being:
+    colnames(hypo_z_scores) <- c(
+      'geneID',
+      'Zscore',
+      'probeID'
+    )
+
+    ## Reorganize the columns:
+    hypo_z_scores <- hypo_z_scores[
+      c(
+        'probeID',
+        'geneID',
+        'Zscore'
+      )
+    ]
+
+    ## Separate into two dataframes based on Z score:
+    hypo.Gplus_z_scores <- hypo_z_scores[
+      hypo_z_scores$Zscore<0,
+    ]
+
+    hypo.Gminus_z_scores <- hypo_z_scores[
+      hypo_z_scores$Zscore>0,
+    ]
+
+    ## Save the two dataframes to the output folder:
+    ## Write out the file:
+    write.table(
+      hypo.Gplus_z_scores,
+      file= paste(
+        TENET_directory,
+        'step3/',
+        'hypo_Gplus_link_zscores.txt',
+        sep=''
+      ),
+      row.names=F,
+      col.names=F,
+      quote=F,
+      sep="\t"
+    )
+
+    write.table(
+      hypo.Gminus_z_scores,
+      file= paste(
+        TENET_directory,
+        'step3/',
+        'hypo_Gminus_link_zscores.txt',
+        sep=''
+      ),
+      row.names=F,
+      col.names=F,
+      quote=F,
+      sep="\t"
+    )
+
+  }
+
 }
