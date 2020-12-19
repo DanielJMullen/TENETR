@@ -30,7 +30,7 @@ get_analysis_z_score(
 \item{core_count}{Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.}
 }
 \value{
-Currently returns tab-delimited ".txt"zscore_all_genes_rda.txt" for each probe of the selected types analyzed, containing the zscore
+Currently returns tab-delimited "sig_link_zscores.txt" files for hypo/hyper Gplus/Gminus probe-gene links, as well as individual "zscores.txt" files named after each gene in the hypo/hyper analysis with zscores for that gene to all probes from that analysis type.
 }
 \description{
 This is the step3 function of the TENETR package.

@@ -15,7 +15,7 @@
 #' @param TF_only Set to TRUE/FALSE to determine if you only want to consider genes that are accepted transcription factors in The Human Transcription Factors by Lambert et al (2018) when calculating z-scores.
 #' @param significant_p_value Set p-value to identify significant Z-scores for gene expression values selected between hyper/hypomethylated tumor/experimental samples and those that are not.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
-#' @return Currently returns tab-delimited ".txt"zscore_all_genes_rda.txt" for each probe of the selected types analyzed, containing the zscore
+#' @return Currently returns tab-delimited "sig_link_zscores.txt" files for hypo/hyper Gplus/Gminus probe-gene links, as well as individual "zscores.txt" files named after each gene in the hypo/hyper analysis with zscores for that gene to all probes from that analysis type.
 #' @export
 
 get_analysis_z_score <- function(
@@ -293,20 +293,6 @@ get_analysis_z_score <- function(
     )
 
     write(
-      rownames(metDataHyper),
-      file= paste(
-        TENET_directory,
-        'step3/',
-        'hypermeth_results/',
-        'hypermeth_probe_names_ordered.txt',
-        sep=''
-      ),
-      ncolumns= 1,
-      append= FALSE,
-      sep= "\t"
-    )
-
-    write(
       c('geneID','probeID','Zscore'),
       file= paste(
         TENET_directory,
@@ -346,20 +332,6 @@ get_analysis_z_score <- function(
         'hypometh_results/',
         sep=''
       )
-    )
-
-    write(
-      rownames(metDataHypo),
-      file= paste(
-        TENET_directory,
-        'step3/',
-        'hypometh_results/',
-        'hypometh_probe_names_ordered.txt',
-        sep=''
-      ),
-      ncolumns= 1,
-      append= FALSE,
-      sep= "\t"
     )
 
     write(
@@ -411,20 +383,6 @@ get_analysis_z_score <- function(
       Human_TF_present[order(Human_TF_present)],
     ]
   }
-
-  ## Now print out a list of the genes remaining in expData:
-  write(
-    rownames(expData),
-    file= paste(
-      TENET_directory,
-      'step3/',
-      'gene_names_ordered.txt',
-      sep=''
-    ),
-    ncolumns= 1,
-    append= FALSE,
-    sep= "\t"
-  )
 
   ## Determine a significant z-score from the input p-value:
   significant_z_score <- qnorm(

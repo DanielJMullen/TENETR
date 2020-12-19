@@ -3,3 +3,4 @@
 export(get_analysis_z_score)
 export(get_diffmeth_regions)
 export(make_external_datasets)
+export(permutate_z_scores)
