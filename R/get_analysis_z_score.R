@@ -282,10 +282,12 @@ get_analysis_z_score <- function(
   ## As well as files with significant Z-scores by genes:
   if(hypermeth_analysis==TRUE){
 
+    ## Create a hypometh folder:
     dir.create(
       paste(
         TENET_directory,
         'step3/',
+        'hypermeth_results/',
         sep=''
       )
     )
@@ -295,6 +297,7 @@ get_analysis_z_score <- function(
       file= paste(
         TENET_directory,
         'step3/',
+        'hypermeth_results/',
         'hypermeth_probe_names_ordered.txt',
         sep=''
       ),
@@ -308,6 +311,7 @@ get_analysis_z_score <- function(
       file= paste(
         TENET_directory,
         'step3/',
+        'hypermeth_results/',
         'hyper_Gplus_sig_link_zscores.txt',
         sep=''
       ),
@@ -321,6 +325,7 @@ get_analysis_z_score <- function(
       file= paste(
         TENET_directory,
         'step3/',
+        'hypermeth_results/',
         'hyper_Gminus_sig_link_zscores.txt',
         sep=''
       ),
@@ -333,11 +338,22 @@ get_analysis_z_score <- function(
 
   if(hypometh_analysis==TRUE){
 
+    ## Create a hypometh folder:
+    dir.create(
+      paste(
+        TENET_directory,
+        'step3/',
+        'hypometh_results/',
+        sep=''
+      )
+    )
+
     write(
       rownames(metDataHypo),
       file= paste(
         TENET_directory,
         'step3/',
+        'hypometh_results/',
         'hypometh_probe_names_ordered.txt',
         sep=''
       ),
@@ -351,6 +367,7 @@ get_analysis_z_score <- function(
       file= paste(
         TENET_directory,
         'step3/',
+        'hypometh_results/',
         'hypo_Gplus_sig_link_zscores.txt',
         sep=''
       ),
@@ -364,6 +381,7 @@ get_analysis_z_score <- function(
       file= paste(
         TENET_directory,
         'step3/',
+        'hypometh_results/',
         'hypo_Gminus_sig_link_zscores.txt',
         sep=''
       ),
@@ -535,6 +553,7 @@ get_analysis_z_score <- function(
           file= paste(
             TENET_directory,
             'step3/',
+            'hypermeth_results/',
             'hyper_Gplus_sig_link_zscores.txt',
             sep=''
           ),
@@ -560,6 +579,7 @@ get_analysis_z_score <- function(
           file= paste(
             TENET_directory,
             'step3/',
+            'hypermeth_results/',
             'hyper_Gminus_sig_link_zscores.txt',
             sep=''
           ),
@@ -633,6 +653,7 @@ get_analysis_z_score <- function(
           file= paste(
             TENET_directory,
             'step3/',
+            'hypometh_results/',
             'hypo_Gminus_sig_link_zscores.txt',
             sep=''
           ),
@@ -658,6 +679,7 @@ get_analysis_z_score <- function(
           file= paste(
             TENET_directory,
             'step3/',
+            'hypometh_results/',
             'hypo_Gplus_sig_link_zscores.txt',
             sep=''
           ),
@@ -674,6 +696,17 @@ get_analysis_z_score <- function(
     ## Remove the gene name from the TESTSR dataframe:
     TESTSR$geneID <- NULL
 
+    ## Set an analysis folder:
+    if(hyper_hypo=='hyper'){
+
+      output_folder <- 'hypermeth_results/'
+
+    } else if(hyper_hyp0=='hypo'){
+
+      output_folder <- 'hypometh_results/'
+
+    }
+
     ## Now write the complete results file with the name of the gene:
     ## and the analysis type:
     write.table(
@@ -681,6 +714,7 @@ get_analysis_z_score <- function(
       file= paste(
         TENET_directory,
         'step3/',
+        output_folder,
         paste(
           hyper_hypo,
           gene_ENSG,
