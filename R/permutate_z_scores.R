@@ -185,7 +185,10 @@ permutate_z_scores <- function(
         'step4/',
         'hyper_Gplus_sig_link_zscores_perm.txt',
         sep=''
-      )
+      ),
+      sep='\t',
+      row.names= FALSE,
+      quote= FALSE
     )
 
     ## Remove the old Zscore file:
@@ -210,7 +213,7 @@ permutate_z_scores <- function(
     ){
 
       ## Load the file and change the colnames:
-      hypermeth_Gplus_zscores <- read.delim(
+      hypermeth_Gminus_zscores <- read.delim(
         paste(
           TENET_directory,
           'step3/',
@@ -327,7 +330,10 @@ permutate_z_scores <- function(
         'step4/',
         'hyper_Gminus_sig_link_zscores_perm.txt',
         sep=''
-      )
+      ),
+      sep='\t',
+      row.names = FALSE,
+      quote= FALSE
     )
 
     ## Remove the old Zscore file:
@@ -469,7 +475,10 @@ permutate_z_scores <- function(
         'step4/',
         'hypo_Gplus_sig_link_zscores_perm.txt',
         sep=''
-      )
+      ),
+      sep='\t',
+      row.names= FALSE,
+      quote= FALSE
     )
 
     ## Remove the old Zscore file:
@@ -611,7 +620,10 @@ permutate_z_scores <- function(
         'step4/',
         'hypo_Gminus_sig_link_zscores_perm.txt',
         sep=''
-      )
+      ),
+      sep='\t',
+      row.names= FALSE,
+      quote= FALSE
     )
 
     ## Remove the old Zscore file:
