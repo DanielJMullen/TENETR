@@ -53,25 +53,45 @@ permutate_z_scores <- function(
   ## If hypermeth Gplus analysis is selected, run it first:
   if(hypermeth_Gplus_analysis==TRUE){
 
-    ## Load the significant zscores:
-    hypermeth_Gplus_zscores <- read.delim(
-      paste(
-        TENET_directory,
-        'step3/',
-        'hypermeth_results/',
-        'hyper_Gplus_sig_link_zscores.txt',
-        sep=''
-      ),
-      sep='\t',
-      header= TRUE,
-      stringsAsFactors = FALSE
-    )
+    ## Check that the significant zscores from step3 exists and load it:
+    ## If not, return an error message:
+    if(
+      file.exists(
+        paste(
+          TENET_directory,
+          'step3/',
+          'hypermeth_results/',
+          'hyper_Gplus_sig_link_zscores.txt',
+          sep=''
+        )
+      )
+    ){
 
-    colnames(hypermeth_Gplus_zscores) <- c(
-      'geneID',
-      'probeID',
-      'Zscore'
-    )
+      ## Load the file and change the colnames:
+      hypermeth_Gplus_zscores <- read.delim(
+        paste(
+          TENET_directory,
+          'step3/',
+          'hypermeth_results/',
+          'hyper_Gplus_sig_link_zscores.txt',
+          sep=''
+        ),
+        sep='\t',
+        header= TRUE,
+        stringsAsFactors = FALSE
+      )
+
+      colnames(hypermeth_Gplus_zscores) <- c(
+        'geneID',
+        'probeID',
+        'Zscore'
+      )
+
+    } else{
+
+      ## Return the error if the file wasn't found:
+      stop('hyper_Gplus_sig_link_zscores.txt in step3 of TENET directory was not found. Please check that the file exists and consider rerunning the step3 get_analysis_z_score function.')
+    }
 
     ## Write the function to perform the Z-score permutation:
     getPosEpval_hyperGplus <- function(
@@ -175,25 +195,45 @@ permutate_z_scores <- function(
   ## If hypermeth Gminus analysis is selected, run it:
   if(hypermeth_Gminus_analysis==TRUE){
 
-    ## Load the significant zscores:
-    hypermeth_Gminus_zscores <- read.delim(
-      paste(
-        TENET_directory,
-        'step3/',
-        'hypermeth_results/',
-        'hyper_Gminus_sig_link_zscores.txt',
-        sep=''
-      ),
-      sep='\t',
-      header= TRUE,
-      stringsAsFactors = FALSE
-    )
+    ## Check that the significant zscores from step3 exists and load it:
+    ## If not, return an error message:
+    if(
+      file.exists(
+        paste(
+          TENET_directory,
+          'step3/',
+          'hypermeth_results/',
+          'hyper_Gminus_sig_link_zscores.txt',
+          sep=''
+        )
+      )
+    ){
 
-    colnames(hypermeth_Gminus_zscores) <- c(
-      'geneID',
-      'probeID',
-      'Zscore'
-    )
+      ## Load the file and change the colnames:
+      hypermeth_Gplus_zscores <- read.delim(
+        paste(
+          TENET_directory,
+          'step3/',
+          'hypermeth_results/',
+          'hyper_Gminus_sig_link_zscores.txt',
+          sep=''
+        ),
+        sep='\t',
+        header= TRUE,
+        stringsAsFactors = FALSE
+      )
+
+      colnames(hypermeth_Gminus_zscores) <- c(
+        'geneID',
+        'probeID',
+        'Zscore'
+      )
+
+    } else{
+
+      ## Return the error if the file wasn't found:
+      stop('hyper_Gminus_sig_link_zscores.txt in step3 of TENET directory was not found. Please check that the file exists and consider rerunning the step3 get_analysis_z_score function.')
+    }
 
     ## Write the function to perform the Z-score permutation:
     getPosEpval_hyperGminus <- function(
@@ -297,25 +337,45 @@ permutate_z_scores <- function(
   ## If hypometh Gplus analysis is selected, run it first:
   if(hypometh_Gplus_analysis==TRUE){
 
-    ## Load the significant zscores:
-    hypometh_Gplus_zscores <- read.delim(
-      paste(
-        TENET_directory,
-        'step3/',
-        'hypometh_results/',
-        'hypo_Gplus_sig_link_zscores.txt',
-        sep=''
-      ),
-      sep='\t',
-      header= TRUE,
-      stringsAsFactors = FALSE
-    )
+    ## Check that the significant zscores from step3 exists and load it:
+    ## If not, return an error message:
+    if(
+      file.exists(
+        paste(
+          TENET_directory,
+          'step3/',
+          'hypometh_results/',
+          'hypo_Gplus_sig_link_zscores.txt',
+          sep=''
+        )
+      )
+    ){
 
-    colnames(hypometh_Gplus_zscores) <- c(
-      'geneID',
-      'probeID',
-      'Zscore'
-    )
+      ## Load the file and change the colnames:
+      hypometh_Gplus_zscores <- read.delim(
+        paste(
+          TENET_directory,
+          'step3/',
+          'hypometh_results/',
+          'hypo_Gplus_sig_link_zscores.txt',
+          sep=''
+        ),
+        sep='\t',
+        header= TRUE,
+        stringsAsFactors = FALSE
+      )
+
+      colnames(hypometh_Gplus_zscores) <- c(
+        'geneID',
+        'probeID',
+        'Zscore'
+      )
+
+    } else{
+
+      ## Return the error if the file wasn't found:
+      stop('hypo_Gplus_sig_link_zscores.txt in step3 of TENET directory was not found. Please check that the file exists and consider rerunning the step3 get_analysis_z_score function.')
+    }
 
     ## Write the function to perform the Z-score permutation:
     getPosEpval_hypoGplus <- function(
@@ -419,25 +479,45 @@ permutate_z_scores <- function(
   ## If hypometh Gminus analysis is selected, run it first:
   if(hypometh_Gminus_analysis==TRUE){
 
-    ## Load the significant zscores:
-    hypometh_Gminus_zscores <- read.delim(
-      paste(
-        TENET_directory,
-        'step3/',
-        'hypometh_results/',
-        'hypo_Gminus_sig_link_zscores.txt',
-        sep=''
-      ),
-      sep='\t',
-      header= TRUE,
-      stringsAsFactors = FALSE
-    )
+    ## Check that the significant zscores from step3 exists and load it:
+    ## If not, return an error message:
+    if(
+      file.exists(
+        paste(
+          TENET_directory,
+          'step3/',
+          'hypometh_results/',
+          'hypo_Gminus_sig_link_zscores.txt',
+          sep=''
+        )
+      )
+    ){
 
-    colnames(hypometh_Gminus_zscores) <- c(
-      'geneID',
-      'probeID',
-      'Zscore'
-    )
+      ## Load the file and change the colnames:
+      hypometh_Gminus_zscores <- read.delim(
+        paste(
+          TENET_directory,
+          'step3/',
+          'hypometh_results/',
+          'hypo_Gminus_sig_link_zscores.txt',
+          sep=''
+        ),
+        sep='\t',
+        header= TRUE,
+        stringsAsFactors = FALSE
+      )
+
+      colnames(hypometh_Gminus_zscores) <- c(
+        'geneID',
+        'probeID',
+        'Zscore'
+      )
+
+    } else{
+
+      ## Return the error if the file wasn't found:
+      stop('hypo_Gminus_sig_link_zscores.txt in step3 of TENET directory was not found. Please check that the file exists and consider rerunning the step3 get_analysis_z_score function.')
+    }
 
     ## Write the function to perform the Z-score permutation:
     getPosEpval_hypoGminus <- function(
