@@ -33,7 +33,7 @@ permutate_z_scores(
 \item{core_count}{Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.}
 }
 \value{
-Currently returns tab-delimited tab-delimited "sig_link_zscores.txt" files for hypo/hyper Gplus/Gminus probe-gene links, similar to step3, but with the permutated p-value for each link.
+Currently returns tab-delimited tab-delimited "sig_link_zscores_perm.txt" files for hypo/hyper Gplus/Gminus probe-gene links, similar to step3, but with the permutated p-value for each link.
 }
 \description{
 permutate_z_scores
