@@ -13,7 +13,7 @@
 #' @param hypometh_Gplus_analysis Set TRUE or FALSE if user wants to permutate on hypometh_Gplus links. Requires hypometh_analysis from step3 to have been set to TRUE.
 #' @param hypometh_Gminus_analysis Set TRUE or FALSE if user wants to permutate on hypometh_Gminus links. Requires hypometh_analysis from step3 to have been set to TRUE.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
-#' @return Currently returns tab-delimited tab-delimited "sig_link_zscores.txt" files for hypo/hyper Gplus/Gminus probe-gene links, similar to step3, but with the permutated p-value for each link.
+#' @return Currently returns tab-delimited tab-delimited "sig_link_zscores_perm.txt" files for hypo/hyper Gplus/Gminus probe-gene links, similar to step3, but with the permutated p-value for each link.
 #' @export
 
 permutate_z_scores <- function(
