@@ -2,13 +2,7 @@
 % Please edit documentation in R/permutate_z_scores.R
 \name{permutate_z_scores}
 \alias{permutate_z_scores}
-\title{permutate_z_scores
-#'
-This is the step4 function of the TENETR package.
-This function takes the calculated z-scores for the hyper/hypomethylated
-Gplus or Gminus probe-gene quadrants, and does a pseudo-permutation,
-calculating individual permutated p-values for the probe-gene z-score
-based on their relative rank amongst all probes to a given gene.}
+\title{permutate_z_scores}
 \usage{
 permutate_z_scores(
   TENET_directory,
@@ -36,8 +30,6 @@ permutate_z_scores(
 Currently returns tab-delimited tab-delimited "sig_link_zscores_perm.txt" files for hypo/hyper Gplus/Gminus probe-gene links, similar to step3, but with the permutated p-value for each link.
 }
 \description{
-permutate_z_scores
-#'
 This is the step4 function of the TENETR package.
 This function takes the calculated z-scores for the hyper/hypomethylated
 Gplus or Gminus probe-gene quadrants, and does a pseudo-permutation,

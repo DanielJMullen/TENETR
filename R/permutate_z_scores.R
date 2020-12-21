@@ -1,5 +1,5 @@
 #' permutate_z_scores
-#' #'
+#'
 #' This is the step4 function of the TENETR package.
 #' This function takes the calculated z-scores for the hyper/hypomethylated
 #' Gplus or Gminus probe-gene quadrants, and does a pseudo-permutation,
