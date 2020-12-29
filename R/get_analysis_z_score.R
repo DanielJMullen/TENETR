@@ -659,7 +659,7 @@ get_analysis_z_score <- function(
 
       output_folder <- 'hypermeth_results/'
 
-    } else if(hyper_hyp0=='hypo'){
+    } else if(hyper_hypo=='hypo'){
 
       output_folder <- 'hypometh_results/'
 
