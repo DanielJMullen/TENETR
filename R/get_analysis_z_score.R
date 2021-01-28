@@ -158,7 +158,7 @@ get_analysis_z_score <- function(
     if(hypermeth_analysis==TRUE & hypometh_analysis==TRUE){
 
       metDataHyper <- ifelse(
-        hypermethDataT>hypermethcutoff,
+        hypermethDataT<hypermethcutoff,
         1,
         0
       )
@@ -172,7 +172,7 @@ get_analysis_z_score <- function(
     } else if(hypermeth_analysis==TRUE & hypometh_analysis==FALSE){
 
       metDataHyper <- ifelse(
-        hypermethDataT>hypermethcutoff,
+        hypermethDataT<hypermethcutoff,
         1,
         0
       )
@@ -207,7 +207,7 @@ get_analysis_z_score <- function(
         cbind(
           hypermethDataT,
           hypermethDataN
-        )>hypermethcutoff,
+        )<hypermethcutoff,
         1,
         0
       )
@@ -227,7 +227,7 @@ get_analysis_z_score <- function(
         cbind(
           hypermethDataT,
           hypermethDataN
-        )>hypermethcutoff,
+        )<hypermethcutoff,
         1,
         0
       )
@@ -470,11 +470,11 @@ get_analysis_z_score <- function(
       )
 
       ## Isolate genes with only significant Zscores:
-      TESTSR_sig_pos <- TESTSR[
+      TESTSR_sig_neg <- TESTSR[
         (TESTSR$Z.real > significant_z_score),
       ]
 
-      TESTSR_sig_neg <- TESTSR[
+      TESTSR_sig_pos <- TESTSR[
         (TESTSR$Z.real < -significant_z_score),
       ]
 
@@ -494,6 +494,15 @@ get_analysis_z_score <- function(
 
       TESTSR_sig_neg <- TESTSR_sig_neg[
         !is.nan(TESTSR_sig_neg$Z.real),
+      ]
+
+      ## Remove values with NA Z scores:
+      TESTSR_sig_pos <- TESTSR_sig_pos[
+        !is.na(TESTSR_sig_pos$Z.real),
+      ]
+
+      TESTSR_sig_neg <- TESTSR_sig_neg[
+        !is.na(TESTSR_sig_neg$Z.real),
       ]
 
       ## Append the significant Z_scores to the appropriate
@@ -594,6 +603,15 @@ get_analysis_z_score <- function(
 
       TESTSR_sig_neg <- TESTSR_sig_neg[
         !is.nan(TESTSR_sig_neg$Z.real),
+      ]
+
+      ## Remove values with NA Z scores:
+      TESTSR_sig_pos <- TESTSR_sig_pos[
+        !is.na(TESTSR_sig_pos$Z.real),
+      ]
+
+      TESTSR_sig_neg <- TESTSR_sig_neg[
+        !is.na(TESTSR_sig_neg$Z.real),
       ]
 
       ## Append the significant Z_scores to the appropriate

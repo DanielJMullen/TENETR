@@ -134,7 +134,7 @@ permutate_z_scores <- function(
       gene_file <- gene_file[
         order(
           gene_file$V2,
-          decreasing = TRUE
+          decreasing = FALSE
         ),
       ]
 
@@ -279,7 +279,7 @@ permutate_z_scores <- function(
       gene_file <- gene_file[
         order(
           gene_file$V2,
-          decreasing = FALSE
+          decreasing = TRUE
         ),
       ]
 

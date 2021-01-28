@@ -50,7 +50,7 @@ optimize_links <- function(
     )
   )
 
-  ## Create a step3 directory to deposit the output paired score files:
+  ## Create a step5 directory to deposit the output paired score files:
   dir.create(
     paste(
       TENET_directory,
@@ -123,7 +123,7 @@ optimize_links <- function(
   ## If hypermeth_Gplus_analysis is selected, do the optimization:
   if(hypermeth_Gplus_analysis==TRUE){
 
-    ## Check that the hypo_Gminus_sig_link_zscores_perm.txt
+    ## Check that the hypo_Gminus_sig_link_zscores_perm.txt file exists;
     if(
       file.exists(
         paste(
