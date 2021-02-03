@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: c(
 	person("Daniel", "Mullen", email = "dmullen@usc.edu", role = c("aut","cre")),
  	person("Suhn", "Rhie", email = "rhie@usc.edu", role = c("aut")))
-Description: This is the R package version of the TENET_2.0 method (see: https://github.com/suhnrhie/TENET_2.0). 
+Description: This is an R package adaptation of the TENET_2.0 method (see: https://github.com/suhnrhie/TENET_2.0). 
 License: MIT
 Encoding: UTF-8
 LazyData: true
