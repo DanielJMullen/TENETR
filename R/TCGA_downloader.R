@@ -23,6 +23,7 @@ TCGA_downloader <- function(
   TCGA_directory,
   TCGA_study_abbreviation,
   RNA_seq_workflow,
+  RNA_seq_log2_normalization,
   matching_exp_met_samples,
   remove_dup_tumor,
   TENET_directory

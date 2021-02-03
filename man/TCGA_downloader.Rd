@@ -8,6 +8,7 @@ TCGA_downloader(
   TCGA_directory,
   TCGA_study_abbreviation,
   RNA_seq_workflow,
+  RNA_seq_log2_normalization,
   matching_exp_met_samples,
   remove_dup_tumor,
   TENET_directory
@@ -20,13 +21,13 @@ TCGA_downloader(
 
 \item{RNA_seq_workflow}{Select the type of RNA-seq data to download. For TENET purposes, choose either "FPKM" or "FPKM-UQ". See: https://docs.gdc.cancer.gov/Data/Bioinformatics_Pipelines/Expression_mRNA_Pipeline/ for more info on these.}
 
+\item{RNA_seq_log2_normalization}{Set TRUE or FALSE to do log2 normalization of RNA_seq expression values.}
+
 \item{matching_exp_met_samples}{Set TRUE or FALSE to isolate only samples with matching expression and methylation data in both these datasets}
 
 \item{remove_dup_tumor}{Set TRUE or FALSE to remove duplicate tumor samples taking from the same subject, leaving only one per subject in alphanumeric order.}
 
 \item{TENET_directory}{Set a path to the directory where you want the downloaded datasets to be exported to. This could be a directory where you want to eventually run TENETR analyses.}
-
-\item{RNA_seq_log2_normalization}{Set TRUE or FALSE to do log2 normalization of RNA_seq expression values.}
 }
 \value{
 Currently returns a .rda file in the specified TENET_directory containing 5 elements: 'clinical' containing clinical data, 'expDataN' and 'expDataT' containing gene expression data for adjacent normal and tumor samples respectively, and 'metDataN' and 'metDataT' containing methylation data for normal and tumor samples respectively.
