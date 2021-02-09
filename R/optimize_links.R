@@ -19,7 +19,7 @@
 #' @param hyper_stringency Set a number from 0 to 1 to be the beta-value cutoff to optimize for hypermeth links with maximum methylation values above the cutoff
 #' @param hypo_stringency Set a number from 0 to 1 to be the beta-value cutoff to optimize for hypometh links with minimum methylation values below the cutoff
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
-#' @return Currently returns tab-delimited tab-delimited "sig_link_zscores_perm_optimized.txt" files for hypo/hyper Gplus/Gminus probe-gene links, similar to step4, but only with the optimized links.
+#' @return Currently returns tab-delimited "sig_link_zscores_perm_optimized.txt" files for hypo/hyper Gplus/Gminus probe-gene links, similar to step4, but only with the optimized links.
 #' @export
 
 optimize_links <- function(

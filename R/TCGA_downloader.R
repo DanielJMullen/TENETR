@@ -139,7 +139,20 @@ TCGA_downloader <- function(
   ## TCGAbiolinks GDCprepare function doesn't do this well
   ## So I have coded my own:
 
-  ## First list out all the downloaded methylation files
+  ## First navigate to the directory that contains just the DNA methylation
+  ## data for the analysis of interest:
+  setwd(
+    paste(
+      '.',
+      'GDCdata',
+      TCGA_study_abbreviation_download,
+      'harmonized',
+      'DNA_Methylation',
+      sep='/'
+    )
+  )
+
+  ## Then, list out all the downloaded methylation files
   ## from the TCGA downloaded using the query:
   methylation_files_list_full_path <- list.files(
     pattern='HumanMethylation450',

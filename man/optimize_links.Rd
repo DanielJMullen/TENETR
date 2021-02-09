@@ -36,7 +36,7 @@ optimize_links(
 \item{core_count}{Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.}
 }
 \value{
-Currently returns tab-delimited tab-delimited "sig_link_zscores_perm_optimized.txt" files for hypo/hyper Gplus/Gminus probe-gene links, similar to step4, but only with the optimized links.
+Currently returns tab-delimited "sig_link_zscores_perm_optimized.txt" files for hypo/hyper Gplus/Gminus probe-gene links, similar to step4, but only with the optimized links.
 }
 \description{
 This is the step5 function of the TENETR package.

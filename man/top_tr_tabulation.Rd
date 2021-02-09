@@ -15,13 +15,13 @@ top_tr_tabulation(
 \arguments{
 \item{TENET_directory}{Set a path to the directory that contains step5 results from the optimize_links function. This function will also create a new step6 folder there containing the results.}
 
-\item{hypermeth_Gplus_analysis}{Set to TRUE/FALSE depending on if you want to calculate the top_tfs for hypermeth probes with G+ links.}
+\item{hypermeth_Gplus_analysis}{Set to TRUE/FALSE depending on if you want to calculate the top_trs for hypermeth probes with G+ links.}
 
-\item{hypermeth_Gminus_analysis}{Set to TRUE/FALSE depending on if you want to calculate the top_tfs for hypermeth probes with G- links.}
+\item{hypermeth_Gminus_analysis}{Set to TRUE/FALSE depending on if you want to calculate the top_trs for hypermeth probes with G- links.}
 
-\item{hypometh_Gplus_analysis}{Set to TRUE/FALSE depending on if you want to calculate the top_tfs for hypometh probes with G+ links.}
+\item{hypometh_Gplus_analysis}{Set to TRUE/FALSE depending on if you want to calculate the top_trs for hypometh probes with G+ links.}
 
-\item{hypometh_Gminus_analysis}{Set to TRUE/FALSE depending on if you want to calculate the top_tfs for hypometh probes with G- links.}
+\item{hypometh_Gminus_analysis}{Set to TRUE/FALSE depending on if you want to calculate the top_trs for hypometh probes with G- links.}
 }
 \value{
 Currently returns tab-delimited "sig_link_zscores.txt" files for hypo/hyper Gplus/Gminus probe-gene links, as well as individual "zscores.txt" files named after each gene in the hypo/hyper analysis with zscores for that gene to all probes from that analysis type.
