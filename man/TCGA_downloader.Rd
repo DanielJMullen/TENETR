@@ -9,8 +9,8 @@ TCGA_downloader(
   TCGA_study_abbreviation,
   RNA_seq_workflow,
   RNA_seq_log2_normalization,
-  matching_exp_met_samples,
-  remove_dup_tumor,
+  matching_exp_met_samples = TRUE,
+  remove_dup_tumor = TRUE,
   TENET_directory
 )
 }
@@ -23,9 +23,9 @@ TCGA_downloader(
 
 \item{RNA_seq_log2_normalization}{Set TRUE or FALSE to do log2 normalization of RNA_seq expression values.}
 
-\item{matching_exp_met_samples}{Set TRUE or FALSE to isolate only samples with matching expression and methylation data in both these datasets}
+\item{matching_exp_met_samples}{Set TRUE or FALSE to isolate only samples with matching expression and methylation data in both these datasets. Set to TRUE by default.}
 
-\item{remove_dup_tumor}{Set TRUE or FALSE to remove duplicate tumor samples taking from the same subject, leaving only one per subject in alphanumeric order.}
+\item{remove_dup_tumor}{Set TRUE or FALSE to remove duplicate tumor samples taking from the same subject, leaving only one per subject in alphanumeric order. Set to TRUE by default.}
 
 \item{TENET_directory}{Set a path to the directory where you want the downloaded datasets to be exported to. This could be a directory where you want to eventually run TENETR analyses.}
 }
