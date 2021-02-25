@@ -15,8 +15,8 @@
 #' @param top_gene_number Specify a number to generate survival plots for that many of the top genes and TFs based on the most linked enhancer probes.
 #' @param visualize_survival_plots_genes Set to TRUE/FALSE depending on if you want to create .pdfs displaying the survival results for the genes of interest.
 #' @param visualize_survival_plots_probes Set to TRUE/FALSE depending on if you want to create .pdfs displaying the survival results for the probes linked to the genes of interest.
-#' @param high_thresh Set a number ranging from 0 to 1, as a threshold for proportion of samples to include in the high expression/methylation group, and should be greater than low_thresh to prevent samples from appearing in both groups.
-#' @param low_thresh Set a number ranging from 0 to 1, as a threshold for proportion of samples to include in the low expression/methylation group, and should be less than low_thresh to prevent samples from appearing in both groups.
+#' @param high_thresh Set a number ranging from 0 to 1, as a threshold for proportion of samples to include in the high expression/methylation group, and should be greater than or equal to low_thresh to prevent samples from appearing in both groups.
+#' @param low_thresh Set a number ranging from 0 to 1, as a threshold for proportion of samples to include in the low expression/methylation group, and should be less than or equal to low_thresh to prevent samples from appearing in both groups.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
 #' @return Returns dataframes of survival information in the form of .tsv files, as well as .pdfs if selected by the user, showing survival information for the expression of the top genes, as well as the probes linked to them.
 #' @export

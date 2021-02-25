@@ -32,9 +32,9 @@ TENET_directory
 
 \item{visualize_survival_plots_probes}{Set to TRUE/FALSE depending on if you want to create .pdfs displaying the survival results for the probes linked to the genes of interest.}
 
-\item{high_thresh}{Set a number ranging from 0 to 1, as a threshold for proportion of samples to include in the high expression/methylation group, and should be greater than low_thresh to prevent samples from appearing in both groups.}
+\item{high_thresh}{Set a number ranging from 0 to 1, as a threshold for proportion of samples to include in the high expression/methylation group, and should be greater than or equal to low_thresh to prevent samples from appearing in both groups.}
 
-\item{low_thresh}{Set a number ranging from 0 to 1, as a threshold for proportion of samples to include in the low expression/methylation group, and should be less than low_thresh to prevent samples from appearing in both groups.}
+\item{low_thresh}{Set a number ranging from 0 to 1, as a threshold for proportion of samples to include in the low expression/methylation group, and should be less than or equal to low_thresh to prevent samples from appearing in both groups.}
 
 \item{core_count}{Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.}
 }
