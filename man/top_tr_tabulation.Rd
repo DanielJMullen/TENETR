@@ -24,7 +24,7 @@ top_tr_tabulation(
 \item{hypometh_Gminus_analysis}{Set to TRUE/FALSE depending on if you want to calculate the top_trs for hypometh probes with G- links.}
 }
 \value{
-Currently returns tab-delimited "sig_link_zscores.txt" files for hypo/hyper Gplus/Gminus probe-gene links, as well as individual "zscores.txt" files named after each gene in the hypo/hyper analysis with zscores for that gene to all probes from that analysis type.
+Currently returns tab-delimited "_freq.txt" files that include all genes, or annotated TFs only, organized by decreasing number of linked probes of the given analysis type.
 }
 \description{
 This is the step6 function of the TENETR package.

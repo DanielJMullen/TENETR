@@ -19,7 +19,7 @@
 #' @param hypermethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes. Should be set higher than the unmethcutoff.
 #' @param minExp Sets the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups.
 #' @param use_purity_data Set TRUE or FALSE to use purity datasets, as .rda files containing DNA methylation values supplied by the user in a 'purity' subdirectory in the TENET_directory, to select for DNA methylation probes not potentially due to differences in cell type purity.
-#' @return Returns several objects including a .rda file with matrices of methylation data for the four quadrants in control/normal and experimental/tumor samples. Also outputs a simple .txt file containing metrics on the number of probes found in different categories.
+#' @return Returns two objects including a .rda file with matrices of methylation and expression data for the four quadrants in control/normal and experimental/tumor samples, the clinical data, as well as the used parameters. Also outputs a simple .txt file containing metrics on the number of probes found in different categories.
 #' @export
 
 ## Write the get_diffmeth_regions function:
@@ -1489,16 +1489,32 @@ get_diffmeth_regions <- function(
       col.names = FALSE
     )
 
-    ## Now let's save the final dataset:
-    save(
-      metDataT, metDataN, expDataT, expDataN, enhmetDataT, enhmetDataN, methDataT, methDataN, hypomethDataT, hypomethDataN, unmethDataT, unmethDataN, hypermethDataT, hypermethDataN, hypermethcutoff, hypomethcutoff, minExp,
-      file= paste(
-        TENET_directory,
-        'step2/',
-        "diff.methylated.datasets.rda",
-        sep=''
+    if(exists('clinical')){
+
+      ## Now let's save the final dataset:
+      save(
+        metDataT, metDataN, expDataT, expDataN, enhmetDataT, enhmetDataN, methDataT, methDataN, hypomethDataT, hypomethDataN, unmethDataT, unmethDataN, hypermethDataT, hypermethDataN, hypermethcutoff, hypomethcutoff, minExp, clinical,
+        file= paste(
+          TENET_directory,
+          'step2/',
+          "diff.methylated.datasets.rda",
+          sep=''
+        )
       )
-    )
+
+    } else{
+
+      ## Now let's save the final dataset without the clinical data:
+      save(
+        metDataT, metDataN, expDataT, expDataN, enhmetDataT, enhmetDataN, methDataT, methDataN, hypomethDataT, hypomethDataN, unmethDataT, unmethDataN, hypermethDataT, hypermethDataN, hypermethcutoff, hypomethcutoff, minExp,
+        file= paste(
+          TENET_directory,
+          'step2/',
+          "diff.methylated.datasets.rda",
+          sep=''
+        )
+      )
+    }
 
   } else{
 

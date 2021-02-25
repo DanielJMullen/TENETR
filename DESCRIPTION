@@ -1,5 +1,5 @@
 Package: TENETR
-Title: Functions to identify dysregulated transcription factors and linked enhancers in tumor samples
+Title: TENETR: Functions to identify dysregulated transcription factors and linked enhancers in tumor samples
 Version: 0.0.0.9000
 Authors@R: c(
 	person("Daniel", "Mullen", email = "dmullen@usc.edu", role = c("aut","cre")),
@@ -8,10 +8,16 @@ Description: This is an R package adaptation of the TENET_2.0 method (see: https
 License: MIT
 Encoding: UTF-8
 LazyData: true
-Imports:
-	TENETR.data,
-	S4Vectors,
-	GenomicRanges,
-	parallel
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Depends: 
+	R (>= 2.10),
+		TENETR.data,
+		S4Vectors,
+		GenomicRanges,
+		parallel,
+		ggplot2,
+		BioCircos,
+		htmlwidgets,
+		survival
+

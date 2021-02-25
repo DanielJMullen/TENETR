@@ -33,7 +33,7 @@ get_diffmeth_regions(
 \item{use_purity_data}{Set TRUE or FALSE to use purity datasets, as .rda files containing DNA methylation values supplied by the user in a 'purity' subdirectory in the TENET_directory, to select for DNA methylation probes not potentially due to differences in cell type purity.}
 }
 \value{
-Returns several objects including a .rda file with matrices of methylation data for the four quadrants in control/normal and experimental/tumor samples. Also outputs a simple .txt file containing metrics on the number of probes found in different categories.
+Returns two objects including a .rda file with matrices of methylation and expression data for the four quadrants in control/normal and experimental/tumor samples, the clinical data, as well as the used parameters. Also outputs a simple .txt file containing metrics on the number of probes found in different categories.
 }
 \description{
 This is the step2 function of the TENETR package.

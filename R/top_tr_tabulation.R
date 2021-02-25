@@ -13,7 +13,7 @@
 #' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to calculate the top_trs for hypermeth probes with G- links.
 #' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to calculate the top_trs for hypometh probes with G+ links.
 #' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to calculate the top_trs for hypometh probes with G- links.
-#' @return Currently returns tab-delimited "sig_link_zscores.txt" files for hypo/hyper Gplus/Gminus probe-gene links, as well as individual "zscores.txt" files named after each gene in the hypo/hyper analysis with zscores for that gene to all probes from that analysis type.
+#' @return Currently returns tab-delimited "_freq.txt" files that include all genes, or annotated TFs only, organized by decreasing number of linked probes of the given analysis type.
 #' @export
 
 top_tr_tabulation <- function(
@@ -40,7 +40,7 @@ top_tr_tabulation <- function(
     )
   )
 
-  ## Create a step6 directory to deposit the output paired score files:
+  ## Create a step6 directory to deposit the output the tabulation files:
   dir.create(
     paste(
       TENET_directory,
