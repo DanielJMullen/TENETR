@@ -1,37 +1,25 @@
 #' top_tr_survival
 #'
 #' This is a step7 function of the TENETR package.
-#' This function takes the top TRs by number of linked probes identified from
+#' This function takes the top genes/TRs by number of linked probes identified from
 #' the step6 top_tr_tabulation function up to the number as specified by the user
 #' and generates survival plots for the expression level of each gene as well
 #' as the DNA methylation of each enhancer probe linked to them.
 #'
 #'
-#' @param TENET_directory Set a path to the directory that contains step6 results from the top_tr_tabulation function. This function will also create a new step7 folder there if it has not been created, with a subdirectory called histogram containing the results.
-#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create histograms for the top TRs by most hypermeth probes with G+ links.
-#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypermeth probes with G- links.
-#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypometh probes with G+ links.
-#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypometh probes with G- links.
-#' @param top_gene_number Specify a number to generate survival plots for that many of the top genes and TFs based on the most linked enhancer probes.
-#' @param visualize_survival_plots_genes Set to TRUE/FALSE depending on if you want to create .pdfs displaying the survival results for the genes of interest.
-#' @param visualize_survival_plots_probes Set to TRUE/FALSE depending on if you want to create .pdfs displaying the survival results for the probes linked to the genes of interest.
+#' @param TENET_directory Set a path to the directory that contains step6 results from the top_tr_tabulation function. This function will also create a new step7 folder there if it has not been created, with a subdirectory with 'survival' containing subfolders the results for the top genes and top TFs separately.
+#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create survival plots for the top genes/TRs by most hypermeth probes with G+ links, as well as their linked probes if specified.
+#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create survival plots for the top genes/TRs by most hypermeth probes with G- links, as well as their linked probes if specified.
+#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create survival plots for the top genes/TRs by most hypometh probes with G+ links, as well as their linked probes if specified.
+#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create survival plots for the top genes/TRs by most hypometh probes with G- links, as well as their linked probes if specified.
+#' @param top_gene_number Specify a number to generate survival plots for that many of the top genes/TFs, as well as their linked enhancer probes if specified, based on the most linked enhancer probes.
+#' @param visualize_survival_plots_genes Set to TRUE/FALSE depending on if you want to create .pdfs displaying the survival results for the genes/TFs of interest.
+#' @param visualize_survival_plots_probes Set to TRUE/FALSE depending on if you want to create .pdfs displaying the survival results for the probes linked to the genes/TFs of interest.
 #' @param high_thresh Set a number ranging from 0 to 1, as a threshold for proportion of samples to include in the high expression/methylation group, and should be greater than or equal to low_thresh to prevent samples from appearing in both groups.
 #' @param low_thresh Set a number ranging from 0 to 1, as a threshold for proportion of samples to include in the low expression/methylation group, and should be less than or equal to low_thresh to prevent samples from appearing in both groups.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
-#' @return Returns dataframes of survival information in the form of .tsv files, as well as .pdfs if selected by the user, showing survival information for the expression of the top genes, as well as the probes linked to them.
+#' @return Returns dataframes of survival information in the form of .tsv files, as well as .pdfs if selected by the user, showing survival information for the expression of the top genes, as well as the methylation of the enahncer probes linked to them.
 #' @export
-
-TENET_directory='C:/Users/Danie/Desktop/TENETR_test_flipped_direction_step2'
-hypermeth_Gplus_analysis=TRUE
-hypermeth_Gminus_analysis=TRUE
-hypometh_Gplus_analysis=FALSE
-hypometh_Gminus_analysis=FALSE
-top_gene_number=5
-visualize_survival_plots_genes= TRUE
-visualize_survival_plots_probes= TRUE
-high_thresh=(2/3)
-low_thresh=(1/3)
-core_count=1
 
 top_tr_survival <- function(
   TENET_directory,
@@ -46,6 +34,20 @@ top_tr_survival <- function(
   low_thresh,
   core_count
 ){
+
+  ## Check to make sure at least one analysis type has been selected and return
+  ## an error message if at least one hasn't been
+  if(
+    hypermeth_Gplus_analysis==FALSE &
+    hypermeth_Gminus_analysis==FALSE &
+    hypometh_Gplus_analysis==FALSE &
+    hypometh_Gminus_analysis==FALSE
+  ){
+
+    stop(
+      "All analysis types have been set to false. Set at least one analysis type to TRUE"
+    )
+  }
 
   ## If user has not supplied the final '/' in the TENET directory
   ## add it:
@@ -84,34 +86,6 @@ top_tr_survival <- function(
     )
 
   }
-
-  # ## Load the hg38 450k annotations:
-  # hg38_hm450_df <- TENETR.data::hm450_hg38_annotations
-  # rownames(hg38_hm450_df) <- hg38_hm450_df$probeID
-  #
-  # ## Create a modified dataframe of the hg38 450k annotations
-  # ## to later convert to granges:
-  # hg38_450k_probe_info <- data.frame(
-  #   'chr'= hg38_hm450_df$CpG_chrm,
-  #   'start'= hg38_hm450_df$CpG_beg,
-  #   'end'= hg38_hm450_df$CpG_end,
-  #   'strand'= rep(
-  #     '*',
-  #     nrow(hg38_hm450_df)
-  #   ),
-  #   'names' = hg38_hm450_df$probeID,
-  #   stringsAsFactors = FALSE
-  # )
-  #
-  # ## Remove the big hm450 dataframe:
-  # rm(hg38_hm450_df)
-  #
-  # ## Remove the probes that have NA values:
-  # hg38_450k_probe_info <- hg38_450k_probe_info[
-  #   !is.na(hg38_450k_probe_info$chr),
-  # ]
-  #
-  # rownames(hg38_450k_probe_info) <- hg38_450k_probe_info$names
 
   ## Get the dataset of gencode v22 genes:
   gencode_v22_gtf <- TENETR.data::gencode_v22_annotations

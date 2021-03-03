@@ -1,20 +1,20 @@
 #' top_tr_ciros
 #'
 #' This is a step7 function of the TENETR package.
-#' This function takes the top TRs by number of linked probes identified from
+#' This function takes the top genes/TRs by number of linked probes identified from
 #' the step6 top_tr_tabulation function up to the number as specified by the user
 #' and generates circos plots for each gene showing the genomic links between
 #' each gene and each probe linked to it.
 #'
 #'
-#' @param TENET_directory Set a path to the directory that contains step6 results from the top_tr_tabulation function. This function will also create a new step7 folder there if it has not been created, with a subdirectory called histogram containing the results.
-#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create histograms for the top TRs by most hypermeth probes with G+ links.
-#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypermeth probes with G- links.
-#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypometh probes with G+ links.
-#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypometh probes with G- links.
-#' @param top_gene_number Specify a number to generate circos plots for that many of the top genes and TFs based on the most linked enhancer probes.
+#' @param TENET_directory Set a path to the directory that contains step6 results from the top_tr_tabulation function. This function will also create a new step7 folder there if it has not been created, with a subdirectory with 'circos' containing the results.
+#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create circos plots for the top genes/TRs by most hypermeth probes with G+ links to those probes.
+#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create circos plots for the top genes/TRs by most hypermeth probes with G- links to those probes.
+#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create circos plots for the top genes/TRs by most hypometh probes with G+ links to those probes.
+#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create circos plots for the top genes/TRs by most hypometh probes with G- links to those probes.
+#' @param top_gene_number Specify a number to generate circos plots for that many of the top genes/TFs based on the most linked enhancer probes.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
-#' @return Currently returns .pdf files with the histograms showing the number of TRs linked to a given number of probes of the given analysis type.
+#' @return Currently returns .html files with the circos plots displaying the top genes and TRs and links to their linked enhancer probes.
 #' @export
 
 top_tr_circos <- function(
@@ -26,6 +26,20 @@ top_tr_circos <- function(
   top_gene_number,
   core_count
 ){
+
+  ## Check to make sure at least one analysis type has been selected and return
+  ## an error message if at least one hasn't been
+  if(
+    hypermeth_Gplus_analysis==FALSE &
+    hypermeth_Gminus_analysis==FALSE &
+    hypometh_Gplus_analysis==FALSE &
+    hypometh_Gminus_analysis==FALSE
+  ){
+
+    stop(
+      "All analysis types have been set to false. Set at least one analysis type to TRUE"
+    )
+  }
 
   ## If user has not supplied the final '/' in the TENET directory
   ## add it:

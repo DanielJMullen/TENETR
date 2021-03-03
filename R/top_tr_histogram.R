@@ -23,6 +23,20 @@ top_tr_histogram <- function(
   hypometh_Gminus_analysis
 ){
 
+  ## Check to make sure at least one analysis type has been selected and return
+  ## an error message if at least one hasn't been
+  if(
+    hypermeth_Gplus_analysis==FALSE &
+    hypermeth_Gminus_analysis==FALSE &
+    hypometh_Gplus_analysis==FALSE &
+    hypometh_Gminus_analysis==FALSE
+  ){
+
+    stop(
+      "All analysis types have been set to false. Set at least one analysis type to TRUE"
+    )
+  }
+
   ## If user has not supplied the final '/' in the TENET directory
   ## add it:
   TENET_directory <- ifelse(

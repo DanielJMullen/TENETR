@@ -1,29 +1,21 @@
 #' top_tr_simple_scatterplots
 #'
 #' This is a step7 function of the TENETR package.
-#' This function takes the top TRs by number of linked probes identified from
+#' This function takes the top genes/TRs by number of linked probes identified from
 #' the step6 top_tr_tabulation function up to the number as specified by the user
 #' and generates scatterplots displaying the expression level of each of these genes
 #' and the methylation level of each enhancer probe linked to them.
 #'
 #'
-#' @param TENET_directory Set a path to the directory that contains step6 results from the top_tr_tabulation function. This function will also create a new step7 folder there if it has not been created, with a subdirectory called histogram containing the results.
-#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create histograms for the top TRs by most hypermeth probes with G+ links.
-#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypermeth probes with G- links.
-#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypometh probes with G+ links.
-#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypometh probes with G- links.
-#' @param top_gene_number Specify a number to generate scatterplots for that many of the top genes and TFs based on the most linked enhancer probes.
+#' @param TENET_directory Set a path to the directory that contains step6 results from the top_tr_tabulation function. This function will also create a new step7 folder there if it has not been created, with a subdirectory with 'scatterplots' containing subfolders the results for the top genes and top TFs separately.
+#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create scatterplots for the top genes/TRs by most hypermeth probes with G+ links and each of their linked probes.
+#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create scatterplots for the top genes/TRs by most hypermeth probes with G- links and each of their linked probes.
+#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create scatterplots for the top genes/TRs by most hypometh probes with G+ links and each of their linked probes.
+#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create scatterplots for the top genes/TRs by most hypometh probes with G- links and each of their linked probes.
+#' @param top_gene_number Specify a number to generate scatterplots for that many of the top genes/TFs based on the most linked enhancer probes.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
-#' @return Currently returns .pdf files with the scatterplots showing the expression of the gene of interest on the x-axis and the methylation of the linked probe on the y-axis.
+#' @return Currently returns .pdf files with scatterplots showing the expression of the genes of interest on the x-axis and the methylation of the linked probes on the y-axis.
 #' @export
-
-TENET_directory="C:/Users/Danie/Desktop/TENETR_test_flipped_direction_step2"
-hypermeth_Gplus_analysis=TRUE
-hypermeth_Gminus_analysis=TRUE
-hypometh_Gplus_analysis=FALSE
-hypometh_Gminus_analysis=FALSE
-top_gene_number <- 5
-core_count <- 1
 
 top_tr_simple_scatterplots <- function(
   TENET_directory,
@@ -34,6 +26,20 @@ top_tr_simple_scatterplots <- function(
   top_gene_number,
   core_count
 ){
+
+  ## Check to make sure at least one analysis type has been selected and return
+  ## an error message if at least one hasn't been
+  if(
+    hypermeth_Gplus_analysis==FALSE &
+    hypermeth_Gminus_analysis==FALSE &
+    hypometh_Gplus_analysis==FALSE &
+    hypometh_Gminus_analysis==FALSE
+  ){
+
+    stop(
+      "All analysis types have been set to false. Set at least one analysis type to TRUE"
+    )
+  }
 
   ## If user has not supplied the final '/' in the TENET directory
   ## add it:
@@ -434,7 +440,7 @@ top_tr_simple_scatterplots <- function(
         'gene_name'
       ]
 
-      ## Add the expression of the gene of interest to DichF:
+      ## Get the expression of the gene:
       TR_expression <- c(
         unlist(
           expDataF_subC[
