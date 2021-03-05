@@ -2,7 +2,7 @@
 % Please edit documentation in R/top_tr_circos.R
 \name{top_tr_circos}
 \alias{top_tr_circos}
-\title{top_tr_ciros}
+\title{top_tr_circos}
 \usage{
 top_tr_circos(
   TENET_directory,
