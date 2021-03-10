@@ -1393,13 +1393,13 @@ top_tr_survival <- function(
 
     }
 
-    ## Check that the hyper_Gminus_links_TF_gene_freq.txt file exists:
+    ## Check that the hyper_Gplus_links_all_TR_freq.txt file exists:
     if(
       file.exists(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gplus_links_all_TF_freq.txt',
+          'hyper_Gplus_links_all_TR_freq.txt',
           sep=''
         )
       )
@@ -1410,7 +1410,7 @@ top_tr_survival <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gplus_links_all_TF_freq.txt',
+          'hyper_Gplus_links_all_TR_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -1420,7 +1420,7 @@ top_tr_survival <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gplus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gplus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
 
     }
 
@@ -2042,7 +2042,7 @@ top_tr_survival <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gminus_links_all_TF_freq.txt',
+          'hyper_Gminus_links_all_TR_freq.txt',
           sep=''
         )
       )
@@ -2053,7 +2053,7 @@ top_tr_survival <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gminus_links_all_TF_freq.txt',
+          'hyper_Gminus_links_all_TR_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -2063,7 +2063,7 @@ top_tr_survival <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gminus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gminus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
 
     }
 
@@ -2685,7 +2685,7 @@ top_tr_survival <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gplus_links_all_TF_freq.txt',
+          'hypo_Gplus_links_all_TR_freq.txt',
           sep=''
         )
       )
@@ -2696,7 +2696,7 @@ top_tr_survival <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gplus_links_all_TF_freq.txt',
+          'hypo_Gplus_links_all_TR_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -2706,7 +2706,7 @@ top_tr_survival <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gplus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gplus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
 
     }
 
@@ -3328,7 +3328,7 @@ top_tr_survival <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gminus_links_all_TF_freq.txt',
+          'hypo_Gminus_links_all_TR_freq.txt',
           sep=''
         )
       )
@@ -3339,7 +3339,7 @@ top_tr_survival <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gminus_links_all_TF_freq.txt',
+          'hypo_Gminus_links_all_TR_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -3349,7 +3349,7 @@ top_tr_survival <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gminus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gminus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
 
     }
 
