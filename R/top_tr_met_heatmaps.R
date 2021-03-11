@@ -17,14 +17,6 @@
 #' @return Currently returns .pdf files with the heatmaps showing the DNA methylation levels of all probes of a specific analysis type linked to those genes, as well as the expression of said genes across the samples in the column labels
 #' @export
 
-TENET_directory='C:/Users/Danie/Desktop/TENETR_test_flipped_direction_step2'
-hypermeth_Gplus_analysis=TRUE
-hypermeth_Gminus_analysis=TRUE
-hypometh_Gplus_analysis=FALSE
-hypometh_Gminus_analysis=FALSE
-top_gene_number=5
-core_count=1
-
 top_tr_met_heatmaps <- function(
   TENET_directory,
   hypermeth_Gplus_analysis,
