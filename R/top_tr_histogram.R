@@ -171,27 +171,27 @@ top_tr_histogram <- function(
       hyper_Gplus_all_gene_freq,
       ggplot2::aes(x=Freq)
     ) +
-    ggplot2::geom_histogram(
-      color='black',
-      fill='darkgrey',
-      binwidth=ceiling(
-        max(hyper_Gplus_all_gene_freq$Freq)/200
+      ggplot2::geom_histogram(
+        color='black',
+        fill='darkgrey',
+        binwidth=ceiling(
+          max(hyper_Gplus_all_gene_freq$Freq)/200
+        )
+      ) +
+      ggplot2::ggtitle("Histogram of Hyper.G+ linked enhancer probes per gene") +
+      ggplot2::xlab("Number of linked enhancer probes per gene") +
+      ggplot2::ylab("Frequency") +
+      ggplot2::theme_bw() +
+      ggplot2::theme(
+        plot.title = ggplot2::element_text(hjust=0.5, size=20),
+        panel.border = ggplot2::element_rect(colour = 'black', fill=NA, size=1),
+        axis.title.x = ggplot2::element_text(size=20),
+        axis.title.y = ggplot2::element_text(size=20),
+        axis.text.x = ggplot2::element_text(size=18, colour = 'black'),
+        axis.text.y = ggplot2::element_text(size=16, colour = 'black'),
+        panel.grid.major = ggplot2::element_blank(),
+        panel.grid.minor = ggplot2::element_blank()
       )
-    ) +
-    ggplot2::ggtitle("Histogram of Hyper.G+ linked enhancer probes per gene") +
-    ggplot2::xlab("Number of linked enhancer probes per gene") +
-    ggplot2::ylab("Frequency") +
-    ggplot2::theme_bw() +
-    ggplot2::theme(
-      plot.title = ggplot2::element_text(hjust=0.5, size=20),
-      panel.border = ggplot2::element_rect(colour = 'black', fill=NA, size=1),
-      axis.title.x = ggplot2::element_text(size=20),
-      axis.title.y = ggplot2::element_text(size=20),
-      axis.text.x = ggplot2::element_text(size=18, colour = 'black'),
-      axis.text.y = ggplot2::element_text(size=16, colour = 'black'),
-      panel.grid.major = ggplot2::element_blank(),
-      panel.grid.minor = ggplot2::element_blank()
-    )
 
     ## Save the plot:
     ggplot2::ggsave(
