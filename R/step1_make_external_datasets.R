@@ -1,27 +1,30 @@
-#' make_external_datasets
+#' step1_make_external_datasets
 #'
 #' This is the step1 function of the TENETR package.
 #' This function allows users to use bed-like files see: https://genome.ucsc.edu/FAQ/FAQformat.html#format1
-#' which contain either enhancer or open chromatin data contained within given directories
-#' or to use pre developed consensus enhancer and open chromatin datasets from many cell/tissue types
-#' from the TENETR.data package, and identify the hg38-annotated HM450 DNA methylation probes
-#' that fall in the regions from each file, then exports .probelist.txt files listing the probes
-#' to a directory specified by the user
+#' which contain either enhancer or open chromatin data contained within directories
+#' specified by the user, or to use pre developed consensus enhancer and open chromatin
+#' datasets from many cell/tissue types contained in the TENETR.data package,
+#' in order to identify the hg38-annotated DNA methylation probes of the
+#' user-specified array that fall in the peaks/regions specified by each file,
+#' then saves .probelist.txt files listing the probes to a directory specified
+#' by the user, which will also act as the 'TENET_directory' for future functions
+#' in the TENETR package.
 #'
-#'
-#' @param extENH Set TRUE or FALSE depending on if user has enhancer datasets they would like to analyze.
-#' @param extNDR Set TRUE or FALSE depending on if user has open chromatin datasets they would like to analyze
-#' @param consensusENH Set TRUE or FALSE depending on if user would like to use consensus enhancer data from TENETR.data for analysis.
-#' @param consensusNDR Set TRUE or FALSE depending on if user would like to use consensus open chromatin data from TENETR.data for analysis.
-#' @param extENH_directory Set a path to a directory containing either .bed, .narrowPeak, .broadPeak, or .gappedPeak files with enhancer datasets. This must be supplied and extENH set to TRUE for this analysis.
-#' @param extNDR_directory Set a path to a directory containing either .bed, .narrowPeak, .broadPeak, or .gappedPeak files with open chromatin datasets. This must be supplied and extNDR set to TRUE for this analysis.
-#' @param output_directory Set a path to a directory where you want TENETR data to be exported to. Function will create a step1 folder in that directory and subfolders containing function output datasets.
+#' @param output_directory Set a path to a directory, which will be created by this function, if it doesn't already exist, where you want the .probelist.txt files created by this function to be exported to. This directory will be the 'TENET_directory' utilized in later functions and a 'step1' subdirectory will be created in that directory, with further subdirectories containing the output .probelist.txt files made by this function.
+#' @param DNA_methylation_manifest Set to 'HM27', 'HM450', or 'EPIC' depending on the DNA methylation array of interest for the user's data. hg38 array annotations come from https://zwdzwd.github.io/InfiniumAnnotation. Defaults to 'HM450'.
+#' @param extENH Set TRUE or FALSE depending on if user has their own enhancer datasets in a specific directory they would like to analyze.
+#' @param extNDR Set TRUE or FALSE depending on if user has their own open chromatin datasets in a specific directory they would like to analyze.
+#' @param consensusENH Set TRUE or FALSE depending on if user would like to use the consensus enhancer data from TENETR.data for analysis.
+#' @param consensusNDR Set TRUE or FALSE depending on if user would like to use the consensus open chromatin data from TENETR.data for analysis.
+#' @param extENH_directory Set a path to a directory containing either .bed, .narrowPeak, .broadPeak, or .gappedPeak files with enhancer datasets. This must be supplied and extENH set to TRUE for the user to analyze their own enhancer datasets.
+#' @param extNDR_directory Set a path to a directory containing either .bed, .narrowPeak, .broadPeak, or .gappedPeak files with open chromatin datasets. This must be supplied and extNDR set to TRUE for the user to analyze their own enhancer datasets.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
-#' @return Returns .probelist.txt with the same name as the input files listing the hg38-annotated HM450 DNA methylation probes that fell within the regions specified by each file. These files will be used in downsteam TENETR analyses.
+#' @return Returns .probelist.txt fils with the same name as the input files listing the hg38-annotated DNA methylation probes that fell within the regions specified by each file. These files will be used in later TENETR analyses.
 #' @export
 
-## Write make_external_datasets function
-make_external_datasets <- function(
+step1_make_external_datasets <- function(
+  DNA_methylation_manifest,
   extENH,
   extNDR,
   consensusENH,
@@ -48,52 +51,90 @@ make_external_datasets <- function(
     )
   )
 
+  ## Create the output_directory if it does not already exist;
+  if(
+    !dir.exists(output_directory)
+  ){
+
+    dir.create(output_directory)
+  }
+
   ## Create a step1 directory to deposit overlapped probe files:
-  dir.create(
-    paste(
-      output_directory,
-      'step1/',
-      sep=''
+  if(
+    !dir.exists(
+      paste(
+        output_directory,
+        'step1',
+        sep=''
+      )
     )
-  )
+  ){
 
-  ## Load the hg38 450k annotations:
-  hg38_hm450_df <- TENETR.data::hm450_hg38_annotations
-  rownames(hg38_hm450_df) <- hg38_hm450_df$probeID
+    dir.create(
+      paste(
+        output_directory,
+        'step1/',
+        sep=''
+      )
+    )
+  }
 
-  ## Create a modified dataframe of the hg38 450k annotations
+  ## Load the hg38 DNA methylation annotations:
+  ## Written in by Zexun Wu
+  if (DNA_methylation_manifest == "HM450" | missing(DNA_methylation_manifest)) {
+
+    hg38_manifest_df <- TENETR.data::hm450_hg38_annotations
+
+  } else if (DNA_methylation_manifest == "HM27") {
+
+    hg38_manifest_df <- TENETR.data::hm27_hg38_annotations
+
+  } else if (DNA_methylation_manifest == "EPIC") {
+
+    hg38_manifest_df <- TENETR.data::epic_hg38_annotations
+
+  } else {
+
+    stop("The input for DNA_methylation_manifest is incorrect. Please select one from \"HM450\",\"HM27\",\"EPIC\"!")
+
+  }
+
+  ## Set the rownames of the loaded manifest to be the probeIDs:
+  rownames(hg38_manifest_df) <- hg38_manifest_df$probeID
+
+  ## Create a modified dataframe of the hg38 DNA methylation probe annotations
   ## to later convert to granges:
-  hg38_450_annotations_granges_df <- data.frame(
-    'chr'= hg38_hm450_df$CpG_chrm,
-    'start'= hg38_hm450_df$CpG_beg,
-    'end'= hg38_hm450_df$CpG_end,
+  hg38_manifest_granges_df <- data.frame(
+    'chr'= hg38_manifest_df$CpG_chrm,
+    'start'= hg38_manifest_df$CpG_beg,
+    'end'= hg38_manifest_df$CpG_end,
     'strand'= rep(
       '*',
-      nrow(hg38_hm450_df)
+      nrow(hg38_manifest_df)
     ),
-    'names' = hg38_hm450_df$probeID,
+    'names' = hg38_manifest_df$probeID,
     stringsAsFactors = FALSE
   )
 
-  ## Remove the big hm450 dataframe:
-  rm(hg38_hm450_df)
+  ## Remove the big manifest dataframe:
+  rm(hg38_manifest_df)
 
   ## Remove the probes that have NA values:
-  hg38_450_annotations_no_NA_granges_df <- hg38_450_annotations_granges_df[
-    !is.na(hg38_450_annotations_granges_df$chr),
+  hg38_manifest_no_NA_granges_df <- hg38_manifest_granges_df[
+    !is.na(hg38_manifest_granges_df$chr),
   ]
 
   ## Remove the dataset with NA probes:
-  rm(hg38_450_annotations_granges_df)
+  rm(hg38_manifest_granges_df)
 
   ## Create a granges object from the new
-  ## hg38 450k annotations with no NA df:
-  hg38_450_annotations_granges <- GenomicRanges::makeGRangesFromDataFrame(
-    df= hg38_450_annotations_no_NA_granges_df,
+  ## hg38 annotations with no NA df:
+  hg38_manifest_annotations_granges <- GenomicRanges::makeGRangesFromDataFrame(
+    df= hg38_manifest_no_NA_granges_df,
     keep.extra.columns = FALSE,
     starts.in.df.are.0based = TRUE
   )
-  names(hg38_450_annotations_granges) <- hg38_450_annotations_no_NA_granges_df$names
+  names(hg38_manifest_annotations_granges) <- hg38_manifest_no_NA_granges_df$names
 
   ## Write a function to determine hg38 HM450 probes that
   ## overlap with bed-like file and write them out
@@ -143,13 +184,13 @@ make_external_datasets <- function(
     )
 
     ## Get the names of the CpGs that overlapped with the bed file:
-    CpG_overlap_with_bedlike <- hg38_450_annotations_no_NA_granges_df[
+    CpG_overlap_with_bedlike <- hg38_manifest_no_NA_granges_df[
       unique(
         S4Vectors::subjectHits(
           suppressWarnings(
             GenomicRanges::findOverlaps(
               bedlike_file_granges,
-              hg38_450_annotations_granges
+              hg38_manifest_annotations_granges
             )
           )
         )
@@ -176,15 +217,28 @@ make_external_datasets <- function(
   ## If external ENH files are used run this section:
   if(extENH==TRUE){
 
-    ## Create a directory in the output folder to deposit files:
-    dir.create(
-      paste(
-        output_directory,
-        'step1/',
-        'extENH',
-        sep=''
+    ## Create a directory in the output folder to deposit files if it does
+    ## not already exist:
+    if(
+      !dir.exists(
+        paste(
+          output_directory,
+          'step1/',
+          'extENH',
+          sep=''
+        )
       )
-    )
+    ){
+
+      dir.create(
+        paste(
+          output_directory,
+          'step1/',
+          'extENH',
+          sep=''
+        )
+      )
+    }
 
     ## List all the ENH bed files found:
     ENH_bed_files <- list.files(
@@ -242,15 +296,28 @@ make_external_datasets <- function(
   ## If external NDR files are used run this section:
   if(extNDR==TRUE){
 
-    ## Create a directory in the output folder to deposit files:
-    dir.create(
-      paste(
-        output_directory,
-        'step1/',
-        'extNDR',
-        sep=''
+    ## Create a directory in the output folder to deposit files if it does
+    ## not already exist:
+    if(
+      !dir.exists(
+        paste(
+          output_directory,
+          'step1/',
+          'extNDR',
+          sep=''
+        )
       )
-    )
+    ){
+
+      dir.create(
+        paste(
+          output_directory,
+          'step1/',
+          'extNDR',
+          sep=''
+        )
+      )
+    }
 
     ## List all the NDR bed files found:
     NDR_bed_files <- list.files(
@@ -308,15 +375,28 @@ make_external_datasets <- function(
   ## If consensus ENH files are used run this section:
   if(consensusENH==TRUE){
 
-    ## Create a directory in the output folder to deposit files:
-    dir.create(
-      paste(
-        output_directory,
-        'step1/',
-        'consensusENH',
-        sep=''
+    ## Create a directory in the output folder to deposit files if it does
+    ## not already exist:
+    if(
+      !dir.exists(
+        paste(
+          output_directory,
+          'step1/',
+          'consensusENH',
+          sep=''
+        )
       )
-    )
+    ){
+
+      dir.create(
+        paste(
+          output_directory,
+          'step1/',
+          'consensusENH',
+          sep=''
+        )
+      )
+    }
 
     ## Create a granges object from the consensus enhancer regions:
     bedlike_file_granges <- GenomicRanges::makeGRangesFromDataFrame(
@@ -336,13 +416,13 @@ make_external_datasets <- function(
     )
 
     ## Get the names of the CpGs that overlapped with the bed file:
-    CpG_overlap_with_bedlike <- hg38_450_annotations_no_NA_granges_df[
+    CpG_overlap_with_bedlike <- hg38_manifest_no_NA_granges_df[
       unique(
         S4Vectors::subjectHits(
           suppressWarnings(
             GenomicRanges::findOverlaps(
               bedlike_file_granges,
-              hg38_450_annotations_granges
+              hg38_manifest_annotations_granges
             )
           )
         )
@@ -396,15 +476,28 @@ make_external_datasets <- function(
   ## If consensus NDR (open chromatin) files are used run this section:
   if(consensusNDR==TRUE){
 
-    ## Create a directory in the output folder to deposit files:
-    dir.create(
-      paste(
-        output_directory,
-        'step1/',
-        'consensusNDR',
-        sep=''
+    ## Create a directory in the output folder to deposit files if it does
+    ## not already exist:
+    if(
+      !dir.exists(
+        paste(
+          output_directory,
+          'step1/',
+          'consensusNDR',
+          sep=''
+        )
       )
-    )
+    ){
+
+      dir.create(
+        paste(
+          output_directory,
+          'step1/',
+          'consensusNDR',
+          sep=''
+        )
+      )
+    }
 
     ## Create a granges object from the consensus enhancer regions:
     bedlike_file_granges <- GenomicRanges::makeGRangesFromDataFrame(
@@ -424,13 +517,13 @@ make_external_datasets <- function(
     )
 
     ## Get the names of the CpGs that overlapped with the bed file:
-    CpG_overlap_with_bedlike <- hg38_450_annotations_no_NA_granges_df[
+    CpG_overlap_with_bedlike <- hg38_manifest_no_NA_granges_df[
       unique(
         S4Vectors::subjectHits(
           suppressWarnings(
             GenomicRanges::findOverlaps(
               bedlike_file_granges,
-              hg38_450_annotations_granges
+              hg38_manifest_annotations_granges
             )
           )
         )

@@ -1,22 +1,22 @@
-#' permutate_z_scores
+#' step4_permutate_z_scores
 #'
 #' This is the step4 function of the TENETR package.
-#' This function takes the calculated z-scores for the hyper/hypomethylated
-#' Gplus or Gminus probe-gene quadrants, and does a pseudo-permutation,
-#' calculating individual permutated p-values for the probe-gene z-score
-#' based on their relative rank amongst all probes to a given gene.
+#' This function takes the calculated z-scores for the hyper or hypomethylated
+#' Gplus or Gminus probe-gene links, depending on user input, and performs a
+#' permutation analysis, calculating individual permutated p-values for each
+#' probe-gene z-score from the previous step based on their relative rank amongst
+#' the link z-scores for all enhancer DNA methylation probes to a given gene.
 #'
-#'
-#' @param TENET_directory Set a path to the directory that contains step3 results from get_analysis_z_score function. This function will also create a new step4 folder there containing the results.
-#' @param hypermeth_Gplus_analysis Set TRUE or FALSE if user wants to permutate on hypermeth_Gplus links. Requires hypermeth_analysis from step3 to have been set to TRUE.
-#' @param hypermeth_Gminus_analysis Set TRUE or FALSE if user wants to permutate on hypermeth_Gminus links. Requires hypermeth_analysis from step3 to have been set to TRUE.
-#' @param hypometh_Gplus_analysis Set TRUE or FALSE if user wants to permutate on hypometh_Gplus links. Requires hypometh_analysis from step3 to have been set to TRUE.
-#' @param hypometh_Gminus_analysis Set TRUE or FALSE if user wants to permutate on hypometh_Gminus links. Requires hypometh_analysis from step3 to have been set to TRUE.
+#' @param TENET_directory Set a path to the TENET directory containing the 'step3' subdirectory and results created by the step3_get_analysis_z_scores function. This function will also create a new 'step4' subdirectory there containing the results of this function.
+#' @param hypermeth_Gplus_analysis Set TRUE or FALSE if user wants to permutate on hypermeth_Gplus probe-gene links. Requires hypermeth_analysis from step3 to have been set to TRUE.
+#' @param hypermeth_Gminus_analysis Set TRUE or FALSE if user wants to permutate on hypermeth_Gminus probe-gene links. Requires hypermeth_analysis from step3 to have been set to TRUE.
+#' @param hypometh_Gplus_analysis Set TRUE or FALSE if user wants to permutate on hypometh_Gplus probe-gene links. Requires hypometh_analysis from step3 to have been set to TRUE.
+#' @param hypometh_Gminus_analysis Set TRUE or FALSE if user wants to permutate on hypometh_Gminus probe-gene links. Requires hypometh_analysis from step3 to have been set to TRUE.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
-#' @return Currently returns tab-delimited tab-delimited "sig_link_zscores_perm.txt" files for hypo/hyper Gplus/Gminus probe-gene links, similar to step3, but with the permutated p-value for each link.
+#' @return Currently returns tab-delimited "sig_link_zscores_perm.txt" files for hypo/hyper Gplus/Gminus probe-gene links, similar to step3, but with the permutated p-value for each link rather than z-score.
 #' @export
 
-permutate_z_scores <- function(
+step4_permutate_z_scores <- function(
   TENET_directory,
   hypermeth_Gplus_analysis,
   hypermeth_Gminus_analysis,
@@ -41,14 +41,26 @@ permutate_z_scores <- function(
     )
   )
 
-  ## Create a step3 directory to deposit the output paired score files:
-  dir.create(
-    paste(
-      TENET_directory,
-      'step4/',
-      sep=''
+  ## Create a step4 directory to deposit the output permutated p-values if
+  ## it has not already been created:
+  if(
+    !dir.exists(
+      paste(
+        TENET_directory,
+        'step4/',
+        sep=''
+      )
     )
-  )
+  ){
+
+    dir.create(
+      paste(
+        TENET_directory,
+        'step4/',
+        sep=''
+      )
+    )
+  }
 
   ## If hypermeth Gplus analysis is selected, run it first:
   if(hypermeth_Gplus_analysis==TRUE){

@@ -1,23 +1,23 @@
-#' top_tr_simple_scatterplots
+#' step7_top_genes_simple_scatterplots
 #'
 #' This is a step7 function of the TENETR package.
-#' This function takes the top genes/TRs by number of linked probes identified from
-#' the step6 top_tr_tabulation function up to the number as specified by the user
+#' This function takes the top genes/TFs by number of linked probes identified from
+#' the step6_probe_per_gene_tabulation function up to the number as specified by the user
 #' and generates scatterplots displaying the expression level of each of these genes
-#' and the methylation level of each enhancer probe linked to them.
+#' and the methylation level of each enhancer probe linked to them for each of the
+#' four hypo or hypermethylated Gplus or Gminus analysis quadrants, as selected by the user.
 #'
-#'
-#' @param TENET_directory Set a path to the directory that contains step6 results from the top_tr_tabulation function. This function will also create a new step7 folder there if it has not been created, with a subdirectory with 'scatterplots' containing subfolders the results for the top genes and top TFs separately.
+#' @param TENET_directory Set a path to the TENET directory containing the 'step6' subdirectory and results created by the step6_probe_per_gene_tabulation function. This function will also create a new 'step7' subdirectory there, if not already created, with further subdirectories for each of the four analysis types selected, ending with '_simple_scatterplots' containing the results of this function.
 #' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create scatterplots for the top genes/TRs by most hypermeth probes with G+ links and each of their linked probes.
 #' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create scatterplots for the top genes/TRs by most hypermeth probes with G- links and each of their linked probes.
 #' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create scatterplots for the top genes/TRs by most hypometh probes with G+ links and each of their linked probes.
 #' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create scatterplots for the top genes/TRs by most hypometh probes with G- links and each of their linked probes.
-#' @param top_gene_number Specify a number to generate scatterplots for that many of the top genes/TFs based on the most linked enhancer probes.
+#' @param top_gene_number Specify a number of the top genes/TFs based on the most linked enhancer probes of a given analysis type to generate scatterplots for showing expression of the genes and methylation of each of their linked enhancer probes.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
 #' @return Currently returns .pdf files with scatterplots showing the expression of the genes of interest on the x-axis and the methylation of the linked probes on the y-axis.
 #' @export
 
-top_tr_simple_scatterplots <- function(
+step7_top_genes_simple_scatterplots <- function(
   TENET_directory,
   hypermeth_Gplus_analysis,
   hypermeth_Gminus_analysis,
@@ -134,7 +134,7 @@ top_tr_simple_scatterplots <- function(
   } else{
 
     # Return an error message that the file wasn't found:
-    stop('diff.methylated.datasets.rda in step2 of TENET directory was not found. Please check that the file exists and consider rerunning the step2 get_diffmeth_regions function.')
+    stop('diff.methylated.datasets.rda in step2 of TENET directory was not found. Please check that the file exists and consider rerunning the step2_get_diffmeth_regions function.')
   }
 
   ## Combine the methylation and expression data from both tumor and normal samples:
@@ -261,7 +261,7 @@ top_tr_simple_scatterplots <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gplus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
 
@@ -292,17 +292,17 @@ top_tr_simple_scatterplots <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
-    ## Check that the hyper_Gplus_links_all_TR_freq.txt file exists:
+    ## Check that the hyper_Gplus_links_all_TF_freq.txt file exists:
     if(
       file.exists(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gplus_links_all_TR_freq.txt',
+          'hyper_Gplus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -313,7 +313,7 @@ top_tr_simple_scatterplots <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gplus_links_all_TR_freq.txt',
+          'hyper_Gplus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -323,7 +323,7 @@ top_tr_simple_scatterplots <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gplus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gplus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -378,10 +378,10 @@ top_tr_simple_scatterplots <- function(
       1:length(top_hyper_Gplus_all_gene_ENSG)
     )){
 
-      ## Get the TRs ENSG:
+      ## Get the genes' ENSG:
       gene_ENSG_placeholder <- top_hyper_Gplus_all_gene_ENSG[i]
 
-      ## Get the probes linked to each TR
+      ## Get the probes linked to each gene
       probes_linked_to_significant_gene <- unique(
         hyper_Gplus_sig_link_zscores[
           hyper_Gplus_sig_link_zscores$geneID %in% top_hyper_Gplus_all_gene_ENSG[i],
@@ -398,10 +398,10 @@ top_tr_simple_scatterplots <- function(
       1:length(top_hyper_Gplus_all_TF_ENSG)
     )){
 
-      ## Get the TRs ENSG:
+      ## Get the TFs ENSG:
       TF_ENSG_placeholder <- top_hyper_Gplus_all_TF_ENSG[i]
 
-      ## Get the probes linked to each TR
+      ## Get the probes linked to each TF
       probes_linked_to_significant_TF <- unique(
         hyper_Gplus_sig_link_zscores[
           hyper_Gplus_sig_link_zscores$geneID %in% top_hyper_Gplus_all_TF_ENSG[i],
@@ -441,7 +441,7 @@ top_tr_simple_scatterplots <- function(
       ]
 
       ## Get the expression of the gene:
-      TR_expression <- c(
+      TF_expression <- c(
         unlist(
           expDataF_subC[
             gene_ENSG,
@@ -451,21 +451,21 @@ top_tr_simple_scatterplots <- function(
       )
 
       ## Now write an internal function that will get each linked CpGs methylation,
-      ## and use the methylation and TR expression to create a ggplot2 scatterplot
+      ## and use the methylation and gene expression to create a ggplot2 scatterplot
       ## and save it:
       internal_scatterplot_function <- function(
-        CpGs_linked_to_TR,
+        CpGs_linked_to_TF,
         internal_gene_or_TF
       ){
 
         ## Save the CpG name:
-        CpG_name_placeholder <- CpGs_linked_to_TR
+        CpG_name_placeholder <- CpGs_linked_to_TF
 
         ## Get DNA methylation values:
         unlisted_CpG_methylation <- c(
           unlist(
             metDataF_subC[
-              CpGs_linked_to_TR,
+              CpGs_linked_to_TF,
               DichF$group
             ]
           )
@@ -479,7 +479,7 @@ top_tr_simple_scatterplots <- function(
 
         ## Creating scatter with ggplot2:
         scatter_plot <- ggplot2::qplot(
-          x=TR_expression,
+          x=TF_expression,
           y=unlisted_CpG_methylation,
           geom=c("point"),
           colour=DichF$cluster
@@ -575,7 +575,7 @@ top_tr_simple_scatterplots <- function(
       )
     }
 
-    ## Generate the plots for all TRs of interest:
+    ## Generate the plots for all TFs of interest:
     suppressWarnings(
       parallel::mcmapply(
         FUN= hyper_Gplus_scatterplot_function,
@@ -698,7 +698,7 @@ top_tr_simple_scatterplots <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gminus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function')
 
     }
 
@@ -729,7 +729,7 @@ top_tr_simple_scatterplots <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -739,7 +739,7 @@ top_tr_simple_scatterplots <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gminus_links_all_TR_freq.txt',
+          'hyper_Gminus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -750,7 +750,7 @@ top_tr_simple_scatterplots <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gminus_links_all_TR_freq.txt',
+          'hyper_Gminus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -760,7 +760,7 @@ top_tr_simple_scatterplots <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gminus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gminus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -815,10 +815,10 @@ top_tr_simple_scatterplots <- function(
       1:length(top_hyper_Gminus_all_gene_ENSG)
     )){
 
-      ## Get the TRs ENSG:
+      ## Get the genes' ENSG:
       gene_ENSG_placeholder <- top_hyper_Gminus_all_gene_ENSG[i]
 
-      ## Get the probes linked to each TR
+      ## Get the probes linked to each gene
       probes_linked_to_significant_gene <- unique(
         hyper_Gminus_sig_link_zscores[
           hyper_Gminus_sig_link_zscores$geneID %in% top_hyper_Gminus_all_gene_ENSG[i],
@@ -835,10 +835,10 @@ top_tr_simple_scatterplots <- function(
       1:length(top_hyper_Gminus_all_TF_ENSG)
     )){
 
-      ## Get the TRs ENSG:
+      ## Get the TFs ENSG:
       TF_ENSG_placeholder <- top_hyper_Gminus_all_TF_ENSG[i]
 
-      ## Get the probes linked to each TR
+      ## Get the probes linked to each TF
       probes_linked_to_significant_TF <- unique(
         hyper_Gminus_sig_link_zscores[
           hyper_Gminus_sig_link_zscores$geneID %in% top_hyper_Gminus_all_TF_ENSG[i],
@@ -878,7 +878,7 @@ top_tr_simple_scatterplots <- function(
       ]
 
       ## Add the expression of the gene of interest to DichF:
-      TR_expression <- c(
+      TF_expression <- c(
         unlist(
           expDataF_subC[
             gene_ENSG,
@@ -888,21 +888,21 @@ top_tr_simple_scatterplots <- function(
       )
 
       ## Now write an internal function that will get each linked CpGs methylation,
-      ## and use the methylation and TR expression to create a ggplot2 scatterplot
+      ## and use the methylation and gene expression to create a ggplot2 scatterplot
       ## and save it:
       internal_scatterplot_function <- function(
-        CpGs_linked_to_TR,
+        CpGs_linked_to_TF,
         internal_gene_or_TF
       ){
 
         ## Save the CpG name:
-        CpG_name_placeholder <- CpGs_linked_to_TR
+        CpG_name_placeholder <- CpGs_linked_to_TF
 
         ## Get DNA methylation values:
         unlisted_CpG_methylation <- c(
           unlist(
             metDataF_subC[
-              CpGs_linked_to_TR,
+              CpGs_linked_to_TF,
               DichF$group
             ]
           )
@@ -916,7 +916,7 @@ top_tr_simple_scatterplots <- function(
 
         ## Creating scatter with ggplot2:
         scatter_plot <- ggplot2::qplot(
-          x=TR_expression,
+          x=TF_expression,
           y=unlisted_CpG_methylation,
           geom=c("point"),
           colour=DichF$cluster
@@ -1012,7 +1012,7 @@ top_tr_simple_scatterplots <- function(
       )
     }
 
-    ## Generate the plots for all TRs of interest:
+    ## Generate the plots for all genes/TFs of interest:
     suppressWarnings(
       parallel::mcmapply(
         FUN= hyper_Gminus_scatterplot_function,
@@ -1135,7 +1135,7 @@ top_tr_simple_scatterplots <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gplus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function')
 
     }
 
@@ -1166,7 +1166,7 @@ top_tr_simple_scatterplots <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -1176,7 +1176,7 @@ top_tr_simple_scatterplots <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gplus_links_all_TR_freq.txt',
+          'hypo_Gplus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -1187,7 +1187,7 @@ top_tr_simple_scatterplots <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gplus_links_all_TR_freq.txt',
+          'hypo_Gplus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -1197,7 +1197,7 @@ top_tr_simple_scatterplots <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gplus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gplus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -1252,10 +1252,10 @@ top_tr_simple_scatterplots <- function(
       1:length(top_hypo_Gplus_all_gene_ENSG)
     )){
 
-      ## Get the TRs ENSG:
+      ## Get the genes' ENSG:
       gene_ENSG_placeholder <- top_hypo_Gplus_all_gene_ENSG[i]
 
-      ## Get the probes linked to each TR
+      ## Get the probes linked to each gene
       probes_linked_to_significant_gene <- unique(
         hypo_Gplus_sig_link_zscores[
           hypo_Gplus_sig_link_zscores$geneID %in% top_hypo_Gplus_all_gene_ENSG[i],
@@ -1272,10 +1272,10 @@ top_tr_simple_scatterplots <- function(
       1:length(top_hypo_Gplus_all_TF_ENSG)
     )){
 
-      ## Get the TRs ENSG:
+      ## Get the TFs ENSG:
       TF_ENSG_placeholder <- top_hypo_Gplus_all_TF_ENSG[i]
 
-      ## Get the probes linked to each TR
+      ## Get the probes linked to each TF
       probes_linked_to_significant_TF <- unique(
         hypo_Gplus_sig_link_zscores[
           hypo_Gplus_sig_link_zscores$geneID %in% top_hypo_Gplus_all_TF_ENSG[i],
@@ -1315,7 +1315,7 @@ top_tr_simple_scatterplots <- function(
       ]
 
       ## Add the expression of the gene of interest to DichF:
-      TR_expression <- c(
+      TF_expression <- c(
         unlist(
           expDataF_subC[
             gene_ENSG,
@@ -1325,21 +1325,21 @@ top_tr_simple_scatterplots <- function(
       )
 
       ## Now write an internal function that will get each linked CpGs methylation,
-      ## and use the methylation and TR expression to create a ggplot2 scatterplot
+      ## and use the methylation and gene expression to create a ggplot2 scatterplot
       ## and save it:
       internal_scatterplot_function <- function(
-        CpGs_linked_to_TR,
+        CpGs_linked_to_TF,
         internal_gene_or_TF
       ){
 
         ## Save the CpG name:
-        CpG_name_placeholder <- CpGs_linked_to_TR
+        CpG_name_placeholder <- CpGs_linked_to_TF
 
         ## Get DNA methylation values:
         unlisted_CpG_methylation <- c(
           unlist(
             metDataF_subC[
-              CpGs_linked_to_TR,
+              CpGs_linked_to_TF,
               DichF$group
             ]
           )
@@ -1353,7 +1353,7 @@ top_tr_simple_scatterplots <- function(
 
         ## Creating scatter with ggplot2:
         scatter_plot <- ggplot2::qplot(
-          x=TR_expression,
+          x=TF_expression,
           y=unlisted_CpG_methylation,
           geom=c("point"),
           colour=DichF$cluster
@@ -1449,7 +1449,7 @@ top_tr_simple_scatterplots <- function(
       )
     }
 
-    ## Generate the plots for all TRs of interest:
+    ## Generate the plots for all genes/TFs of interest:
     suppressWarnings(
       parallel::mcmapply(
         FUN= hypo_Gplus_scatterplot_function,
@@ -1572,7 +1572,7 @@ top_tr_simple_scatterplots <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gminus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function')
 
     }
 
@@ -1603,7 +1603,7 @@ top_tr_simple_scatterplots <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -1613,7 +1613,7 @@ top_tr_simple_scatterplots <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gminus_links_all_TR_freq.txt',
+          'hypo_Gminus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -1624,7 +1624,7 @@ top_tr_simple_scatterplots <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gminus_links_all_TR_freq.txt',
+          'hypo_Gminus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -1634,7 +1634,7 @@ top_tr_simple_scatterplots <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gminus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gminus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -1689,10 +1689,10 @@ top_tr_simple_scatterplots <- function(
       1:length(top_hypo_Gminus_all_gene_ENSG)
     )){
 
-      ## Get the TRs ENSG:
+      ## Get the genes' ENSG:
       gene_ENSG_placeholder <- top_hypo_Gminus_all_gene_ENSG[i]
 
-      ## Get the probes linked to each TR
+      ## Get the probes linked to each gene:
       probes_linked_to_significant_gene <- unique(
         hypo_Gminus_sig_link_zscores[
           hypo_Gminus_sig_link_zscores$geneID %in% top_hypo_Gminus_all_gene_ENSG[i],
@@ -1709,10 +1709,10 @@ top_tr_simple_scatterplots <- function(
       1:length(top_hypo_Gminus_all_TF_ENSG)
     )){
 
-      ## Get the TRs ENSG:
+      ## Get the TFs ENSG:
       TF_ENSG_placeholder <- top_hypo_Gminus_all_TF_ENSG[i]
 
-      ## Get the probes linked to each TR
+      ## Get the probes linked to each TF
       probes_linked_to_significant_TF <- unique(
         hypo_Gminus_sig_link_zscores[
           hypo_Gminus_sig_link_zscores$geneID %in% top_hypo_Gminus_all_TF_ENSG[i],
@@ -1752,7 +1752,7 @@ top_tr_simple_scatterplots <- function(
       ]
 
       ## Add the expression of the gene of interest to DichF:
-      TR_expression <- c(
+      TF_expression <- c(
         unlist(
           expDataF_subC[
             gene_ENSG,
@@ -1762,21 +1762,21 @@ top_tr_simple_scatterplots <- function(
       )
 
       ## Now write an internal function that will get each linked CpGs methylation,
-      ## and use the methylation and TR expression to create a ggplot2 scatterplot
+      ## and use the methylation and gene expression to create a ggplot2 scatterplot
       ## and save it:
       internal_scatterplot_function <- function(
-        CpGs_linked_to_TR,
+        CpGs_linked_to_TF,
         internal_gene_or_TF
       ){
 
         ## Save the CpG name:
-        CpG_name_placeholder <- CpGs_linked_to_TR
+        CpG_name_placeholder <- CpGs_linked_to_TF
 
         ## Get DNA methylation values:
         unlisted_CpG_methylation <- c(
           unlist(
             metDataF_subC[
-              CpGs_linked_to_TR,
+              CpGs_linked_to_TF,
               DichF$group
             ]
           )
@@ -1790,7 +1790,7 @@ top_tr_simple_scatterplots <- function(
 
         ## Creating scatter with ggplot2:
         scatter_plot <- ggplot2::qplot(
-          x=TR_expression,
+          x=TF_expression,
           y=unlisted_CpG_methylation,
           geom=c("point"),
           colour=DichF$cluster
@@ -1886,7 +1886,7 @@ top_tr_simple_scatterplots <- function(
       )
     }
 
-    ## Generate the plots for all TRs of interest:
+    ## Generate the plots for all genes/TFs of interest:
     suppressWarnings(
       parallel::mcmapply(
         FUN= hypo_Gminus_scatterplot_function,

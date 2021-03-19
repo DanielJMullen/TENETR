@@ -1,21 +1,22 @@
-#' top_tr_histogram
+#' step7_top_genes_histograms
 #'
 #' This is a step7 function of the TENETR package.
-#' This function takes the top TRs by number of linked probes identified from
-#' the step6 top_tr_tabulation function and generates heatmaps showing the
-#' number of all genes and TF-only genes with a given number of enhancer
-#' DNA methylation probes of a given type linked to them.
+#' This function takes all genes and only accepted transcription factor
+#' genes from "The Human Transcription Factors" by Lambert et al. 2018.
+#' and generates histograms displaying the number of all genes and TF-only genes
+#' with a links to a given number of enhancer DNA methylation probes for each of
+#' the four hypo or hypermethylated Gplus or Gminus analysis quadrants,
+#' as selected by the user.
 #'
-#'
-#' @param TENET_directory Set a path to the directory that contains step6 results from the top_tr_tabulation function. This function will also create a new step7 folder there if it has not been created, with a subdirectory called histogram containing the results.
-#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create histograms for the top TRs by most hypermeth probes with G+ links.
-#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypermeth probes with G- links.
-#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypometh probes with G+ links.
-#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypometh probes with G- links.
-#' @return Currently returns .pdf files with the histograms showing the number of TRs linked to a given number of probes of the given analysis type.
+#' @param TENET_directory Set a path to the TENET directory containing the 'step6' subdirectory and results created by the step6_probe_per_gene_tabulation function. This function will also create a new 'step7' subdirectory there, if not already created, with a further subdirectories for each of the four analysis types selected, ending with '_histograms' containing the results of this function.
+#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create histograms of genes/TFs linked to hypermeth probes with G+ links.
+#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create histograms of genes/TFs linked to hypermeth probes with G- links.
+#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create histograms of genes/TFs linked to hypometh probes with G+ links.
+#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create histograms of genes/TFs linked to hypometh probes with G- links.
+#' @return Currently returns .pdf files with the histograms showing the number of genes/TFs linked to a given number of enhancer probes of the given analysis type.
 #' @export
 
-top_tr_histogram <- function(
+step7_top_genes_histograms <- function(
   TENET_directory,
   hypermeth_Gplus_analysis,
   hypermeth_Gminus_analysis,
@@ -129,7 +130,7 @@ top_tr_histogram <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -139,7 +140,7 @@ top_tr_histogram <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gplus_links_all_TR_freq.txt',
+          'hyper_Gplus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -150,7 +151,7 @@ top_tr_histogram <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gplus_links_all_TR_freq.txt',
+          'hyper_Gplus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -160,7 +161,7 @@ top_tr_histogram <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gplus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gplus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -171,27 +172,27 @@ top_tr_histogram <- function(
       hyper_Gplus_all_gene_freq,
       ggplot2::aes(x=Freq)
     ) +
-      ggplot2::geom_histogram(
-        color='black',
-        fill='darkgrey',
-        binwidth=ceiling(
-          max(hyper_Gplus_all_gene_freq$Freq)/200
-        )
-      ) +
-      ggplot2::ggtitle("Histogram of Hyper.G+ linked enhancer probes per gene") +
-      ggplot2::xlab("Number of linked enhancer probes per gene") +
-      ggplot2::ylab("Frequency") +
-      ggplot2::theme_bw() +
-      ggplot2::theme(
-        plot.title = ggplot2::element_text(hjust=0.5, size=20),
-        panel.border = ggplot2::element_rect(colour = 'black', fill=NA, size=1),
-        axis.title.x = ggplot2::element_text(size=20),
-        axis.title.y = ggplot2::element_text(size=20),
-        axis.text.x = ggplot2::element_text(size=18, colour = 'black'),
-        axis.text.y = ggplot2::element_text(size=16, colour = 'black'),
-        panel.grid.major = ggplot2::element_blank(),
-        panel.grid.minor = ggplot2::element_blank()
+    ggplot2::geom_histogram(
+      color='black',
+      fill='darkgrey',
+      binwidth=ceiling(
+        max(hyper_Gplus_all_gene_freq$Freq)/200
       )
+    ) +
+    ggplot2::ggtitle("Histogram of Hyper.G+ linked enhancer probes per gene") +
+    ggplot2::xlab("Number of linked enhancer probes per gene") +
+    ggplot2::ylab("Frequency") +
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(hjust=0.5, size=20),
+      panel.border = ggplot2::element_rect(colour = 'black', fill=NA, size=1),
+      axis.title.x = ggplot2::element_text(size=20),
+      axis.title.y = ggplot2::element_text(size=20),
+      axis.text.x = ggplot2::element_text(size=18, colour = 'black'),
+      axis.text.y = ggplot2::element_text(size=16, colour = 'black'),
+      panel.grid.major = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank()
+    )
 
     ## Save the plot:
     ggplot2::ggsave(
@@ -307,7 +308,7 @@ top_tr_histogram <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -317,7 +318,7 @@ top_tr_histogram <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gminus_links_all_TR_freq.txt',
+          'hyper_Gminus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -328,7 +329,7 @@ top_tr_histogram <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gminus_links_all_TR_freq.txt',
+          'hyper_Gminus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -338,7 +339,7 @@ top_tr_histogram <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gminus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gminus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -485,7 +486,7 @@ top_tr_histogram <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -495,7 +496,7 @@ top_tr_histogram <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gplus_links_all_TR_freq.txt',
+          'hypo_Gplus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -506,7 +507,7 @@ top_tr_histogram <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gplus_links_all_TR_freq.txt',
+          'hypo_Gplus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -516,7 +517,7 @@ top_tr_histogram <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gplus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gplus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -663,7 +664,7 @@ top_tr_histogram <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -673,7 +674,7 @@ top_tr_histogram <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gminus_links_all_TR_freq.txt',
+          'hypo_Gminus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -684,7 +685,7 @@ top_tr_histogram <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gminus_links_all_TR_freq.txt',
+          'hypo_Gminus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -694,7 +695,7 @@ top_tr_histogram <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gminus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gminus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 

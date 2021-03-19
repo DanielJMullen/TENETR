@@ -1,22 +1,25 @@
-#' top_tr_states_for_links
+#' step7_states_for_links
 #'
 #' This is a step7 function of the TENETR package.
-#' This function takes the top genes/TFs by number of linked probes identified from
-#' the step6 top_tr_tabulation function up to the number as specified by the user
-#' and generates .tsv files with information for each of the experimental, or tumor,
-#' samples for each probe to gene link for the analysis types selected
+#' This function generates .tsv files with information for each of the experimental/tumor,
+#' samples and each probe-gene link from each of the four hypo or hypermethylated
+#' Gplus or Gminus analysis quadrants, as selected by the user, on if a given sample
+#' is said "harbor" each link, depending on if the methylation of the given sample
+#' for the probe in the link is above or below the hyper or hypomethcutoff defined
+#' from the step2_get_diffmeth_regions function, and the expression of gene in the link
+#' is significantly greater than, or less than, the mean expression in the normal/control
+#' samples.
 #'
-#'
-#' @param TENET_directory Set a path to the directory that contains step6 results from the top_tr_tabulation function. This function will also create a new step7 folder there if it has not been created, with subdirectories for each of the four analysis types to contain the link files.
-#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create .tsv files showing which tumor samples harbor a given probe-gene link of the given analysis type.
-#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create .tsv files showing which tumor samples harbor a given probe-gene link of the given analysis type.
-#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create .tsv files showing which tumor samples harbor a given probe-gene link of the given analysis type.
-#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create .tsv files showing which tumor samples harbor a given probe-gene link of the given analysis type.
+#' @param TENET_directory Set a path to the TENET directory containing the 'step6' subdirectory and results created by the step6_probe_per_gene_tabulation function. This function will also create a new 'step7' subdirectory there, if not already created, with a further subdirectories for each of the four analysis types selected, ending with '_states_for_links' containing the results of this function.
+#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create .tsv files showing which experimental/tumor samples harbor a given hypermeth Gplus probe-gene link.
+#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create .tsv files showing which experimental/tumor samples harbor a given hypermeth Gminus probe-gene link.
+#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create .tsv files showing which experimental/tumor samples harbor a given hypometh Gplus probe-gene link.
+#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create .tsv files showing which experimental/tumor samples harbor a given hypometh Gminus probe-gene link.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
-#' @return Exports .tsv files for each of the specified analysis types with tumor samples in the y-axis and each probe-gene link for that analysis type in the x-axis, with a 1 indicating the sample is positive for that link, and a 0 if that sample isn't.
+#' @return Exports .tsv files for each of the specified analysis types with experimental/tumor samples in the columns and each probe-gene link for that analysis type in the rows, with a 1 indicating the sample is positive for that link, and a 0 if that sample isn't.
 #' @export
 
-top_tr_states_for_links <- function(
+step7_states_for_links <- function(
   TENET_directory,
   hypermeth_Gplus_analysis,
   hypermeth_Gminus_analysis,
@@ -102,7 +105,7 @@ top_tr_states_for_links <- function(
   } else{
 
     # Return an error message that the file wasn't found:
-    stop('diff.methylated.datasets.rda in step2 of TENET directory was not found. Please check that the file exists and consider rerunning the step2 get_diffmeth_regions function.')
+    stop('diff.methylated.datasets.rda in step2 of TENET directory was not found. Please check that the file exists and consider rerunning the step2_get_diffmeth_regions function.')
   }
 
   ## Get the dataset of gencode v22 genes:
@@ -287,7 +290,7 @@ top_tr_states_for_links <- function(
         paste(
           TENET_directory,
           'step7/',
-          'hyper_Gplus_states_for_links_files',
+          'hyper_Gplus_states_for_links',
           sep=''
         )
       )
@@ -297,7 +300,7 @@ top_tr_states_for_links <- function(
         paste(
           TENET_directory,
           'step7/',
-          'hyper_Gplus_states_for_links_files',
+          'hyper_Gplus_states_for_links',
           sep=''
         )
       )
@@ -330,7 +333,7 @@ top_tr_states_for_links <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gplus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5 optimize_links function.')
+      stop('hyper_Gplus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
 
@@ -366,7 +369,7 @@ top_tr_states_for_links <- function(
       file= paste(
         TENET_directory,
         'step7/',
-        'hyper_Gplus_states_for_links_files/',
+        'hyper_Gplus_states_for_links/',
         'hyper_Gplus_links_states_table.tsv',
         sep=''
       ),
@@ -385,7 +388,7 @@ top_tr_states_for_links <- function(
         paste(
           TENET_directory,
           'step7/',
-          'hyper_Gminus_states_for_links_files',
+          'hyper_Gminus_states_for_links',
           sep=''
         )
       )
@@ -395,7 +398,7 @@ top_tr_states_for_links <- function(
         paste(
           TENET_directory,
           'step7/',
-          'hyper_Gminus_states_for_links_files',
+          'hyper_Gminus_states_for_links',
           sep=''
         )
       )
@@ -428,7 +431,7 @@ top_tr_states_for_links <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gminus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5 optimize_links function.')
+      stop('hyper_Gminus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
 
@@ -464,7 +467,7 @@ top_tr_states_for_links <- function(
       file= paste(
         TENET_directory,
         'step7/',
-        'hyper_Gminus_states_for_links_files/',
+        'hyper_Gminus_states_for_links/',
         'hyper_Gminus_links_states_table.tsv',
         sep=''
       ),
@@ -483,7 +486,7 @@ top_tr_states_for_links <- function(
         paste(
           TENET_directory,
           'step7/',
-          'hypo_Gplus_states_for_links_files',
+          'hypo_Gplus_states_for_links',
           sep=''
         )
       )
@@ -493,7 +496,7 @@ top_tr_states_for_links <- function(
         paste(
           TENET_directory,
           'step7/',
-          'hypo_Gplus_states_for_links_files',
+          'hypo_Gplus_states_for_links',
           sep=''
         )
       )
@@ -526,7 +529,7 @@ top_tr_states_for_links <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gplus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5 optimize_links function.')
+      stop('hypo_Gplus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
 
@@ -562,7 +565,7 @@ top_tr_states_for_links <- function(
       file= paste(
         TENET_directory,
         'step7/',
-        'hypo_Gplus_states_for_links_files/',
+        'hypo_Gplus_states_for_links/',
         'hypo_Gplus_links_states_table.tsv',
         sep=''
       ),
@@ -581,7 +584,7 @@ top_tr_states_for_links <- function(
         paste(
           TENET_directory,
           'step7/',
-          'hypo_Gminus_states_for_links_files',
+          'hypo_Gminus_states_for_links',
           sep=''
         )
       )
@@ -591,7 +594,7 @@ top_tr_states_for_links <- function(
         paste(
           TENET_directory,
           'step7/',
-          'hypo_Gminus_states_for_links_files',
+          'hypo_Gminus_states_for_links',
           sep=''
         )
       )
@@ -624,7 +627,7 @@ top_tr_states_for_links <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gminus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5 optimize_links function.')
+      stop('hypo_Gminus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
 
@@ -660,7 +663,7 @@ top_tr_states_for_links <- function(
       file= paste(
         TENET_directory,
         'step7/',
-        'hypo_Gminus_states_for_links_files/',
+        'hypo_Gminus_states_for_links/',
         'hypo_Gminus_links_states_table.tsv',
         sep=''
       ),

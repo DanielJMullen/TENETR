@@ -1,23 +1,23 @@
-#' top_tr_circos
+#' step7_top_genes_circos
 #'
 #' This is a step7 function of the TENETR package.
-#' This function takes the top genes/TRs by number of linked probes identified from
-#' the step6 top_tr_tabulation function up to the number as specified by the user
+#' This function takes the top genes/TFs by number of linked probes identified from
+#' the step6_probe_per_gene_tabulation function up to the number as specified by the user
 #' and generates circos plots for each gene showing the genomic links between
-#' each gene and each probe linked to it.
+#' each gene and each enhancer probe linked to them for the analysis types specified.
 #'
-#'
-#' @param TENET_directory Set a path to the directory that contains step6 results from the top_tr_tabulation function. This function will also create a new step7 folder there if it has not been created, with a subdirectory with 'circos' containing the results.
-#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create circos plots for the top genes/TRs by most hypermeth probes with G+ links to those probes.
-#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create circos plots for the top genes/TRs by most hypermeth probes with G- links to those probes.
-#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create circos plots for the top genes/TRs by most hypometh probes with G+ links to those probes.
-#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create circos plots for the top genes/TRs by most hypometh probes with G- links to those probes.
-#' @param top_gene_number Specify a number to generate circos plots for that many of the top genes/TFs based on the most linked enhancer probes.
+#' @param TENET_directory Set a path to the TENET directory containing the 'step6' subdirectory and results created by the step6_probe_per_gene_tabulation function. This function will also create a new 'step7' subdirectory there, if not already created, with further subdirectories for each of the four analysis types selected, ending with '_circos' containing the results of this function.
+#' @param DNA_methylation_manifest Set to 'HM27', 'HM450', or 'EPIC' depending on the DNA methylation array of interest for the user's data. hg38 array annotations come from https://zwdzwd.github.io/InfiniumAnnotation. Defaults to 'HM450'.
+#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create circos plots displaying links between the top genes/TFs by most hypermeth probes with G+ links and their linked enhancer probes of that type.
+#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create circos plots displaying links between the top genes/TFs by most hypermeth probes with G- links and their linked enhancer probes of that type.
+#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create circos plots displaying links between the top genes/TFs by most hypometh probes with G+ links and their linked enhancer probes of that type.
+#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create circos plots displaying links between the top genes/TFs by most hypometh probes with G- links and their linked enhancer probes of that type.
+#' @param top_gene_number Specify a number of the top genes/TFs based on the most linked enhancer probes of a given analysis type to generate circos plots for.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
-#' @return Currently returns .html files with the circos plots displaying the top genes and TRs and links to their linked enhancer probes.
+#' @return Currently returns .html files with the circos plots visualizing the links between the top genes/TFs and their linked enhancer probes for the selected analysis types.
 #' @export
 
-top_tr_circos <- function(
+step7_top_genes_circos <- function(
   TENET_directory,
   hypermeth_Gplus_analysis,
   hypermeth_Gminus_analysis,
@@ -79,33 +79,62 @@ top_tr_circos <- function(
 
   }
 
-  ## Load the hg38 450k annotations:
-  hg38_hm450_df <- TENETR.data::hm450_hg38_annotations
-  rownames(hg38_hm450_df) <- hg38_hm450_df$probeID
+  ## Load the hg38 DNA methylation annotations:
+  ## Written in by Zexun Wu
+  if (DNA_methylation_manifest == "HM450" | missing(DNA_methylation_manifest)) {
 
-  ## Create a modified dataframe of the hg38 450k annotations
+    hg38_manifest_df <- TENETR.data::hm450_hg38_annotations
+
+  } else if (DNA_methylation_manifest == "HM27") {
+
+    hg38_manifest_df <- TENETR.data::hm27_hg38_annotations
+
+  } else if (DNA_methylation_manifest == "EPIC") {
+
+    hg38_manifest_df <- TENETR.data::epic_hg38_annotations
+
+  } else {
+
+    stop("The input for DNA_methylation_manifest is incorrect. Please select one from \"HM450\",\"HM27\",\"EPIC\"!")
+
+  }
+
+  ## Set the rownames of the loaded manifest to be the probeIDs:
+  rownames(hg38_manifest_df) <- hg38_manifest_df$probeID
+
+  ## Create a modified dataframe of the hg38 DNA methylation probe annotations
   ## to later convert to granges:
-  hg38_450k_probe_info <- data.frame(
-    'chr'= hg38_hm450_df$CpG_chrm,
-    'start'= hg38_hm450_df$CpG_beg,
-    'end'= hg38_hm450_df$CpG_end,
+  hg38_manifest_granges_df <- data.frame(
+    'chr'= hg38_manifest_df$CpG_chrm,
+    'start'= hg38_manifest_df$CpG_beg,
+    'end'= hg38_manifest_df$CpG_end,
     'strand'= rep(
       '*',
-      nrow(hg38_hm450_df)
+      nrow(hg38_manifest_df)
     ),
-    'names' = hg38_hm450_df$probeID,
+    'names' = hg38_manifest_df$probeID,
     stringsAsFactors = FALSE
   )
 
-  ## Remove the big hm450 dataframe:
-  rm(hg38_hm450_df)
+  ## Remove the big manifest dataframe:
+  rm(hg38_manifest_df)
 
   ## Remove the probes that have NA values:
-  hg38_450k_probe_info <- hg38_450k_probe_info[
-    !is.na(hg38_450k_probe_info$chr),
+  hg38_manifest_no_NA_granges_df <- hg38_manifest_granges_df[
+    !is.na(hg38_manifest_granges_df$chr),
   ]
 
-  rownames(hg38_450k_probe_info) <- hg38_450k_probe_info$names
+  ## Remove the dataset with NA probes:
+  rm(hg38_manifest_granges_df)
+
+  ## Create a granges object from the new
+  ## hg38 annotations with no NA df:
+  hg38_manifest_annotations_granges <- GenomicRanges::makeGRangesFromDataFrame(
+    df= hg38_manifest_no_NA_granges_df,
+    keep.extra.columns = FALSE,
+    starts.in.df.are.0based = TRUE
+  )
+  names(hg38_manifest_annotations_granges) <- hg38_manifest_no_NA_granges_df$names
 
   ## Get the dataset of gencode v22 genes:
   gencode_v22_gtf <- TENETR.data::gencode_v22_annotations
@@ -227,7 +256,7 @@ top_tr_circos <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gplus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
 
@@ -258,17 +287,17 @@ top_tr_circos <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation.')
 
     }
 
-    ## Check that the hyper_Gplus_links_all_TR_freq.txt file exists:
+    ## Check that the hyper_Gplus_links_all_TF_freq.txt file exists:
     if(
       file.exists(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gplus_links_all_TR_freq.txt',
+          'hyper_Gplus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -279,7 +308,7 @@ top_tr_circos <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gplus_links_all_TR_freq.txt',
+          'hyper_Gplus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -289,7 +318,7 @@ top_tr_circos <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gplus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gplus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation.')
 
     }
 
@@ -378,13 +407,13 @@ top_tr_circos <- function(
 
       ## List the chromosome and start for probes
       ## linked to given gene as end points on circos:
-      circos_end_chromosome <- hg38_450k_probe_info[
+      circos_end_chromosome <- hg38_manifest_no_NA_granges_df[
         linked_CpGs,
         'chr'
       ]
 
       circos_end_position <- (
-        hg38_450k_probe_info[
+        hg38_manifest_no_NA_granges_df[
           linked_CpGs,
           'start'
         ]+1
@@ -547,7 +576,7 @@ top_tr_circos <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gminus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
 
@@ -578,7 +607,7 @@ top_tr_circos <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation.')
 
     }
 
@@ -588,7 +617,7 @@ top_tr_circos <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gminus_links_all_TR_freq.txt',
+          'hyper_Gminus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -599,7 +628,7 @@ top_tr_circos <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gminus_links_all_TR_freq.txt',
+          'hyper_Gminus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -609,7 +638,7 @@ top_tr_circos <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gminus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gminus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation.')
 
     }
 
@@ -698,13 +727,13 @@ top_tr_circos <- function(
 
       ## List the chromosome and start for probes
       ## linked to given gene as end points on circos:
-      circos_end_chromosome <- hg38_450k_probe_info[
+      circos_end_chromosome <- hg38_manifest_no_NA_granges_df[
         linked_CpGs,
         'chr'
       ]
 
       circos_end_position <- (
-        hg38_450k_probe_info[
+        hg38_manifest_no_NA_granges_df[
           linked_CpGs,
           'start'
         ]+1
@@ -867,7 +896,7 @@ top_tr_circos <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gplus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
 
@@ -898,7 +927,7 @@ top_tr_circos <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation.')
 
     }
 
@@ -908,7 +937,7 @@ top_tr_circos <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gplus_links_all_TR_freq.txt',
+          'hypo_Gplus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -919,7 +948,7 @@ top_tr_circos <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gplus_links_all_TR_freq.txt',
+          'hypo_Gplus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -929,7 +958,7 @@ top_tr_circos <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gplus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gplus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation.')
 
     }
 
@@ -1018,13 +1047,13 @@ top_tr_circos <- function(
 
       ## List the chromosome and start for probes
       ## linked to given gene as end points on circos:
-      circos_end_chromosome <- hg38_450k_probe_info[
+      circos_end_chromosome <- hg38_manifest_no_NA_granges_df[
         linked_CpGs,
         'chr'
       ]
 
       circos_end_position <- (
-        hg38_450k_probe_info[
+        hg38_manifest_no_NA_granges_df[
           linked_CpGs,
           'start'
         ]+1
@@ -1187,7 +1216,7 @@ top_tr_circos <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gminus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
 
@@ -1218,7 +1247,7 @@ top_tr_circos <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation.')
 
     }
 
@@ -1228,7 +1257,7 @@ top_tr_circos <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gminus_links_all_TR_freq.txt',
+          'hypo_Gminus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -1239,7 +1268,7 @@ top_tr_circos <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gminus_links_all_TR_freq.txt',
+          'hypo_Gminus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -1249,7 +1278,7 @@ top_tr_circos <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gminus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gminus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation.')
 
     }
 
@@ -1338,13 +1367,13 @@ top_tr_circos <- function(
 
       ## List the chromosome and start for probes
       ## linked to given gene as end points on circos:
-      circos_end_chromosome <- hg38_450k_probe_info[
+      circos_end_chromosome <- hg38_manifest_no_NA_granges_df[
         linked_CpGs,
         'chr'
       ]
 
       circos_end_position <- (
-        hg38_450k_probe_info[
+        hg38_manifest_no_NA_granges_df[
           linked_CpGs,
           'start'
         ]+1

@@ -1,30 +1,31 @@
-#' get_diffmeth_regions
+#' step2_get_diffmeth_regions
 #'
 #' This is the step2 function of the TENETR package.
-#' This function first identifies hm450 DNA methylation probes
-#' that fall within enhancer regions based on enhancer and open chromatin
-#' datasets from the step1 make_external_datasets function as well as
-#' a specified distance from GENCODE v22 transcript TSS.
+#' This function identifies DNA methylation probes that mark putative enhancer
+#' regions. These are probes that lie within at least one enhancer and open chromatin
+#' dataset from the step1_make_external_datasets function and which are located
+#' a user-specified distance from GENCODE v22 transcript transcription start sites.
 #' After identifying enhancer DNA methylation probes, the function classifies
-#' them as methylated/unmethylated or hypermethylated/hypomethylated based on
-#' their differential methylation between the control/normal and
-#' experimental/tumor samples, based on input parameters from the user
+#' the probes as methylated, unmethylated, hypermethylated, or hypomethylated
+#' based on their differential methylation between the control/normal and
+#' experimental/tumor samples supplied by the user, defined by the cutoff values
+#' also specified by the user.
 #'
-#'
-#' @param TENET_directory Set a path to the directory that contains the step1 directory created by make_external_datasets function as well as the .rda file containing methylation and expression data.
-#' @param TSS_dist Set a number to be the buffer in base pairs from GENCODE v22-annotated transcription start sites for DNA methylation probes to not be considered enhancer probes.
+#' @param TENET_directory Set a path to the TENET directory containing the 'step1' subdirectory and results created by the step1_make_external_datasets function as well as a user-supplied .rda file containing methylation and expression data. This function will also create a new 'step2' subdirectory there containing the results of this function.
+#' @param DNA_methylation_manifest Set to 'HM27', 'HM450', or 'EPIC' depending on the DNA methylation array of interest for the user's data. hg38 array annotations come from https://zwdzwd.github.io/InfiniumAnnotation. Defaults to 'HM450'.
+#' @param TSS_dist Set a positive integer to be the buffer in base pairs from GENCODE v22-annotated transcription start sites for DNA methylation probes to not be considered enhancer probes.
 #' @param methcutoff Set a number from 0 to 1 to be the beta-value cutoff for methylated probes.
 #' @param hypomethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypomethylated probes. Should be set lower than the methcutoff.
 #' @param unmethcutoff Set a number from 0 to 1 to be the beta-value cutoff for unmethylated probes.
 #' @param hypermethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes. Should be set higher than the unmethcutoff.
-#' @param minExp Sets the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups.
+#' @param minExp Set a positive integer to be the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups. Should be less than or equal to the total number of experimental/tumor groups
 #' @param use_purity_data Set TRUE or FALSE to use purity datasets, as .rda files containing DNA methylation values supplied by the user in a 'purity' subdirectory in the TENET_directory, to select for DNA methylation probes not potentially due to differences in cell type purity.
-#' @return Returns two objects including a .rda file with matrices of methylation and expression data for the four quadrants in control/normal and experimental/tumor samples, the clinical data, as well as the used parameters. Also outputs a simple .txt file containing metrics on the number of probes found in different categories.
+#' @return Returns two objects, a .rda file with matrices of methylation and expression data for the four types of identified enhancer DNA methylation probes in control/normal and experimental/tumor samples, the clinical data, as well as the user-set parameters for consistency in downstream analyses. Also outputs a .txt file containing metrics on the number of probes found in different categories.
 #' @export
 
-## Write the get_diffmeth_regions function:
-get_diffmeth_regions <- function(
+step2_get_diffmeth_regions <- function(
   TENET_directory,
+  DNA_methylation_manifest,
   TSS_dist,
   methcutoff,
   hypomethcutoff,
@@ -50,54 +51,83 @@ get_diffmeth_regions <- function(
     )
   )
 
-  ## Create a step2 directory to deposit overlapped probe files:
-  dir.create(
-    paste(
-      TENET_directory,
-      'step2/',
-      sep=''
+  ## Create a step2 directory to deposit overlapped probe files if it doesn't
+  ## already exist:
+  if(
+    !dir.exists(
+      paste(
+        TENET_directory,
+        'step2/',
+        sep=''
+      )
     )
-  )
+  ){
 
-  ## Load the hg38 450k annotations:
-  hg38_hm450_df <- TENETR.data::hm450_hg38_annotations
-  rownames(hg38_hm450_df) <- hg38_hm450_df$probeID
+    dir.create(
+      paste(
+        TENET_directory,
+        'step2/',
+        sep=''
+      )
+    )
+  }
 
-  ## Create a modified dataframe of the hg38 450k annotations
+  ## Load the hg38 DNA methylation annotations:
+  ## Written in by Zexun Wu
+  if(DNA_methylation_manifest == "HM450" | missing(DNA_methylation_manifest)){
+
+    hg38_manifest_df <- TENETR.data::hm450_hg38_annotations
+
+  } else if (DNA_methylation_manifest == "HM27") {
+
+    hg38_manifest_df <- TENETR.data::hm27_hg38_annotations
+
+  } else if (DNA_methylation_manifest == "EPIC") {
+
+    hg38_manifest_df <- TENETR.data::epic_hg38_annotations
+
+  } else {
+
+    stop("The input for DNA_methylation_manifest is incorrect. Please select one from \"HM450\",\"HM27\",\"EPIC\"!")
+
+  }
+
+  ## Set the rownames of the loaded manifest to be the probeIDs:
+  rownames(hg38_manifest_df) <- hg38_manifest_df$probeID
+
+  ## Create a modified dataframe of the hg38 DNA methylation probe annotations
   ## to later convert to granges:
-  hg38_450_annotations_granges_df <- data.frame(
-    'chr'= hg38_hm450_df$CpG_chrm,
-    'start'= hg38_hm450_df$CpG_beg,
-    'end'= hg38_hm450_df$CpG_end,
+  hg38_manifest_granges_df <- data.frame(
+    'chr'= hg38_manifest_df$CpG_chrm,
+    'start'= hg38_manifest_df$CpG_beg,
+    'end'= hg38_manifest_df$CpG_end,
     'strand'= rep(
       '*',
-      nrow(hg38_hm450_df)
+      nrow(hg38_manifest_df)
     ),
-    'names' = hg38_hm450_df$probeID,
+    'names' = hg38_manifest_df$probeID,
     stringsAsFactors = FALSE
   )
 
-  ## Remove the big hm450 dataframe:
-  rm(hg38_hm450_df)
+  ## Remove the big manifest dataframe:
+  rm(hg38_manifest_df)
 
   ## Remove the probes that have NA values:
-  hg38_450_annotations_no_NA_granges_df <- hg38_450_annotations_granges_df[
-    !is.na(hg38_450_annotations_granges_df$chr),
+  hg38_manifest_no_NA_granges_df <- hg38_manifest_granges_df[
+    !is.na(hg38_manifest_granges_df$chr),
   ]
 
-  rownames(hg38_450_annotations_no_NA_granges_df) <- hg38_450_annotations_no_NA_granges_df$names
-
   ## Remove the dataset with NA probes:
-  rm(hg38_450_annotations_granges_df)
+  rm(hg38_manifest_granges_df)
 
   ## Create a granges object from the new
-  ## hg38 450k annotations with no NA df:
-  hg38_450_annotations_granges <- GenomicRanges::makeGRangesFromDataFrame(
-    df= hg38_450_annotations_no_NA_granges_df,
+  ## hg38 annotations with no NA df:
+  hg38_manifest_annotations_granges <- GenomicRanges::makeGRangesFromDataFrame(
+    df= hg38_manifest_no_NA_granges_df,
     keep.extra.columns = FALSE,
     starts.in.df.are.0based = TRUE
   )
-  names(hg38_450_annotations_granges) <- hg38_450_annotations_no_NA_granges_df$names
+  names(hg38_manifest_annotations_granges) <- hg38_manifest_no_NA_granges_df$names
 
   ## Get the dataset of gencode v22 genes:
   gencode_v22_gtf <- TENETR.data::gencode_v22_annotations
@@ -171,13 +201,13 @@ get_diffmeth_regions <- function(
 
   # find probes not overlap with TSS windows
   nonTSS_probes <- rownames(
-    hg38_450_annotations_no_NA_granges_df[
+    hg38_manifest_no_NA_granges_df[
       setdiff(
-        1:nrow(hg38_450_annotations_no_NA_granges_df),
+        1:nrow(hg38_manifest_no_NA_granges_df),
         unique(
           S4Vectors::queryHits(
             GenomicRanges::findOverlaps(
-              hg38_450_annotations_granges,
+              hg38_manifest_annotations_granges,
               gencode_v22_TSS_granges
             )
           )
@@ -187,7 +217,7 @@ get_diffmeth_regions <- function(
   )
 
   ## Clear the workspace:
-  rm(gencode_v22_TSS_df, gencode_v22_TSS_granges, hg38_450_annotations_granges)
+  rm(gencode_v22_TSS_df, gencode_v22_TSS_granges, hg38_manifest_annotations_granges)
 
   ## Now that non-TSS probes have been identified, let's import the
   ## Enhancer + NDR probes from step1:
@@ -354,10 +384,17 @@ get_diffmeth_regions <- function(
 
     ## Clear workspace:
     rm(
-      custom_filelist_probelist, custom_placeholder, ENH_custom_filelist_probelist,
-       ENH_directories, ENH_filelist_placeholder, ENH_filelist_probelist,
-       NDR_custom_filelist_probelist, NDR_directories, NDR_filelist_placeholder,
-       NDR_filelist_probelist, step1_directories
+      custom_filelist_probelist,
+      custom_placeholder,
+      ENH_custom_filelist_probelist,
+      ENH_directories,
+      ENH_filelist_placeholder,
+      ENH_filelist_probelist,
+      NDR_custom_filelist_probelist,
+      NDR_directories,
+      NDR_filelist_placeholder,
+      NDR_filelist_probelist,
+      step1_directories
     )
 
     ## Now for each of the probelist files assembled,
@@ -553,12 +590,12 @@ get_diffmeth_regions <- function(
     ## Next match the genes in the methylation datasets with those
     ## from the hm450 array annotation
     matched_probes_control <- intersect(
-      hg38_450_annotations_no_NA_granges_df$names,
+      hg38_manifest_no_NA_granges_df$names,
       rownames(metDataN)
     )
 
     matched_probes_experimental <- intersect(
-      hg38_450_annotations_no_NA_granges_df$names,
+      hg38_manifest_no_NA_granges_df$names,
       rownames(metDataT)
     )
 
@@ -617,25 +654,25 @@ get_diffmeth_regions <- function(
     if(length(matched_probes_control)==0 & length(matched_probes_experimental)==0){
 
       stop(
-        "No HM450 probes were found in the methylation datasets. /nPlease reload the methylation datasets with HM450 probe IDs in the rownames."
+        "No DNA methylation probes of the specified array were found in the methylation datasets. /nPlease reload the methylation datasets with HM450 probe IDs in the rownames."
       )
 
     } else if(length(matched_probes_control)==0){
 
       stop(
-        "No HM450 probes were found in the control (normal) methylation dataset. /nPlease reload the methylation dataset with HM450 probe IDs in the rownames."
+        "No DNA methylation probes of the specified array were found in the control (normal) methylation dataset. /nPlease reload the methylation dataset with HM450 probe IDs in the rownames."
       )
 
     } else if(length(matched_probes_experimental)==0){
 
       stop(
-        "No HM450 probes were found in the experimental (tumor) methylation dataset. /nPlease reload the methylation dataset with HM450 probe IDs in the rownames."
+        "No DNA methylation probes of the specified array were found in the experimental (tumor) methylation dataset. /nPlease reload the methylation dataset with HM450 probe IDs in the rownames."
       )
 
     } else if(length(matched_probes)==0){
 
       stop(
-        "No matched HM450 probes were found between the two methylation datasets. /nPlease reload the methylation datasets with HM450 probe IDs in the rownames."
+        "No matched DNA methylation probes of the specified array were found between the two methylation datasets. /nPlease reload the methylation datasets with HM450 probe IDs in the rownames."
       )
 
     }
@@ -1011,7 +1048,7 @@ get_diffmeth_regions <- function(
         ## Next match the genes in the expression datasets with those
         ## from the GENCODE v22 annotation:
         matched_probes_purity_dataset <- intersect(
-          hg38_450_annotations_no_NA_granges_df$names,
+          hg38_manifest_no_NA_granges_df$names,
           rownames(get(purity_rda_content_vector[i]))
         )
 
@@ -1020,7 +1057,7 @@ get_diffmeth_regions <- function(
 
           stop(
             paste(
-              'No HM450 probes were found in the',
+              'No DNA methylation probes of the specified array were found in the',
               purity_file_list_trunc[i],
               'purity dataset. /nPlease reload the purity dataset with HM450 probe IDs in the rownames.',
               sep=' '
@@ -1050,7 +1087,7 @@ get_diffmeth_regions <- function(
 
           stop(
             paste(
-              'No HM450 probes were found overlapping between the',
+              'No DNA methylation probes of the specified array were found overlapping between the',
               purity_file_list_trunc[i],
               'purity dataset, and the uploaded control (normal) experimental (tumor) methylation datasets. /nPlease check these datasets, which should include HM450 probe IDs in the rownames.',
               sep=' '
@@ -1105,7 +1142,7 @@ get_diffmeth_regions <- function(
 
           stop(
             paste(
-              'No non-NA HM450 probes were found overlapping between the',
+              'No non-NA DNA methylation probes of the specified array were found overlapping between the',
               purity_file_list_trunc[i],
               'purity dataset, and the uploaded control (normal) experimental (tumor) methylation datasets. /nPlease check these datasets, making sure the probes have non-NA values and HM450 probe IDs in the rownames.',
               sep=' '
@@ -1520,7 +1557,7 @@ get_diffmeth_regions <- function(
 
     ## Step1 directory does not exist. Return an error:
     stop(
-      'Step1 directory was not found. \nPlease rerun make_external_datasets or create a directory called step1 \nand add your own custom .probelist.txt files to it.'
+      'Step1 directory was not found. \nPlease rerun step1_make_external_datasets or create a directory called step1 \nand add your own custom .probelist.txt files to it.'
     )
   }
 }

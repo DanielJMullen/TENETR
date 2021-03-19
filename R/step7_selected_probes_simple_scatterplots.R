@@ -1,23 +1,22 @@
-#' top_tr_simple_scatterplots_selected_probes
+#' step7_selected_probes_simple_scatterplots
 #'
 #' This is a step7 function of the TENETR package.
-#' This function takes a custom list of probes specified by the user
+#' This function takes a custom list of DNA methylation probes specified by the user
 #' and generates scatterplots displaying the expression level of the genes
-#' linked to these probes in the specified analysis types, i.e.e hyper/hypo
-#' Gplus/Gminus
+#' linked to these probes for each of the four hypo or hypermethylated
+#' Gplus or Gminus analysis quadrants, as selected by the user.
 #'
-#'
-#' @param TENET_directory Set a path to the directory that contains step6 results from the top_tr_tabulation function. This function will also create a new step7 folder there if it has not been created, with a subdirectory with 'simple_scatterplots' containing the results.
-#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create histograms for the top TRs by most hypermeth probes with G+ links.
-#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypermeth probes with G- links.
-#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypometh probes with G+ links.
-#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create histograms for the top TRs by most hypometh probes with G- links.1
-#' @param probe_list Supply a vector of probe names for which scatterplots for those probs with expression of any linked genes of the specified analysis types above will be generated.
+#' @param TENET_directory Set a path to the TENET directory containing the 'step6' subdirectory and results created by the step6_probe_per_gene_tabulation function. This function will also create a new 'step7' subdirectory there, if not already created, with an additional a subdirectory 'selected_probes_simple_scatterplots' containing the results of this function.
+#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create scatterplots for the user-supplied probes with all genes the probes may have hypermeth Gplus links to.
+#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to create scatterplots for the user-supplied probes with all genes the probes may have hypermeth Gminus links to.
+#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to create scatterplots for the user-supplied probes with all genes the probes may have hypometh Gplus links to.
+#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to create scatterplots for the user-supplied probes with all genes the probes may have hypometh Gminus links to.
+#' @param probe_list Supply a vector of DNA methylation probe names for which scatterplots of those probes with expression of any linked genes of the specified analysis types above will be generated.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
-#' @return Currently returns .pdf files with scatterplots showing the expression of the genes linked to the specified probes on the x-axis and the methylation the probes on the y-axis.
+#' @return Currently returns .pdf files with scatterplots showing the expression of any genes linked to the specified probes on the x-axis and the methylation level of the probes on the y-axis.
 #' @export
 
-top_tr_simple_scatterplots_selected_probes <- function(
+step7_selected_probes_simple_scatterplots <- function(
   TENET_directory,
   hypermeth_Gplus_analysis,
   hypermeth_Gminus_analysis,
@@ -157,7 +156,7 @@ top_tr_simple_scatterplots_selected_probes <- function(
   } else{
 
     # Return an error message that the file wasn't found:
-    stop('diff.methylated.datasets.rda in step2 of TENET directory was not found. Please check that the file exists and consider rerunning the step2 get_diffmeth_regions function.')
+    stop('diff.methylated.datasets.rda in step2 of TENET directory was not found. Please check that the file exists and consider rerunning the step2_get_diffmeth_regions function.')
   }
 
   ## Combine the methylation and expression data from both tumor and normal samples:
@@ -216,7 +215,7 @@ top_tr_simple_scatterplots_selected_probes <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gplus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
   }
@@ -251,7 +250,7 @@ top_tr_simple_scatterplots_selected_probes <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gminus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
   }
@@ -286,7 +285,7 @@ top_tr_simple_scatterplots_selected_probes <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gplus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
   }
@@ -321,7 +320,7 @@ top_tr_simple_scatterplots_selected_probes <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gminus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
   }

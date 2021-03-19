@@ -1,25 +1,29 @@
-#' top_tr_ucsc_bed_files
+#' step7_top_genes_UCSC_bed_files
 #'
 #' This is a step7 function of the TENETR package.
 #' This function takes the top genes/TFs by number of linked probes identified from
-#' the step6 top_tr_tabulation function up to the number as specified by the user
-#' and generates bed files that can be uploaded to the UCSC genome browser displaying the
-#' links between each of the top specified genes/enhancers of the given analysis types
-#' and their linked enhancer probes.
+#' the step6_probe_per_gene_tabulation function up to the number as specified by the user
+#' and generates interact files see: https://genome.ucsc.edu/goldenPath/help/interact.html
+#' that can be uploaded to the UCSC genome browser and visualize the
+#' links between each of the top specified genes/TFs and the enhancer probes linked
+#' to them for each of the four hypo or hypermethylated Gplus or Gminus analysis quadrants,
+#' as selected by the user.
 #'
-#'
-#' @param TENET_directory Set a path to the directory that contains step6 results from the top_tr_tabulation function. This function will also create a new step7 folder there if it has not been created, with a subdirectory with 'scatterplots' containing subfolders the results for the top genes and top TFs separately.
-#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create bed files that can be uploaded to the UCSC genome browser showing links between the top genes/TRs by most hypermeth probes with G+ links, and said linked probes.
-#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create bed files that can be uploaded to the UCSC genome browser showing links between the top genes/TRs by most hypermeth probes with G- links, and said linked probes.
-#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create bed files that can be uploaded to the UCSC genome browser showing links between the top genes/TRs by most hypometh probes with G+ links, and said linked probes.
-#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create bed files that can be uploaded to the UCSC genome browser showing links between the top genes/TRs by most hypometh probes with G- links, and said linked probes.
-#' @param top_gene_number Specify a number to generate TAD tables for the probes linked to that many of the top genes/TFs based on the most linked enhancer probes.
+#' @param TENET_directory Set a path to the TENET directory containing the 'step6' subdirectory and results created by the step6_probe_per_gene_tabulation function. This function will also create a new 'step7' subdirectory there, if not already created, with further subdirectories for each of the four analysis types selected, ending with '_UCSC_bed_files' containing the results of this function.
+#' @param DNA_methylation_manifest Set to 'HM27', 'HM450', or 'EPIC' depending on the DNA methylation array of interest for the user's data. hg38 array annotations come from https://zwdzwd.github.io/InfiniumAnnotation. Defaults to 'HM450'.
+#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create TAD tables for the enhancer probes linked to the top genes/TFs by most hypermeth probes with G+ links.
+#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to create interact .bed files that can be uploaded to the UCSC genome browser showing links between the top genes/TFs by most hypermeth probes with G+ links, and said linked probes.
+#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create interact .bed files that can be uploaded to the UCSC genome browser showing links between the top genes/TFs by most hypermeth probes with G- links, and said linked probes.
+#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to to create interact .bed files that can be uploaded to the UCSC genome browser showing links between the top genes/TFs by most hypometh probes with G+ links, and said linked probes.
+#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to to create interact .bed files that can be uploaded to the UCSC genome browser showing links between the top genes/TFs by most hypometh probes with G- links, and said linked probes.
+#' @param top_gene_number Specify a number of the top genes/TFs based on the most linked enhancer probes to generate interact bed files for showing the links between the genes and each of their linked enhancer probes.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
-#' @return Exports .bed formatted files that act as an interact file for uploading to the UCSC genome browser see: https://genome.ucsc.edu/goldenPath/help/interact.html. These files display the interactions between the top genes/TFs as noted by the user, and each of the linked enhancer probes to each individual gene for given analysis types.
+#' @return Exports .bed formatted interact files to upload to the UCSC genome browser. These files display the interactions between the top genes/TFs and their linked enhancer probes for the given analysis types.
 #' @export
 
-top_tr_ucsc_bed_files <- function(
+step7_top_genes_UCSC_bed_files <- function(
   TENET_directory,
+  DNA_methylation_manifest,
   hypermeth_Gplus_analysis,
   hypermeth_Gminus_analysis,
   hypometh_Gplus_analysis,
@@ -113,33 +117,62 @@ top_tr_ucsc_bed_files <- function(
   ## Remove the unneeded gtf file:
   rm(gencode_v22_gtf)
 
-  ## Load the hg38 450k annotations:
-  hg38_hm450_df <- TENETR.data::hm450_hg38_annotations
-  rownames(hg38_hm450_df) <- hg38_hm450_df$probeID
+  ## Load the hg38 DNA methylation annotations:
+  ## Written in by Zexun Wu
+  if (DNA_methylation_manifest == "HM450" | missing(DNA_methylation_manifest)) {
 
-  ## Create a modified dataframe of the hg38 450k annotations
+    hg38_manifest_df <- TENETR.data::hm450_hg38_annotations
+
+  } else if (DNA_methylation_manifest == "HM27") {
+
+    hg38_manifest_df <- TENETR.data::hm27_hg38_annotations
+
+  } else if (DNA_methylation_manifest == "EPIC") {
+
+    hg38_manifest_df <- TENETR.data::epic_hg38_annotations
+
+  } else {
+
+    stop("The input for DNA_methylation_manifest is incorrect. Please select one from \"HM450\",\"HM27\",\"EPIC\"!")
+
+  }
+
+  ## Set the rownames of the loaded manifest to be the probeIDs:
+  rownames(hg38_manifest_df) <- hg38_manifest_df$probeID
+
+  ## Create a modified dataframe of the hg38 DNA methylation probe annotations
   ## to later convert to granges:
-  hg38_450k_probe_info <- data.frame(
-    'chr'= hg38_hm450_df$CpG_chrm,
-    'start'= hg38_hm450_df$CpG_beg,
-    'end'= hg38_hm450_df$CpG_end,
+  hg38_manifest_granges_df <- data.frame(
+    'chr'= hg38_manifest_df$CpG_chrm,
+    'start'= hg38_manifest_df$CpG_beg,
+    'end'= hg38_manifest_df$CpG_end,
     'strand'= rep(
       '*',
-      nrow(hg38_hm450_df)
+      nrow(hg38_manifest_df)
     ),
-    'names' = hg38_hm450_df$probeID,
+    'names' = hg38_manifest_df$probeID,
     stringsAsFactors = FALSE
   )
 
-  ## Remove the big hm450 dataframe:
-  rm(hg38_hm450_df)
+  ## Remove the big manifest dataframe:
+  rm(hg38_manifest_df)
 
   ## Remove the probes that have NA values:
-  hg38_450k_probe_info <- hg38_450k_probe_info[
-    !is.na(hg38_450k_probe_info$chr),
+  hg38_manifest_no_NA_granges_df <- hg38_manifest_granges_df[
+    !is.na(hg38_manifest_granges_df$chr),
   ]
 
-  rownames(hg38_450k_probe_info) <- hg38_450k_probe_info$names
+  ## Remove the dataset with NA probes:
+  rm(hg38_manifest_granges_df)
+
+  ## Create a granges object from the new
+  ## hg38 annotations with no NA df:
+  hg38_manifest_annotations_granges <- GenomicRanges::makeGRangesFromDataFrame(
+    df= hg38_manifest_no_NA_granges_df,
+    keep.extra.columns = FALSE,
+    starts.in.df.are.0based = TRUE
+  )
+  names(hg38_manifest_annotations_granges) <- hg38_manifest_no_NA_granges_df$names
 
   ## Generate results for hypermeth Gplus probes:
   if(hypermeth_Gplus_analysis==TRUE){
@@ -194,7 +227,7 @@ top_tr_ucsc_bed_files <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gplus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
 
@@ -225,17 +258,17 @@ top_tr_ucsc_bed_files <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
-    ## Check that the hyper_Gplus_links_all_TR_freq.txt file exists:
+    ## Check that the hyper_Gplus_links_all_TF_freq.txt file exists:
     if(
       file.exists(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gplus_links_all_TR_freq.txt',
+          'hyper_Gplus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -246,7 +279,7 @@ top_tr_ucsc_bed_files <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gplus_links_all_TR_freq.txt',
+          'hyper_Gplus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -256,7 +289,7 @@ top_tr_ucsc_bed_files <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gplus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gplus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -328,7 +361,7 @@ top_tr_ucsc_bed_files <- function(
         'gene_name'
       ]
 
-      ## Get a list of all the CpGs linked to the given TR:
+      ## Get a list of all the CpGs linked to the given TF:
       linked_CpGs <- unique(
         hyper_Gplus_sig_link_zscores[
           hyper_Gplus_sig_link_zscores$geneID==gene_ENSG,
@@ -367,7 +400,7 @@ top_tr_ucsc_bed_files <- function(
         'gene_name'
       ]
 
-      ## Get a list of all the CpGs linked to the given TR:
+      ## Get a list of all the CpGs linked to the given TF:
       linked_CpGs <- unique(
         hyper_Gplus_sig_link_zscores[
           hyper_Gplus_sig_link_zscores$geneID==TF_ENSG,
@@ -431,32 +464,32 @@ top_tr_ucsc_bed_files <- function(
 
     ## For each of the probes in the intersect dfs
     ## get the chromosome, "start", and "end" of the probe:
-    top_hyper_Gplus_all_genes_intersect_df$CpG_chr <- hg38_450k_probe_info[
+    top_hyper_Gplus_all_genes_intersect_df$CpG_chr <- hg38_manifest_no_NA_granges_df[
       top_hyper_Gplus_all_genes_intersect_df$CpG_ID,
       'chr'
     ]
 
-    top_hyper_Gplus_all_genes_intersect_df$CpG_start <- hg38_450k_probe_info[
+    top_hyper_Gplus_all_genes_intersect_df$CpG_start <- hg38_manifest_no_NA_granges_df[
       top_hyper_Gplus_all_genes_intersect_df$CpG_ID,
       'start'
     ]
 
-    top_hyper_Gplus_all_genes_intersect_df$CpG_end <- hg38_450k_probe_info[
+    top_hyper_Gplus_all_genes_intersect_df$CpG_end <- hg38_manifest_no_NA_granges_df[
       top_hyper_Gplus_all_genes_intersect_df$CpG_ID,
       'end'
     ]
 
-    top_hyper_Gplus_all_TFs_intersect_df$CpG_chr <- hg38_450k_probe_info[
+    top_hyper_Gplus_all_TFs_intersect_df$CpG_chr <- hg38_manifest_no_NA_granges_df[
       top_hyper_Gplus_all_TFs_intersect_df$CpG_ID,
       'chr'
     ]
 
-    top_hyper_Gplus_all_TFs_intersect_df$CpG_start <- hg38_450k_probe_info[
+    top_hyper_Gplus_all_TFs_intersect_df$CpG_start <- hg38_manifest_no_NA_granges_df[
       top_hyper_Gplus_all_TFs_intersect_df$CpG_ID,
       'start'
     ]
 
-    top_hyper_Gplus_all_TFs_intersect_df$CpG_end <- hg38_450k_probe_info[
+    top_hyper_Gplus_all_TFs_intersect_df$CpG_end <- hg38_manifest_no_NA_granges_df[
       top_hyper_Gplus_all_TFs_intersect_df$CpG_ID,
       'end'
     ]
@@ -717,7 +750,7 @@ top_tr_ucsc_bed_files <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gminus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
 
@@ -748,17 +781,17 @@ top_tr_ucsc_bed_files <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
-    ## Check that the hyper_Gminus_links_all_TR_freq.txt file exists:
+    ## Check that the hyper_Gminus_links_all_TF_freq.txt file exists:
     if(
       file.exists(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gminus_links_all_TR_freq.txt',
+          'hyper_Gminus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -769,7 +802,7 @@ top_tr_ucsc_bed_files <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hyper_Gminus_links_all_TR_freq.txt',
+          'hyper_Gminus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -779,7 +812,7 @@ top_tr_ucsc_bed_files <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hyper_Gminus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hyper_Gminus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -851,7 +884,7 @@ top_tr_ucsc_bed_files <- function(
         'gene_name'
       ]
 
-      ## Get a list of all the CpGs linked to the given TR:
+      ## Get a list of all the CpGs linked to the given TF:
       linked_CpGs <- unique(
         hyper_Gminus_sig_link_zscores[
           hyper_Gminus_sig_link_zscores$geneID==gene_ENSG,
@@ -890,7 +923,7 @@ top_tr_ucsc_bed_files <- function(
         'gene_name'
       ]
 
-      ## Get a list of all the CpGs linked to the given TR:
+      ## Get a list of all the CpGs linked to the given TF:
       linked_CpGs <- unique(
         hyper_Gminus_sig_link_zscores[
           hyper_Gminus_sig_link_zscores$geneID==TF_ENSG,
@@ -954,32 +987,32 @@ top_tr_ucsc_bed_files <- function(
 
     ## For each of the probes in the intersect dfs
     ## get the chromosome, "start", and "end" of the probe:
-    top_hyper_Gminus_all_genes_intersect_df$CpG_chr <- hg38_450k_probe_info[
+    top_hyper_Gminus_all_genes_intersect_df$CpG_chr <- hg38_manifest_no_NA_granges_df[
       top_hyper_Gminus_all_genes_intersect_df$CpG_ID,
       'chr'
     ]
 
-    top_hyper_Gminus_all_genes_intersect_df$CpG_start <- hg38_450k_probe_info[
+    top_hyper_Gminus_all_genes_intersect_df$CpG_start <- hg38_manifest_no_NA_granges_df[
       top_hyper_Gminus_all_genes_intersect_df$CpG_ID,
       'start'
     ]
 
-    top_hyper_Gminus_all_genes_intersect_df$CpG_end <- hg38_450k_probe_info[
+    top_hyper_Gminus_all_genes_intersect_df$CpG_end <- hg38_manifest_no_NA_granges_df[
       top_hyper_Gminus_all_genes_intersect_df$CpG_ID,
       'end'
     ]
 
-    top_hyper_Gminus_all_TFs_intersect_df$CpG_chr <- hg38_450k_probe_info[
+    top_hyper_Gminus_all_TFs_intersect_df$CpG_chr <- hg38_manifest_no_NA_granges_df[
       top_hyper_Gminus_all_TFs_intersect_df$CpG_ID,
       'chr'
     ]
 
-    top_hyper_Gminus_all_TFs_intersect_df$CpG_start <- hg38_450k_probe_info[
+    top_hyper_Gminus_all_TFs_intersect_df$CpG_start <- hg38_manifest_no_NA_granges_df[
       top_hyper_Gminus_all_TFs_intersect_df$CpG_ID,
       'start'
     ]
 
-    top_hyper_Gminus_all_TFs_intersect_df$CpG_end <- hg38_450k_probe_info[
+    top_hyper_Gminus_all_TFs_intersect_df$CpG_end <- hg38_manifest_no_NA_granges_df[
       top_hyper_Gminus_all_TFs_intersect_df$CpG_ID,
       'end'
     ]
@@ -1240,7 +1273,7 @@ top_tr_ucsc_bed_files <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gplus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
 
@@ -1271,17 +1304,17 @@ top_tr_ucsc_bed_files <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gplus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
-    ## Check that the hypo_Gplus_links_all_TR_freq.txt file exists:
+    ## Check that the hypo_Gplus_links_all_TF_freq.txt file exists:
     if(
       file.exists(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gplus_links_all_TR_freq.txt',
+          'hypo_Gplus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -1292,7 +1325,7 @@ top_tr_ucsc_bed_files <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gplus_links_all_TR_freq.txt',
+          'hypo_Gplus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -1302,7 +1335,7 @@ top_tr_ucsc_bed_files <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gplus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gplus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -1374,7 +1407,7 @@ top_tr_ucsc_bed_files <- function(
         'gene_name'
       ]
 
-      ## Get a list of all the CpGs linked to the given TR:
+      ## Get a list of all the CpGs linked to the given TF:
       linked_CpGs <- unique(
         hypo_Gplus_sig_link_zscores[
           hypo_Gplus_sig_link_zscores$geneID==gene_ENSG,
@@ -1413,7 +1446,7 @@ top_tr_ucsc_bed_files <- function(
         'gene_name'
       ]
 
-      ## Get a list of all the CpGs linked to the given TR:
+      ## Get a list of all the CpGs linked to the given TF:
       linked_CpGs <- unique(
         hypo_Gplus_sig_link_zscores[
           hypo_Gplus_sig_link_zscores$geneID==TF_ENSG,
@@ -1477,32 +1510,32 @@ top_tr_ucsc_bed_files <- function(
 
     ## For each of the probes in the intersect dfs
     ## get the chromosome, "start", and "end" of the probe:
-    top_hypo_Gplus_all_genes_intersect_df$CpG_chr <- hg38_450k_probe_info[
+    top_hypo_Gplus_all_genes_intersect_df$CpG_chr <- hg38_manifest_no_NA_granges_df[
       top_hypo_Gplus_all_genes_intersect_df$CpG_ID,
       'chr'
     ]
 
-    top_hypo_Gplus_all_genes_intersect_df$CpG_start <- hg38_450k_probe_info[
+    top_hypo_Gplus_all_genes_intersect_df$CpG_start <- hg38_manifest_no_NA_granges_df[
       top_hypo_Gplus_all_genes_intersect_df$CpG_ID,
       'start'
     ]
 
-    top_hypo_Gplus_all_genes_intersect_df$CpG_end <- hg38_450k_probe_info[
+    top_hypo_Gplus_all_genes_intersect_df$CpG_end <- hg38_manifest_no_NA_granges_df[
       top_hypo_Gplus_all_genes_intersect_df$CpG_ID,
       'end'
     ]
 
-    top_hypo_Gplus_all_TFs_intersect_df$CpG_chr <- hg38_450k_probe_info[
+    top_hypo_Gplus_all_TFs_intersect_df$CpG_chr <- hg38_manifest_no_NA_granges_df[
       top_hypo_Gplus_all_TFs_intersect_df$CpG_ID,
       'chr'
     ]
 
-    top_hypo_Gplus_all_TFs_intersect_df$CpG_start <- hg38_450k_probe_info[
+    top_hypo_Gplus_all_TFs_intersect_df$CpG_start <- hg38_manifest_no_NA_granges_df[
       top_hypo_Gplus_all_TFs_intersect_df$CpG_ID,
       'start'
     ]
 
-    top_hypo_Gplus_all_TFs_intersect_df$CpG_end <- hg38_450k_probe_info[
+    top_hypo_Gplus_all_TFs_intersect_df$CpG_end <- hg38_manifest_no_NA_granges_df[
       top_hypo_Gplus_all_TFs_intersect_df$CpG_ID,
       'end'
     ]
@@ -1763,7 +1796,7 @@ top_tr_ucsc_bed_files <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gminus_sig_link_zscores_perm_optimized.txt in step5 of TENET directory was not found. Please check that the file exists and consider rerunning the step5_optimize_links function.')
 
     }
 
@@ -1794,17 +1827,17 @@ top_tr_ucsc_bed_files <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gminus_links_all_gene_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
-    ## Check that the hypo_Gminus_links_all_TR_freq.txt file exists:
+    ## Check that the hypo_Gminus_links_all_TF_freq.txt file exists:
     if(
       file.exists(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gminus_links_all_TR_freq.txt',
+          'hypo_Gminus_links_all_TF_freq.txt',
           sep=''
         )
       )
@@ -1815,7 +1848,7 @@ top_tr_ucsc_bed_files <- function(
         paste(
           TENET_directory,
           'step6/',
-          'hypo_Gminus_links_all_TR_freq.txt',
+          'hypo_Gminus_links_all_TF_freq.txt',
           sep=''
         ),
         header= TRUE,
@@ -1825,7 +1858,7 @@ top_tr_ucsc_bed_files <- function(
     } else{
 
       ## Return an error message that the file wasn't found:
-      stop('hypo_Gminus_links_all_TR_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6 top_tr_tabulation function.')
+      stop('hypo_Gminus_links_all_TF_freq.txt in step6 of TENET directory was not found. Please check that the file exists and consider rerunning the step6_probe_per_gene_tabulation function.')
 
     }
 
@@ -1897,7 +1930,7 @@ top_tr_ucsc_bed_files <- function(
         'gene_name'
       ]
 
-      ## Get a list of all the CpGs linked to the given TR:
+      ## Get a list of all the CpGs linked to the given TF:
       linked_CpGs <- unique(
         hypo_Gminus_sig_link_zscores[
           hypo_Gminus_sig_link_zscores$geneID==gene_ENSG,
@@ -1936,7 +1969,7 @@ top_tr_ucsc_bed_files <- function(
         'gene_name'
       ]
 
-      ## Get a list of all the CpGs linked to the given TR:
+      ## Get a list of all the CpGs linked to the given TF:
       linked_CpGs <- unique(
         hypo_Gminus_sig_link_zscores[
           hypo_Gminus_sig_link_zscores$geneID==TF_ENSG,
@@ -2000,32 +2033,32 @@ top_tr_ucsc_bed_files <- function(
 
     ## For each of the probes in the intersect dfs
     ## get the chromosome, "start", and "end" of the probe:
-    top_hypo_Gminus_all_genes_intersect_df$CpG_chr <- hg38_450k_probe_info[
+    top_hypo_Gminus_all_genes_intersect_df$CpG_chr <- hg38_manifest_no_NA_granges_df[
       top_hypo_Gminus_all_genes_intersect_df$CpG_ID,
       'chr'
     ]
 
-    top_hypo_Gminus_all_genes_intersect_df$CpG_start <- hg38_450k_probe_info[
+    top_hypo_Gminus_all_genes_intersect_df$CpG_start <- hg38_manifest_no_NA_granges_df[
       top_hypo_Gminus_all_genes_intersect_df$CpG_ID,
       'start'
     ]
 
-    top_hypo_Gminus_all_genes_intersect_df$CpG_end <- hg38_450k_probe_info[
+    top_hypo_Gminus_all_genes_intersect_df$CpG_end <- hg38_manifest_no_NA_granges_df[
       top_hypo_Gminus_all_genes_intersect_df$CpG_ID,
       'end'
     ]
 
-    top_hypo_Gminus_all_TFs_intersect_df$CpG_chr <- hg38_450k_probe_info[
+    top_hypo_Gminus_all_TFs_intersect_df$CpG_chr <- hg38_manifest_no_NA_granges_df[
       top_hypo_Gminus_all_TFs_intersect_df$CpG_ID,
       'chr'
     ]
 
-    top_hypo_Gminus_all_TFs_intersect_df$CpG_start <- hg38_450k_probe_info[
+    top_hypo_Gminus_all_TFs_intersect_df$CpG_start <- hg38_manifest_no_NA_granges_df[
       top_hypo_Gminus_all_TFs_intersect_df$CpG_ID,
       'start'
     ]
 
-    top_hypo_Gminus_all_TFs_intersect_df$CpG_end <- hg38_450k_probe_info[
+    top_hypo_Gminus_all_TFs_intersect_df$CpG_end <- hg38_manifest_no_NA_granges_df[
       top_hypo_Gminus_all_TFs_intersect_df$CpG_ID,
       'end'
     ]

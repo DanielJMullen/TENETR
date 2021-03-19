@@ -1,22 +1,22 @@
-#' top_tr_tabulation
+#' step6_probe_per_gene_tabulation
 #'
 #' This is the step6 function of the TENETR package.
-#' This function takes the identified hyper and hypomethylated probes
-#' from step2 get_diffmeth_regions function and calculates a zscore comparing
-#' the mean expression of each gene in groups that are hyper/hypomethylated for
-#' each probe, according to hypermeth and hypometh and those that are not, and permutates this across all
-#' hyper/hypomethylated probes
+#' This function takes the final optimized enhancer DNA methylation probe to gene
+#' links found from step5_optimize_links and tabulates how many of these links are
+#' found, both for each gene in the analysis as well as only accepted transcription factor
+#' genes from "The Human Transcription Factors" by Lambert et al. 2018.
+#' This tabulation is done separately for each of the four hypo or hypermethylated
+#' Gplus or Gminus analysis quadrants, as selected by the user.
 #'
-#'
-#' @param TENET_directory Set a path to the directory that contains step5 results from the optimize_links function. This function will also create a new step6 folder there containing the results.
-#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to calculate the top_trs for hypermeth probes with G+ links.
-#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to calculate the top_trs for hypermeth probes with G- links.
-#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to calculate the top_trs for hypometh probes with G+ links.
-#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to calculate the top_trs for hypometh probes with G- links.
+#' @param TENET_directory Set a path to the TENET directory containing the 'step5' subdirectory and results created by the step5_optimize_links function. This function will also create a new 'step6' subdirectory there containing the results of this function.
+#' @param hypermeth_Gplus_analysis Set to TRUE/FALSE depending on if you want to calculate total links by gene/TF for hypermeth probes with G+ links.
+#' @param hypermeth_Gminus_analysis Set to TRUE/FALSE depending on if you want to calculate total links by gene/TF for hypermeth probes with G- links.
+#' @param hypometh_Gplus_analysis Set to TRUE/FALSE depending on if you want to calculate total links by gene/TF for hypometh probes with G+ links.
+#' @param hypometh_Gminus_analysis Set to TRUE/FALSE depending on if you want to calculate total links by gene/TF for hypometh probes with G- links.
 #' @return Currently returns tab-delimited "_freq.txt" files that include all genes, or annotated TFs only, organized by decreasing number of linked probes of the given analysis type.
 #' @export
 
-top_tr_tabulation <- function(
+step6_probe_per_gene_tabulation <- function(
   TENET_directory,
   hypermeth_Gplus_analysis,
   hypermeth_Gminus_analysis,
@@ -55,13 +55,24 @@ top_tr_tabulation <- function(
   )
 
   ## Create a step6 directory to deposit the output the tabulation files:
-  dir.create(
-    paste(
-      TENET_directory,
-      'step6/',
-      sep=''
+  if(
+    !dir.exists(
+      paste(
+        TENET_directory,
+        'step6/',
+        sep=''
+      )
     )
-  )
+  ){
+
+    dir.create(
+      paste(
+        TENET_directory,
+        'step6/',
+        sep=''
+      )
+    )
+  }
 
   ## Get the dataset of gencode v22 genes:
   gencode_v22_gtf <- TENETR.data::gencode_v22_annotations
@@ -77,12 +88,12 @@ top_tr_tabulation <- function(
     gencode_v22_genes$gene_id
   )
 
-  ## Get the TR only info:
-  TR_dataset <- TENETR.data::human_transcription_factors_dataset
+  ## Get the TF only info:
+  TF_dataset <- TENETR.data::human_transcription_factors_dataset
 
-  ## Get the accepted TRs out of the set:
-  TR_gene_ID <- TR_dataset[
-    TR_dataset$Is.TF.=='Yes',
+  ## Get the accepted TFs out of the set:
+  TF_gene_ID <- TF_dataset[
+    TF_dataset$Is.TF.=='Yes',
     'Ensembl.ID'
   ]
 
@@ -162,18 +173,18 @@ top_tr_tabulation <- function(
       row.names = FALSE
     )
 
-    ## Now get only the TRs from this table:
-    hypermeth_Gplus_TR_gene_dataset <- hypermeth_Gplus_all_gene_dataset[
-      hypermeth_Gplus_all_gene_dataset$geneID %in% TR_gene_ID,
+    ## Now get only the TFs from this table:
+    hypermeth_Gplus_TF_gene_dataset <- hypermeth_Gplus_all_gene_dataset[
+      hypermeth_Gplus_all_gene_dataset$geneID %in% TF_gene_ID,
     ]
 
-    ## Save that dataset as TR only dataset:
+    ## Save that dataset as TF only dataset:
     write.table(
-      hypermeth_Gplus_TR_gene_dataset,
+      hypermeth_Gplus_TF_gene_dataset,
       file= paste(
         TENET_directory,
         'step6/',
-        'hyper_Gplus_links_all_TR_freq.txt',
+        'hyper_Gplus_links_all_TF_freq.txt',
         sep=''
       ),
       quote= FALSE,
@@ -258,18 +269,18 @@ top_tr_tabulation <- function(
       row.names = FALSE
     )
 
-    ## Now get only the TRs from this table:
-    hypermeth_Gminus_TR_gene_dataset <- hypermeth_Gminus_all_gene_dataset[
-      hypermeth_Gminus_all_gene_dataset$geneID %in% TR_gene_ID,
+    ## Now get only the TFs from this table:
+    hypermeth_Gminus_TF_gene_dataset <- hypermeth_Gminus_all_gene_dataset[
+      hypermeth_Gminus_all_gene_dataset$geneID %in% TF_gene_ID,
     ]
 
-    ## Save that dataset as TR only dataset:
+    ## Save that dataset as TF only dataset:
     write.table(
-      hypermeth_Gminus_TR_gene_dataset,
+      hypermeth_Gminus_TF_gene_dataset,
       file= paste(
         TENET_directory,
         'step6/',
-        'hyper_Gminus_links_all_TR_freq.txt',
+        'hyper_Gminus_links_all_TF_freq.txt',
         sep=''
       ),
       quote= FALSE,
@@ -354,18 +365,18 @@ top_tr_tabulation <- function(
       row.names = FALSE
     )
 
-    ## Now get only the TRs from this table:
-    hypometh_Gplus_TR_gene_dataset <- hypometh_Gplus_all_gene_dataset[
-      hypometh_Gplus_all_gene_dataset$geneID %in% TR_gene_ID,
+    ## Now get only the TFs from this table:
+    hypometh_Gplus_TF_gene_dataset <- hypometh_Gplus_all_gene_dataset[
+      hypometh_Gplus_all_gene_dataset$geneID %in% TF_gene_ID,
     ]
 
-    ## Save that dataset as TR only dataset:
+    ## Save that dataset as TF only dataset:
     write.table(
-      hypometh_Gplus_TR_gene_dataset,
+      hypometh_Gplus_TF_gene_dataset,
       file= paste(
         TENET_directory,
         'step6/',
-        'hypo_Gplus_links_all_TR_freq.txt',
+        'hypo_Gplus_links_all_TF_freq.txt',
         sep=''
       ),
       quote= FALSE,
@@ -450,18 +461,18 @@ top_tr_tabulation <- function(
       row.names = FALSE
     )
 
-    ## Now get only the TRs from this table:
-    hypometh_Gminus_TR_gene_dataset <- hypometh_Gminus_all_gene_dataset[
-      hypometh_Gminus_all_gene_dataset$geneID %in% TR_gene_ID,
+    ## Now get only the TFs from this table:
+    hypometh_Gminus_TF_gene_dataset <- hypometh_Gminus_all_gene_dataset[
+      hypometh_Gminus_all_gene_dataset$geneID %in% TF_gene_ID,
     ]
 
-    ## Save that dataset as TR only dataset:
+    ## Save that dataset as TF only dataset:
     write.table(
-      hypometh_Gminus_TR_gene_dataset,
+      hypometh_Gminus_TF_gene_dataset,
       file= paste(
         TENET_directory,
         'step6/',
-        'hypo_Gminus_links_all_TR_freq.txt',
+        'hypo_Gminus_links_all_TF_freq.txt',
         sep=''
       ),
       quote= FALSE,

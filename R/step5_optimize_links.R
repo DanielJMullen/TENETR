@@ -1,28 +1,29 @@
-#' optimize_links
+#' step5_optimize_links
 #'
 #' This is the step5 function of the TENETR package.
-#' This function takes the calculated permutated p-values for the hyper/hypomethylated
-#' Gplus or Gminus probe-gene quadrants, and selects optimized links based on relative
-#' expression of the gene in hyper/hypomethylated experimental/tumor samples and the control/normal samples
-#' based on their means and in a wilcoxon test, checks that the hyper/hypometh samples for that given
-#' gene-probe link also show appropriately higher/lower expression of the linked gene in a number of
-#' experimental/tumor samples greater than the minExp number specified in step2 get_diffmeth_regions function
-#' and have maximum/minimum methylation above/below the hyper_stringency and hypo_stringency cutoffs.
+#' This function takes the calculated permutated p-values for the hyper or hypomethylated
+#' Gplus or Gminus probe-gene links, and selects optimized links based on relative
+#' expression of the gene in hyper or hypomethylated experimental/tumor samples
+#' as well as the control/normal samples based on their means and, using a Wilcoxon test,
+#' checks that the hyper or hypomethylated samples for that given gene-probe link
+#' also show appropriately higher/lower expression of the linked gene in a number of
+#' experimental/tumor samples greater than the minExp number specified in the
+#' step2_get_diffmeth_regions function and which have maximum/minimum methylation
+#' above/below the hyper_stringency and hypo_stringency cutoff values selected.
 #'
-#'
-#' @param TENET_directory Set a path to the directory that contains step4 results from permutate_z_scores function. This function will also create a new step5 folder there containing the results.
+#' @param TENET_directory Set a path to the TENET directory containing the 'step4' subdirectory and results created by the step4_permutate_z_scores function. This function will also create a new 'step5' subdirectory there containing the results of this function.
 #' @param hypermeth_Gplus_analysis Set TRUE or FALSE if user wants to optimize hypermeth_Gplus links. Requires hypermeth_analysis from step4 to have been set to TRUE.
 #' @param hypermeth_Gminus_analysis Set TRUE or FALSE if user wants to optimize hypermeth_Gminus links. Requires hypermeth_analysis from step4 to have been set to TRUE.
 #' @param hypometh_Gplus_analysis Set TRUE or FALSE if user wants to optimize hypometh_Gplus links. Requires hypometh_analysis from step4 to have been set to TRUE.
 #' @param hypometh_Gminus_analysis Set TRUE or FALSE if user wants to optimize hypometh_Gminus links. Requires hypometh_analysis from step4 to have been set to TRUE.
-#' @param adj_pval_cutoff Set p-value for BH-corrected Wilcoxon p-values in comparison of gene expression values between hyper/hypomethylated tumor/experimental samples and the control/normal samples..
-#' @param hyper_stringency Set a number from 0 to 1 to be the beta-value cutoff to optimize for hypermeth links with maximum methylation values above the cutoff
-#' @param hypo_stringency Set a number from 0 to 1 to be the beta-value cutoff to optimize for hypometh links with minimum methylation values below the cutoff
+#' @param adj_pval_cutoff Set p-value for Benjamini-Hochberg corrected Wilcoxon p-values in comparison of gene expression values between hyper/hypomethylated tumor/experimental samples and the control/normal samples..
+#' @param hyper_stringency Set a number from 0 to 1 to be the beta-value cutoff to optimize for hypermeth links with methylation values above the cutoff
+#' @param hypo_stringency Set a number from 0 to 1 to be the beta-value cutoff to optimize for hypometh links with methylation values below the cutoff
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
 #' @return Currently returns tab-delimited "sig_link_zscores_perm_optimized.txt" files for hypo/hyper Gplus/Gminus probe-gene links, similar to step4, but only with the optimized links.
 #' @export
 
-optimize_links <- function(
+step5_optimize_links <- function(
   TENET_directory,
   hypermeth_Gplus_analysis,
   hypermeth_Gminus_analysis,
@@ -50,14 +51,26 @@ optimize_links <- function(
     )
   )
 
-  ## Create a step5 directory to deposit the output paired score files:
-  dir.create(
-    paste(
-      TENET_directory,
-      'step5/',
-      sep=''
+  ## Create a step5 directory to deposit the output paired score files if it
+  ## hasn't already been created:
+  if(
+    !dir.exists(
+      paste(
+        TENET_directory,
+        'step4/',
+        sep=''
+      )
     )
-  )
+  ){
+
+    dir.create(
+      paste(
+        TENET_directory,
+        'step4/',
+        sep=''
+      )
+    )
+  }
 
   ## Check that the diff methylated dataset from step2 exists and load it:
   ## If not, return an error message:
@@ -89,12 +102,12 @@ optimize_links <- function(
 
   ## Create expression datasets noting for each gene, which samples
   ## have 0 expression for it as 0s, and those with expression as 1s:
-  expDataT0=ifelse(
+  expDataT0 <- ifelse(
     expDataT==0,
     0,
     1
   )
-  expDataN0=ifelse(
+  expDataN0 <- ifelse(
     expDataN==0,
     0,
     1

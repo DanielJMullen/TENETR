@@ -1,24 +1,25 @@
-#' get_analysis_z_score
+#' step3_get_analysis_z_scores
 #'
 #' This is the step3 function of the TENETR package.
 #' This function takes the identified hyper and hypomethylated probes
-#' from step2 get_diffmeth_regions function and calculates a zscore comparing
-#' the mean expression of each gene in groups that are hyper/hypomethylated for
-#' each probe, according to hypermeth and hypometh and those that are not, and permutates this across all
-#' hyper/hypomethylated probes
+#' from step2_get_diffmeth_regions function and calculates a zscore comparing
+#' the mean expression of each gene in the experimental/tumor samples that are
+#' hyper or hypomethylated for each probe, according to hypermeth and hypometh cutoffs
+#' set during the previous function, to those that are not, and permutates this
+#' across all hyper or hypomethylated probes depending on user input, calculating
+#' a z-score for each probe and gene combination, aka link.
 #'
-#'
-#' @param TENET_directory Set a path to the directory that contains step2 results from get_diffmeth_regions function. This function will also create a new step3 folder there containing the results.
+#' @param TENET_directory Set a path to the TENET directory containing the 'step2' subdirectory and results created by the step2_get_diffmeth_regions function. This function will also create a new 'step3' subdirectory there containing the results of this function.
 #' @param hypermeth_analysis Set to TRUE/FALSE depending on if you want to calculate z-scores for hypermethylated probes.
 #' @param hypometh_analysis Set to TRUE/FALSE depending on if you want to calculate z-scores for hypomethylated probes.
-#' @param usecaseonly Set to TRUE/FALSE depending on if you want to include the control/normal samples with the experimental/tumor samples when calculating hyper/hypomethylated groups and z-scores.
-#' @param TF_only Set to TRUE/FALSE to determine if you only want to consider genes that are accepted transcription factors in The Human Transcription Factors by Lambert et al (2018) when calculating z-scores.
-#' @param significant_p_value Set p-value to identify significant Z-scores for gene expression values selected between hyper/hypomethylated tumor/experimental samples and those that are not.
+#' @param usecaseonly Set to TRUE/FALSE depending on if you want to include the control/normal samples with the experimental/tumor samples when identifying hyper/hypomethylated groups and calculating z-scores.
+#' @param TF_only Set to TRUE/FALSE to determine if you only want to consider genes that are accepted transcription factors in "The Human Transcription Factors" by Lambert et al. 2018 when calculating z-scores.
+#' @param significant_p_value Set a p-value to identify significant Z-scores for gene expression values selected between hyper/hypomethylated tumor/experimental samples and those that are not. Defaults to 0.05.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
-#' @return Currently returns tab-delimited "sig_link_zscores.txt" files for hypo/hyper Gplus/Gminus probe-gene links, as well as individual "zscores.txt" files named after each gene in the hypo/hyper analysis with zscores for that gene to all probes from that analysis type.
+#' @return Currently returns tab-delimited 'sig_link_zscores.txt' files for hypo/hyper Gplus/Gminus probe-gene links, as well as individual "zscores.txt" files named after each gene in the hypo/hyper analysis with z-scores for that gene to all probes from that analysis type.
 #' @export
 
-get_analysis_z_score <- function(
+get_analysis_z_scores <- function(
   TENET_directory,
   hypermeth_analysis,
   hypometh_analysis,
@@ -44,14 +45,26 @@ get_analysis_z_score <- function(
     )
   )
 
-  ## Create a step3 directory to deposit the output paired score files:
-  dir.create(
-    paste(
-      TENET_directory,
-      'step3/',
-      sep=''
+  ## Create a step3 directory to deposit the output paired score files if
+  ## it doesn't already exist:
+  if(
+    !dir.exists(
+      paste(
+        TENET_directory,
+        'step3/',
+        sep=''
+      )
     )
-  )
+  ){
+
+    dir.create(
+      paste(
+        TENET_directory,
+        'step3/',
+        sep=''
+      )
+    )
+  }
 
   ## List files containing results created by get_diffmeth_regions
   ## in step2:
@@ -282,15 +295,27 @@ get_analysis_z_score <- function(
   ## As well as files with significant Z-scores by genes:
   if(hypermeth_analysis==TRUE){
 
-    ## Create a hypometh folder:
-    dir.create(
-      paste(
-        TENET_directory,
-        'step3/',
-        'hypermeth_results/',
-        sep=''
+    ## Create a hypometh folder if it doesn't already exist:
+    if(
+      !dir.exists(
+        paste(
+          TENET_directory,
+          'step3/',
+          'hypermeth_results/',
+          sep=''
+        )
       )
-    )
+    ){
+
+      dir.create(
+        paste(
+          TENET_directory,
+          'step3/',
+          'hypermeth_results/',
+          sep=''
+        )
+      )
+    }
 
     write(
       c('geneID','probeID','Zscore'),
@@ -324,15 +349,27 @@ get_analysis_z_score <- function(
 
   if(hypometh_analysis==TRUE){
 
-    ## Create a hypometh folder:
-    dir.create(
-      paste(
-        TENET_directory,
-        'step3/',
-        'hypometh_results/',
-        sep=''
+    ## Create a hypometh folder if it doesn't already exist:
+    if(
+      !dir.exists(
+        paste(
+          TENET_directory,
+          'step3/',
+          'hypometh_results/',
+          sep=''
+        )
       )
-    )
+    ){
+
+      dir.create(
+        paste(
+          TENET_directory,
+          'step3/',
+          'hypometh_results/',
+          sep=''
+        )
+      )
+    }
 
     write(
       c('geneID','probeID','Zscore'),
