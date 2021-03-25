@@ -1,4 +1,4 @@
-#' step3_get_analysis_z_scores
+#' step3_get_analysis_z_scores_experimental
 #'
 #' This is the step3 function of the TENETR package.
 #' This function takes the identified hyper and hypomethylated probes
@@ -9,7 +9,7 @@
 #' across all hyper or hypomethylated probes depending on user input, calculating
 #' a z-score for each probe and gene combination, aka link.
 #'
-#' @param TENET_directory Set a path to the TENET directory containing the 'step2' subdirectory and results created by the step2_get_diffmeth_regions function. This function will also create a new 'step3' subdirectory there containing the results of this function.
+#' @param TENET_directory Set a path to the TENET directory containing the 'step2' subdirectory and results created by the step2_get_diffmeth_regions function. This function will also create a new 'step3_experimental' subdirectory there containing the results of this function.
 #' @param hypermeth_analysis Set to TRUE/FALSE depending on if you want to calculate z-scores for hypermethylated probes.
 #' @param hypometh_analysis Set to TRUE/FALSE depending on if you want to calculate z-scores for hypomethylated probes.
 #' @param usecaseonly Set to TRUE/FALSE depending on if you want to include the control/normal samples with the experimental/tumor samples when identifying hyper/hypomethylated groups and calculating z-scores.
@@ -19,7 +19,7 @@
 #' @return Currently returns tab-delimited 'sig_link_zscores.txt' files for hypo/hyper Gplus/Gminus probe-gene links, as well as individual "zscores.txt" files named after each gene in the hypo/hyper analysis with z-scores for that gene to all probes from that analysis type.
 #' @export
 
-get_analysis_z_scores <- function(
+step3_get_analysis_z_scores_experimental <- function(
   TENET_directory,
   hypermeth_analysis,
   hypometh_analysis,
@@ -45,13 +45,13 @@ get_analysis_z_scores <- function(
     )
   )
 
-  ## Create a step3 directory to deposit the output paired score files if
+  ## Create a step3_experimental directory to deposit the output paired score files if
   ## it doesn't already exist:
   if(
     !dir.exists(
       paste(
         TENET_directory,
-        'step3/',
+        'step3_experimental/',
         sep=''
       )
     )
@@ -60,7 +60,7 @@ get_analysis_z_scores <- function(
     dir.create(
       paste(
         TENET_directory,
-        'step3/',
+        'step3_experimental/',
         sep=''
       )
     )
@@ -312,7 +312,7 @@ get_analysis_z_scores <- function(
       !dir.exists(
         paste(
           TENET_directory,
-          'step3/',
+          'step3_experimental/',
           'hypermeth_results/',
           sep=''
         )
@@ -322,7 +322,7 @@ get_analysis_z_scores <- function(
       dir.create(
         paste(
           TENET_directory,
-          'step3/',
+          'step3_experimental/',
           'hypermeth_results/',
           sep=''
         )
@@ -333,7 +333,7 @@ get_analysis_z_scores <- function(
       c('geneID','probeID','Zscore','Pvalue','Betavalue','HypermethsampleCount','NonHypermethsampleCount'),
       file= paste(
         TENET_directory,
-        'step3/',
+        'step3_experimental/',
         'hypermeth_results/',
         'hyper_Gplus_sig_link_zscores.txt',
         sep=''
@@ -347,7 +347,7 @@ get_analysis_z_scores <- function(
       c('geneID','probeID','Zscore','Pvalue','Betavalue','HypermethsampleCount','NonHypermethsampleCount'),
       file= paste(
         TENET_directory,
-        'step3/',
+        'step3_experimental/',
         'hypermeth_results/',
         'hyper_Gminus_sig_link_zscores.txt',
         sep=''
@@ -366,7 +366,7 @@ get_analysis_z_scores <- function(
       !dir.exists(
         paste(
           TENET_directory,
-          'step3/',
+          'step3_experimental/',
           'hypometh_results/',
           sep=''
         )
@@ -376,7 +376,7 @@ get_analysis_z_scores <- function(
       dir.create(
         paste(
           TENET_directory,
-          'step3/',
+          'step3_experimental/',
           'hypometh_results/',
           sep=''
         )
@@ -387,7 +387,7 @@ get_analysis_z_scores <- function(
       c('geneID','probeID','Zscore','Pvalue','Betavalue','HypomethsampleCount','NonHypomethsampleCount'),
       file= paste(
         TENET_directory,
-        'step3/',
+        'step3_experimental/',
         'hypometh_results/',
         'hypo_Gplus_sig_link_zscores.txt',
         sep=''
@@ -401,7 +401,7 @@ get_analysis_z_scores <- function(
       c('geneID','probeID','Zscore','Pvalue','Betavalue','HypomethsampleCount','NonHypomethsampleCount'),
       file= paste(
         TENET_directory,
-        'step3/',
+        'step3_experimental/',
         'hypometh_results/',
         'hypo_Gminus_sig_link_zscores.txt',
         sep=''
@@ -701,7 +701,7 @@ get_analysis_z_scores <- function(
           TESTSR_sig_pos,
           file= paste(
             TENET_directory,
-            'step3/',
+            'step3_experimental/',
             'hypermeth_results/',
             'hyper_Gplus_sig_link_zscores.txt',
             sep=''
@@ -727,7 +727,7 @@ get_analysis_z_scores <- function(
           TESTSR_sig_neg,
           file= paste(
             TENET_directory,
-            'step3/',
+            'step3_experimental/',
             'hypermeth_results/',
             'hyper_Gminus_sig_link_zscores.txt',
             sep=''
@@ -827,7 +827,7 @@ get_analysis_z_scores <- function(
           TESTSR_sig_pos,
           file= paste(
             TENET_directory,
-            'step3/',
+            'step3_experimental/',
             'hypometh_results/',
             'hypo_Gminus_sig_link_zscores.txt',
             sep=''
@@ -853,7 +853,7 @@ get_analysis_z_scores <- function(
           TESTSR_sig_neg,
           file= paste(
             TENET_directory,
-            'step3/',
+            'step3_experimental/',
             'hypometh_results/',
             'hypo_Gplus_sig_link_zscores.txt',
             sep=''
@@ -888,7 +888,7 @@ get_analysis_z_scores <- function(
       TESTSR,
       file= paste(
         TENET_directory,
-        'step3/',
+        'step3_experimental/',
         output_folder,
         paste(
           hyper_hypo,

@@ -19,7 +19,7 @@
 #' @return Currently returns tab-delimited 'sig_link_zscores.txt' files for hypo/hyper Gplus/Gminus probe-gene links, as well as individual "zscores.txt" files named after each gene in the hypo/hyper analysis with z-scores for that gene to all probes from that analysis type.
 #' @export
 
-get_analysis_z_scores <- function(
+step3_get_analysis_z_scores <- function(
   TENET_directory,
   hypermeth_analysis,
   hypometh_analysis,
