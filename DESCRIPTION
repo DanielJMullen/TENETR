@@ -3,7 +3,9 @@ Title: TENETR: Functions to identify dysregulated transcription factors and link
 Version: 0.0.0.9000
 Authors@R: c(
 	person("Daniel", "Mullen", email = "dmullen@usc.edu", role = c("aut","cre")),
- 	person("Suhn", "Rhie", email = "rhie@usc.edu", role = c("aut")))
+ 	person("Suhn", "Rhie", email = "rhie@usc.edu", role = c("aut","ths")),
+	person("Zexun", "Wu", email = "Zexunwu@usc.edu", role = c("aut")),
+	person("Lauren", "Han", email = "lhan@usc.edu", role = c("aut")))
 Description: This is an R package adaptation of the TENET_2.0 method (see: https://github.com/suhnrhie/TENET_2.0). 
 License: MIT
 Encoding: UTF-8
