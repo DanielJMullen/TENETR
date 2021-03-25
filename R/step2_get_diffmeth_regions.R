@@ -25,7 +25,7 @@
 
 step2_get_diffmeth_regions <- function(
   TENET_directory,
-  DNA_methylation_manifest,
+  DNA_methylation_manifest="HM450",
   TSS_dist,
   methcutoff,
   hypomethcutoff,
@@ -74,7 +74,7 @@ step2_get_diffmeth_regions <- function(
 
   ## Load the hg38 DNA methylation annotations:
   ## Written in by Zexun Wu
-  if(DNA_methylation_manifest == "HM450" | missing(DNA_methylation_manifest)){
+  if(DNA_methylation_manifest == "HM450"){
 
     hg38_manifest_df <- TENETR.data::hm450_hg38_annotations
 

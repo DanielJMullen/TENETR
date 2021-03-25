@@ -531,8 +531,21 @@ step3_get_analysis_z_scores_experimental <- function(
         )
 
         ## Get the p-value and beta-value for regression:
-        p_value <- summary(expression_methylation_regression)$coefficients[2,4]
-        beta_value <- summary(expression_methylation_regression)$coefficients[2,1]
+        ## if a regression can be done:
+        if(
+          nrow(
+            summary(expression_methylation_regression)$coefficients
+          )>=2
+        ){
+
+          p_value <- summary(expression_methylation_regression)$coefficients[2,4]
+          beta_value <- summary(expression_methylation_regression)$coefficients[2,1]
+
+        } else{
+
+          p_value <- NA
+          beta_value <- NA
+        }
 
         ## Round the z-score to 6 digits to conserve memory
         z_score_internal <- round(
@@ -566,8 +579,21 @@ step3_get_analysis_z_scores_experimental <- function(
         )
 
         ## Get the p-value and beta-value for regression:
-        p_value <- summary(expression_methylation_regression)$coefficients[2,4]
-        beta_value <- summary(expression_methylation_regression)$coefficients[2,1]
+        ## if a regression can be done:
+        if(
+          nrow(
+            summary(expression_methylation_regression)$coefficients
+          )>=2
+        ){
+
+          p_value <- summary(expression_methylation_regression)$coefficients[2,4]
+          beta_value <- summary(expression_methylation_regression)$coefficients[2,1]
+
+        } else{
+
+          p_value <- NA
+          beta_value <- NA
+        }
 
         ## Round the beta-values from regression to 6 digits to conserve memory
         beta_value_internal <- round(

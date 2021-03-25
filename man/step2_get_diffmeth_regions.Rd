@@ -6,7 +6,7 @@
 \usage{
 step2_get_diffmeth_regions(
   TENET_directory,
-  DNA_methylation_manifest,
+  DNA_methylation_manifest = "HM450",
   TSS_dist,
   methcutoff,
   hypomethcutoff,

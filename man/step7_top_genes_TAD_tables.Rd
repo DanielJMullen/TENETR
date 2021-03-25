@@ -6,7 +6,7 @@
 \usage{
 step7_top_genes_TAD_tables(
   TENET_directory,
-  DNA_methylation_manifest,
+  DNA_methylation_manifest = "HM450",
   hypermeth_Gplus_analysis,
   hypermeth_Gminus_analysis,
   hypometh_Gplus_analysis,

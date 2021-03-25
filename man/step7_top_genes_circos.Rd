@@ -6,6 +6,7 @@
 \usage{
 step7_top_genes_circos(
   TENET_directory,
+  DNA_methylation_manifest = "HM450",
   hypermeth_Gplus_analysis,
   hypermeth_Gminus_analysis,
   hypometh_Gplus_analysis,
@@ -16,6 +17,8 @@ step7_top_genes_circos(
 }
 \arguments{
 \item{TENET_directory}{Set a path to the TENET directory containing the 'step6' subdirectory and results created by the step6_probe_per_gene_tabulation function. This function will also create a new 'step7' subdirectory there, if not already created, with further subdirectories for each of the four analysis types selected, ending with '_circos' containing the results of this function.}
+
+\item{DNA_methylation_manifest}{Set to 'HM27', 'HM450', or 'EPIC' depending on the DNA methylation array of interest for the user's data. hg38 array annotations come from https://zwdzwd.github.io/InfiniumAnnotation. Defaults to 'HM450'.}
 
 \item{hypermeth_Gplus_analysis}{Set to TRUE/FALSE depending on if you want to create circos plots displaying links between the top genes/TFs by most hypermeth probes with G+ links and their linked enhancer probes of that type.}
 
@@ -28,8 +31,6 @@ step7_top_genes_circos(
 \item{top_gene_number}{Specify a number of the top genes/TFs based on the most linked enhancer probes of a given analysis type to generate circos plots for.}
 
 \item{core_count}{Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.}
-
-\item{DNA_methylation_manifest}{Set to 'HM27', 'HM450', or 'EPIC' depending on the DNA methylation array of interest for the user's data. hg38 array annotations come from https://zwdzwd.github.io/InfiniumAnnotation. Defaults to 'HM450'.}
 }
 \value{
 Currently returns .html files with the circos plots visualizing the links between the top genes/TFs and their linked enhancer probes for the selected analysis types.

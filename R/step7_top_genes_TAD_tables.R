@@ -23,7 +23,7 @@
 
 step7_top_genes_TAD_tables <- function(
   TENET_directory,
-  DNA_methylation_manifest,
+  DNA_methylation_manifest="HM450",
   hypermeth_Gplus_analysis,
   hypermeth_Gminus_analysis,
   hypometh_Gplus_analysis,
@@ -119,7 +119,7 @@ step7_top_genes_TAD_tables <- function(
 
   ## Load the hg38 DNA methylation annotations:
   ## Written in by Zexun Wu
-  if (DNA_methylation_manifest == "HM450" | missing(DNA_methylation_manifest)) {
+  if (DNA_methylation_manifest == "HM450") {
 
     hg38_manifest_df <- TENETR.data::hm450_hg38_annotations
 
