@@ -154,6 +154,9 @@ step7_top_genes_TAD_tables <- function(
     stringsAsFactors = FALSE
   )
 
+  ## Set the rownames of the hg38_manifest_granges_df
+  rownames(hg38_manifest_granges_df) <- rownames(hg38_manifest_df)
+
   ## Remove the big manifest dataframe:
   rm(hg38_manifest_df)
 
