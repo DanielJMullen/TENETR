@@ -15,8 +15,8 @@
 #' @param DNA_methylation_manifest Set to 'HM27', 'HM450', or 'EPIC' depending on the DNA methylation array of interest for the user's data. hg38 array annotations come from https://zwdzwd.github.io/InfiniumAnnotation. Defaults to 'HM450'.
 #' @param extENH Set TRUE or FALSE depending on if user has their own enhancer datasets in a specific directory they would like to analyze.
 #' @param extNDR Set TRUE or FALSE depending on if user has their own open chromatin datasets in a specific directory they would like to analyze.
-#' @param consensusENH Set TRUE or FALSE depending on if user would like to use the consensus enhancer data from TENETR.data for analysis.
-#' @param consensusNDR Set TRUE or FALSE depending on if user would like to use the consensus open chromatin data from TENETR.data for analysis.
+#' @param consensusENH Set TRUE or FALSE depending on if user would like to use the consensus enhancer data from TENETR.data for analysis. Defaults to TRUE.
+#' @param consensusNDR Set TRUE or FALSE depending on if user would like to use the consensus open chromatin data from TENETR.data for analysis. Defaults to TRUE.
 #' @param extENH_directory Set a path to a directory containing either .bed, .narrowPeak, .broadPeak, or .gappedPeak files with enhancer datasets. This must be supplied and extENH set to TRUE for the user to analyze their own enhancer datasets.
 #' @param extNDR_directory Set a path to a directory containing either .bed, .narrowPeak, .broadPeak, or .gappedPeak files with open chromatin datasets. This must be supplied and extNDR set to TRUE for the user to analyze their own enhancer datasets.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
@@ -24,11 +24,11 @@
 #' @export
 
 step1_make_external_datasets <- function(
-  DNA_methylation_manifest,
+  DNA_methylation_manifest='HM450',
   extENH,
   extNDR,
-  consensusENH,
-  consensusNDR,
+  consensusENH=TRUE,
+  consensusNDR=TRUE,
   extENH_directory,
   extNDR_directory,
   output_directory,

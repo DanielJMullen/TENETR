@@ -5,11 +5,11 @@
 \title{step1_make_external_datasets}
 \usage{
 step1_make_external_datasets(
-  DNA_methylation_manifest,
+  DNA_methylation_manifest = "HM450",
   extENH,
   extNDR,
-  consensusENH,
-  consensusNDR,
+  consensusENH = TRUE,
+  consensusNDR = TRUE,
   extENH_directory,
   extNDR_directory,
   output_directory,
@@ -23,9 +23,9 @@ step1_make_external_datasets(
 
 \item{extNDR}{Set TRUE or FALSE depending on if user has their own open chromatin datasets in a specific directory they would like to analyze.}
 
-\item{consensusENH}{Set TRUE or FALSE depending on if user would like to use the consensus enhancer data from TENETR.data for analysis.}
+\item{consensusENH}{Set TRUE or FALSE depending on if user would like to use the consensus enhancer data from TENETR.data for analysis. Defaults to TRUE.}
 
-\item{consensusNDR}{Set TRUE or FALSE depending on if user would like to use the consensus open chromatin data from TENETR.data for analysis.}
+\item{consensusNDR}{Set TRUE or FALSE depending on if user would like to use the consensus open chromatin data from TENETR.data for analysis. Defaults to TRUE.}
 
 \item{extENH_directory}{Set a path to a directory containing either .bed, .narrowPeak, .broadPeak, or .gappedPeak files with enhancer datasets. This must be supplied and extENH set to TRUE for the user to analyze their own enhancer datasets.}
 

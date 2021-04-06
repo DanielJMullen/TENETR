@@ -57,7 +57,7 @@ step5_optimize_links <- function(
     !dir.exists(
       paste(
         TENET_directory,
-        'step4/',
+        'step5/',
         sep=''
       )
     )
@@ -66,7 +66,7 @@ step5_optimize_links <- function(
     dir.create(
       paste(
         TENET_directory,
-        'step4/',
+        'step5/',
         sep=''
       )
     )
