@@ -24,6 +24,7 @@
 #' @export
 
 step1_make_external_datasets <- function(
+  output_directory,
   DNA_methylation_manifest='HM450',
   extENH,
   extNDR,
@@ -31,7 +32,6 @@ step1_make_external_datasets <- function(
   consensusNDR=TRUE,
   extENH_directory,
   extNDR_directory,
-  output_directory,
   core_count
 ){
 

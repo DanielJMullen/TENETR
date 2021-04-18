@@ -16,7 +16,7 @@
 #' @param hypermeth_Gminus_analysis Set TRUE or FALSE if user wants to optimize hypermeth_Gminus links. Requires hypermeth_analysis from step4 to have been set to TRUE.
 #' @param hypometh_Gplus_analysis Set TRUE or FALSE if user wants to optimize hypometh_Gplus links. Requires hypometh_analysis from step4 to have been set to TRUE.
 #' @param hypometh_Gminus_analysis Set TRUE or FALSE if user wants to optimize hypometh_Gminus links. Requires hypometh_analysis from step4 to have been set to TRUE.
-#' @param adj_pval_cutoff Set p-value for Benjamini-Hochberg corrected Wilcoxon p-values in comparison of gene expression values between hyper/hypomethylated tumor/experimental samples and the control/normal samples..
+#' @param adj_pval_cutoff Set p-value for Benjamini-Hochberg corrected Wilcoxon p-values in comparison of gene expression values between hyper/hypomethylated tumor/experimental samples and the control/normal samples. Defaults to 0.05.
 #' @param hyper_stringency Set a number from 0 to 1 to be the beta-value cutoff to optimize for hypermeth links with methylation values above the cutoff
 #' @param hypo_stringency Set a number from 0 to 1 to be the beta-value cutoff to optimize for hypometh links with methylation values below the cutoff
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
@@ -29,7 +29,7 @@ step5_optimize_links <- function(
   hypermeth_Gminus_analysis,
   hypometh_Gplus_analysis,
   hypometh_Gminus_analysis,
-  adj_pval_cutoff,
+  adj_pval_cutoff=0.05,
   hyper_stringency,
   hypo_stringency,
   core_count

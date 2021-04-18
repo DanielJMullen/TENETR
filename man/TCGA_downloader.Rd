@@ -19,7 +19,7 @@ TCGA_downloader(
 
 \item{TCGA_study_abbreviation}{Input a four letter code for a TCGA dataset to download data for. See: https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations for more info and complete list of options.}
 
-\item{RNA_seq_workflow}{Select the type of RNA-seq data to download. For TENET purposes, choose either "FPKM" or "FPKM-UQ". See: https://docs.gdc.cancer.gov/Data/Bioinformatics_Pipelines/Expression_mRNA_Pipeline/ for more info on these.}
+\item{RNA_seq_workflow}{Select the type of RNA-seq data to download. For TENET purposes, choose either "HTSeq - FPKM" or "HTSeq - FPKM-UQ". "HTSeq - Counts" can also be used but is not recommended for TENET analyses. See: https://docs.gdc.cancer.gov/Data/Bioinformatics_Pipelines/Expression_mRNA_Pipeline/ for more info on these.}
 
 \item{RNA_seq_log2_normalization}{Set TRUE or FALSE to do log2 normalization of RNA_seq expression values.}
 

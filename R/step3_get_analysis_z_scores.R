@@ -12,7 +12,7 @@
 #' @param TENET_directory Set a path to the TENET directory containing the 'step2' subdirectory and results created by the step2_get_diffmeth_regions function. This function will also create a new 'step3' subdirectory there containing the results of this function.
 #' @param hypermeth_analysis Set to TRUE/FALSE depending on if you want to calculate z-scores for hypermethylated probes.
 #' @param hypometh_analysis Set to TRUE/FALSE depending on if you want to calculate z-scores for hypomethylated probes.
-#' @param usecaseonly Set to TRUE/FALSE depending on if you want to include the control/normal samples with the experimental/tumor samples when identifying hyper/hypomethylated groups and calculating z-scores.
+#' @param usecaseonly Set to TRUE/FALSE depending on if you want to include the control/normal samples with the experimental/tumor samples when identifying hyper/hypomethylated groups and calculating z-scores. Defaults to TRUE.
 #' @param TF_only Set to TRUE/FALSE to determine if you only want to consider genes that are accepted transcription factors in "The Human Transcription Factors" by Lambert et al. 2018 when calculating z-scores.
 #' @param significant_p_value Set a p-value to identify significant Z-scores for gene expression values selected between hyper/hypomethylated tumor/experimental samples and those that are not. Defaults to 0.05.
 #' @param core_count Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.
@@ -23,9 +23,9 @@ step3_get_analysis_z_scores <- function(
   TENET_directory,
   hypermeth_analysis,
   hypometh_analysis,
-  usecaseonly,
+  usecaseonly=TRUE,
   TF_only,
-  significant_p_value,
+  significant_p_value=0.05,
   core_count
 ){
 

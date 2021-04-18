@@ -5,6 +5,7 @@
 \title{step1_make_external_datasets}
 \usage{
 step1_make_external_datasets(
+  output_directory,
   DNA_methylation_manifest = "HM450",
   extENH,
   extNDR,
@@ -12,11 +13,12 @@ step1_make_external_datasets(
   consensusNDR = TRUE,
   extENH_directory,
   extNDR_directory,
-  output_directory,
   core_count
 )
 }
 \arguments{
+\item{output_directory}{Set a path to a directory, which will be created by this function, if it doesn't already exist, where you want the .probelist.txt files created by this function to be exported to. This directory will be the 'TENET_directory' utilized in later functions and a 'step1' subdirectory will be created in that directory, with further subdirectories containing the output .probelist.txt files made by this function.}
+
 \item{DNA_methylation_manifest}{Set to 'HM27', 'HM450', or 'EPIC' depending on the DNA methylation array of interest for the user's data. hg38 array annotations come from https://zwdzwd.github.io/InfiniumAnnotation. Defaults to 'HM450'.}
 
 \item{extENH}{Set TRUE or FALSE depending on if user has their own enhancer datasets in a specific directory they would like to analyze.}
@@ -30,8 +32,6 @@ step1_make_external_datasets(
 \item{extENH_directory}{Set a path to a directory containing either .bed, .narrowPeak, .broadPeak, or .gappedPeak files with enhancer datasets. This must be supplied and extENH set to TRUE for the user to analyze their own enhancer datasets.}
 
 \item{extNDR_directory}{Set a path to a directory containing either .bed, .narrowPeak, .broadPeak, or .gappedPeak files with open chromatin datasets. This must be supplied and extNDR set to TRUE for the user to analyze their own enhancer datasets.}
-
-\item{output_directory}{Set a path to a directory, which will be created by this function, if it doesn't already exist, where you want the .probelist.txt files created by this function to be exported to. This directory will be the 'TENET_directory' utilized in later functions and a 'step1' subdirectory will be created in that directory, with further subdirectories containing the output .probelist.txt files made by this function.}
 
 \item{core_count}{Argument passed as mc.cores argument for mclapply. See ?mclapply from the parallel package for more details.}
 }

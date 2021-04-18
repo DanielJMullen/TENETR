@@ -10,7 +10,7 @@
 #'
 #' @param TCGA_directory Set a path to the directory where TCGAbiolinks can download data to. Note that this dataset can be very sizeable.
 #' @param TCGA_study_abbreviation Input a four letter code for a TCGA dataset to download data for. See: https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations for more info and complete list of options.
-#' @param RNA_seq_workflow Select the type of RNA-seq data to download. For TENET purposes, choose either "FPKM" or "FPKM-UQ". See: https://docs.gdc.cancer.gov/Data/Bioinformatics_Pipelines/Expression_mRNA_Pipeline/ for more info on these.
+#' @param RNA_seq_workflow Select the type of RNA-seq data to download. For TENET purposes, choose either "HTSeq - FPKM" or "HTSeq - FPKM-UQ". "HTSeq - Counts" can also be used but is not recommended for TENET analyses. See: https://docs.gdc.cancer.gov/Data/Bioinformatics_Pipelines/Expression_mRNA_Pipeline/ for more info on these.
 #' @param RNA_seq_log2_normalization Set TRUE or FALSE to do log2 normalization of RNA_seq expression values.
 #' @param matching_exp_met_samples Set TRUE or FALSE to isolate only samples with matching expression and methylation data in both these datasets. Set to TRUE by default.
 #' @param remove_dup_tumor Set TRUE or FALSE to remove duplicate tumor samples taking from the same subject, leaving only one per subject in alphanumeric order. Set to TRUE by default.
@@ -79,18 +79,13 @@ TCGA_downloader <- function(
     sep=''
   )
 
-  ## Convert the RNA_seq_workflow to all caps:
-  RNA_seq_workflow_upper <- toupper(
-    RNA_seq_workflow
-  )
-
   ## Set up the expression  query:
   expression_query <- TCGAbiolinks::GDCquery(
     project= TCGA_study_abbreviation_download,
     data.category= "Transcriptome Profiling",
     data.type= "Gene Expression Quantification",
     experimental.strategy= 'RNA-Seq',
-    workflow.type= "HTSeq - FPKM-UQ",
+    workflow.type= RNA_seq_workflow,
     legacy = FALSE
   )
 

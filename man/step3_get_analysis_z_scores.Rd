@@ -8,9 +8,9 @@ step3_get_analysis_z_scores(
   TENET_directory,
   hypermeth_analysis,
   hypometh_analysis,
-  usecaseonly,
+  usecaseonly = TRUE,
   TF_only,
-  significant_p_value,
+  significant_p_value = 0.05,
   core_count
 )
 }
@@ -21,7 +21,7 @@ step3_get_analysis_z_scores(
 
 \item{hypometh_analysis}{Set to TRUE/FALSE depending on if you want to calculate z-scores for hypomethylated probes.}
 
-\item{usecaseonly}{Set to TRUE/FALSE depending on if you want to include the control/normal samples with the experimental/tumor samples when identifying hyper/hypomethylated groups and calculating z-scores.}
+\item{usecaseonly}{Set to TRUE/FALSE depending on if you want to include the control/normal samples with the experimental/tumor samples when identifying hyper/hypomethylated groups and calculating z-scores. Defaults to TRUE.}
 
 \item{TF_only}{Set to TRUE/FALSE to determine if you only want to consider genes that are accepted transcription factors in "The Human Transcription Factors" by Lambert et al. 2018 when calculating z-scores.}
 

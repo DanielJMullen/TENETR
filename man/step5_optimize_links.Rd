@@ -10,7 +10,7 @@ step5_optimize_links(
   hypermeth_Gminus_analysis,
   hypometh_Gplus_analysis,
   hypometh_Gminus_analysis,
-  adj_pval_cutoff,
+  adj_pval_cutoff = 0.05,
   hyper_stringency,
   hypo_stringency,
   core_count
@@ -27,7 +27,7 @@ step5_optimize_links(
 
 \item{hypometh_Gminus_analysis}{Set TRUE or FALSE if user wants to optimize hypometh_Gminus links. Requires hypometh_analysis from step4 to have been set to TRUE.}
 
-\item{adj_pval_cutoff}{Set p-value for Benjamini-Hochberg corrected Wilcoxon p-values in comparison of gene expression values between hyper/hypomethylated tumor/experimental samples and the control/normal samples..}
+\item{adj_pval_cutoff}{Set p-value for Benjamini-Hochberg corrected Wilcoxon p-values in comparison of gene expression values between hyper/hypomethylated tumor/experimental samples and the control/normal samples. Defaults to 0.05.}
 
 \item{hyper_stringency}{Set a number from 0 to 1 to be the beta-value cutoff to optimize for hypermeth links with methylation values above the cutoff}
 
