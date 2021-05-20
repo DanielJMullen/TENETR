@@ -19,7 +19,6 @@ Depends:
 		GenomicRanges,
 		parallel,
 		ggplot2,
-		BioCircos,
-		htmlwidgets,
+		RCircos,
 		survival
 

@@ -808,7 +808,8 @@ step7_top_genes_TAD_tables_test <- function(
           sep=''
         ),
         quote= FALSE,
-        sep='\t'
+        sep='\t',
+        row.names= FALSE
       )
 
       write.table(
@@ -821,7 +822,8 @@ step7_top_genes_TAD_tables_test <- function(
           sep=''
         ),
         quote= FALSE,
-        sep='\t'
+        sep='\t',
+        row.names= FALSE
       )
 
     }
@@ -1271,7 +1273,8 @@ step7_top_genes_TAD_tables_test <- function(
           sep=''
         ),
         quote= FALSE,
-        sep='\t'
+        sep='\t',
+        row.names= FALSE
       )
 
       write.table(
@@ -1284,7 +1287,8 @@ step7_top_genes_TAD_tables_test <- function(
           sep=''
         ),
         quote= FALSE,
-        sep='\t'
+        sep='\t',
+        row.names= FALSE
       )
 
     }
@@ -1734,7 +1738,8 @@ step7_top_genes_TAD_tables_test <- function(
           sep=''
         ),
         quote= FALSE,
-        sep='\t'
+        sep='\t',
+        row.names= FALSE
       )
 
       write.table(
@@ -1747,7 +1752,8 @@ step7_top_genes_TAD_tables_test <- function(
           sep=''
         ),
         quote= FALSE,
-        sep='\t'
+        sep='\t',
+        row.names= FALSE
       )
 
     }
@@ -2197,7 +2203,8 @@ step7_top_genes_TAD_tables_test <- function(
           sep=''
         ),
         quote= FALSE,
-        sep='\t'
+        sep='\t',
+        row.names= FALSE
       )
 
       write.table(
@@ -2210,7 +2217,8 @@ step7_top_genes_TAD_tables_test <- function(
           sep=''
         ),
         quote= FALSE,
-        sep='\t'
+        sep='\t',
+        row.names= FALSE
       )
 
     }
