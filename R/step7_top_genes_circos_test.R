@@ -194,8 +194,8 @@ step7_top_genes_circos_test <- function(
   ## Set chrom_names as the names for the chrom_sizes:
   names(chrom_sizes) <- chrom_names
 
-  ## Remove X and Y chromosomes :
-  chrom_sizes <- chrom_sizes[as.character(c(1:22))]
+  # ## Remove X and Y chromosomes :
+  # chrom_sizes <- chrom_sizes[as.character(c(1:22))]
 
   ## Create a genome build for later use with BioCircos:
   circos_genome <- setNames(
@@ -433,16 +433,19 @@ step7_top_genes_circos_test <- function(
       )
 
       ## Create a hyper G+ circos plot
-      # default color for circos plot
+      ## With red links:
       circos.col = "red"
 
-      #load the hg38 ideogram dataset
+      ## Use the RCircos package to create the circos plot:
+      ## Adapted from original TENET scripts with help from Zexun Wu:
+
+      ## Load the hg38 ideogram dataset
       data(
         UCSC.HG38.Human.CytoBandIdeogram,
         package='RCircos'
       )
 
-      #create the probes and genes table for Rcircos
+      # Create the probes and genes table for Rcircos
       Rcircos_probes <- data.frame(
         chr = circos_end_chromosome,
       	start = (circos_end_position-1),
@@ -497,10 +500,11 @@ step7_top_genes_circos_test <- function(
       RCircos::RCircos.Set.Core.Components(
         cyto.info= UCSC.HG38.Human.CytoBandIdeogram,
         chr.exclude= NULL,
-        tracks.inside= 5,
+        tracks.inside= 2,
         tracks.outside= 0
       )
       params <- RCircos::RCircos.Get.Plot.Parameters()
+      params$base.per.unit <- 4500
       RCircos::RCircos.Reset.Plot.Parameters(params)
 
       ## Create the Circos plot for export:
@@ -521,7 +525,7 @@ step7_top_genes_circos_test <- function(
         side="in"
       )
       RCircos::RCircos.Gene.Name.Plot(
-        probes.genes,
+        Rcircos_genes[1,], ##Only show one label of gene since they are all the same.
         name.col=4,
         track.num=2,
         side="in"
@@ -534,7 +538,7 @@ step7_top_genes_circos_test <- function(
       link.data$PlotColor <- circos.col
       RCircos::RCircos.Link.Plot(
         link.data,
-        track.num=5,
+        track.num=2,
         by.chromosome=FALSE
       )
       dev.off()
@@ -782,16 +786,19 @@ step7_top_genes_circos_test <- function(
       )
 
       ## Create a hyper G+ circos plot
-      # default color for circos plot
+      ## With red links:
       circos.col = "red"
 
-      #load the hg38 ideogram dataset
+      ## Use the RCircos package to create the circos plot:
+      ## Adapted from original TENET scripts with help from Zexun Wu:
+
+      ## Load the hg38 ideogram dataset
       data(
         UCSC.HG38.Human.CytoBandIdeogram,
         package='RCircos'
       )
 
-      #create the probes and genes table for Rcircos
+      # Create the probes and genes table for Rcircos
       Rcircos_probes <- data.frame(
         chr = circos_end_chromosome,
         start = (circos_end_position-1),
@@ -846,10 +853,11 @@ step7_top_genes_circos_test <- function(
       RCircos::RCircos.Set.Core.Components(
         cyto.info= UCSC.HG38.Human.CytoBandIdeogram,
         chr.exclude= NULL,
-        tracks.inside= 5,
+        tracks.inside= 2,
         tracks.outside= 0
       )
       params <- RCircos::RCircos.Get.Plot.Parameters()
+      params$base.per.unit <- 4500
       RCircos::RCircos.Reset.Plot.Parameters(params)
 
       ## Create the Circos plot for export:
@@ -870,7 +878,7 @@ step7_top_genes_circos_test <- function(
         side="in"
       )
       RCircos::RCircos.Gene.Name.Plot(
-        probes.genes,
+        Rcircos_genes[1,], ##Only show one label of gene since they are all the same.
         name.col=4,
         track.num=2,
         side="in"
@@ -883,7 +891,7 @@ step7_top_genes_circos_test <- function(
       link.data$PlotColor <- circos.col
       RCircos::RCircos.Link.Plot(
         link.data,
-        track.num=5,
+        track.num=2,
         by.chromosome=FALSE
       )
       dev.off()
@@ -902,7 +910,6 @@ step7_top_genes_circos_test <- function(
       hyper_Gminus_circos_function,
       mc.cores= core_count
     )
-
   }
 
   ## Generate results for hypometh Gplus probes:
@@ -1131,16 +1138,19 @@ step7_top_genes_circos_test <- function(
       )
 
       ## Create a hypo G+ circos plot
-      # default color for circos plot
+      ## With red links:
       circos.col = "red"
 
-      #load the hg38 ideogram dataset
+      ## Use the RCircos package to create the circos plot:
+      ## Adapted from original TENET scripts with help from Zexun Wu:
+
+      ## Load the hg38 ideogram dataset
       data(
         UCSC.HG38.Human.CytoBandIdeogram,
         package='RCircos'
       )
 
-      #create the probes and genes table for Rcircos
+      # Create the probes and genes table for Rcircos
       Rcircos_probes <- data.frame(
         chr = circos_end_chromosome,
         start = (circos_end_position-1),
@@ -1195,10 +1205,11 @@ step7_top_genes_circos_test <- function(
       RCircos::RCircos.Set.Core.Components(
         cyto.info= UCSC.HG38.Human.CytoBandIdeogram,
         chr.exclude= NULL,
-        tracks.inside= 5,
+        tracks.inside= 2,
         tracks.outside= 0
       )
       params <- RCircos::RCircos.Get.Plot.Parameters()
+      params$base.per.unit <- 4500
       RCircos::RCircos.Reset.Plot.Parameters(params)
 
       ## Create the Circos plot for export:
@@ -1219,7 +1230,7 @@ step7_top_genes_circos_test <- function(
         side="in"
       )
       RCircos::RCircos.Gene.Name.Plot(
-        probes.genes,
+        Rcircos_genes[1,], ##Only show one label of gene since they are all the same.
         name.col=4,
         track.num=2,
         side="in"
@@ -1232,7 +1243,7 @@ step7_top_genes_circos_test <- function(
       link.data$PlotColor <- circos.col
       RCircos::RCircos.Link.Plot(
         link.data,
-        track.num=5,
+        track.num=2,
         by.chromosome=FALSE
       )
       dev.off()
@@ -1480,16 +1491,19 @@ step7_top_genes_circos_test <- function(
       )
 
       ## Create a hypo G+ circos plot
-      # default color for circos plot
+      ## With red links:
       circos.col = "red"
 
-      #load the hg38 ideogram dataset
+      ## Use the RCircos package to create the circos plot:
+      ## Adapted from original TENET scripts with help from Zexun Wu:
+
+      ## Load the hg38 ideogram dataset
       data(
         UCSC.HG38.Human.CytoBandIdeogram,
         package='RCircos'
       )
 
-      #create the probes and genes table for Rcircos
+      # Create the probes and genes table for Rcircos
       Rcircos_probes <- data.frame(
         chr = circos_end_chromosome,
         start = (circos_end_position-1),
@@ -1544,10 +1558,11 @@ step7_top_genes_circos_test <- function(
       RCircos::RCircos.Set.Core.Components(
         cyto.info= UCSC.HG38.Human.CytoBandIdeogram,
         chr.exclude= NULL,
-        tracks.inside= 5,
+        tracks.inside= 2,
         tracks.outside= 0
       )
       params <- RCircos::RCircos.Get.Plot.Parameters()
+      params$base.per.unit <- 4500
       RCircos::RCircos.Reset.Plot.Parameters(params)
 
       ## Create the Circos plot for export:
@@ -1568,7 +1583,7 @@ step7_top_genes_circos_test <- function(
         side="in"
       )
       RCircos::RCircos.Gene.Name.Plot(
-        probes.genes,
+        Rcircos_genes[1,], ##Only show one label of gene since they are all the same.
         name.col=4,
         track.num=2,
         side="in"
@@ -1581,7 +1596,7 @@ step7_top_genes_circos_test <- function(
       link.data$PlotColor <- circos.col
       RCircos::RCircos.Link.Plot(
         link.data,
-        track.num=5,
+        track.num=2,
         by.chromosome=FALSE
       )
       dev.off()
@@ -1600,6 +1615,5 @@ step7_top_genes_circos_test <- function(
       hypo_Gminus_circos_function,
       mc.cores= core_count
     )
-
   }
 }
