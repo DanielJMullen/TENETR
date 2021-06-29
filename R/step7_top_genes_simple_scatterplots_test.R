@@ -79,6 +79,29 @@ step7_top_genes_simple_scatterplots_test <- function(
 
   }
 
+  ## Create a subdirectory in the new step7 directory to contain the
+  ## simple scatterplots:
+  if(
+    !dir.exists(
+      paste(
+        TENET_directory,
+        'step7/',
+        'gene_simple_scatterplots',
+        sep=''
+      )
+    )
+  ){
+
+    dir.create(
+      paste(
+        TENET_directory,
+        'step7/',
+        'gene_simple_scatterplots',
+        sep=''
+      )
+    )
+  }
+
   ## Get the dataset of gencode v22 genes:
   gencode_v22_gtf <- TENETR.data::gencode_v22_annotations
 
@@ -260,6 +283,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hyper_Gplus_simple_scatterplots',
           sep=''
         )
@@ -270,6 +294,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hyper_Gplus_simple_scatterplots',
           sep=''
         )
@@ -283,6 +308,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hyper_Gplus_simple_scatterplots/',
           'top_genes',
           sep=''
@@ -294,6 +320,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hyper_Gplus_simple_scatterplots/',
           'top_genes',
           sep=''
@@ -306,6 +333,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hyper_Gplus_simple_scatterplots/',
           'top_TFs',
           sep=''
@@ -317,6 +345,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hyper_Gplus_simple_scatterplots/',
           'top_TFs',
           sep=''
@@ -634,6 +663,7 @@ step7_top_genes_simple_scatterplots_test <- function(
           paste(
             TENET_directory,
             'step7/',
+            'gene_simple_scatterplots/',
             'hyper_Gplus_simple_scatterplots/',
             subdirectory,
             sep=''
@@ -697,6 +727,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hyper_Gminus_simple_scatterplots',
           sep=''
         )
@@ -707,6 +738,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hyper_Gminus_simple_scatterplots',
           sep=''
         )
@@ -720,6 +752,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hyper_Gminus_simple_scatterplots/',
           'top_genes',
           sep=''
@@ -731,6 +764,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hyper_Gminus_simple_scatterplots/',
           'top_genes',
           sep=''
@@ -743,6 +777,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hyper_Gminus_simple_scatterplots/',
           'top_TFs',
           sep=''
@@ -754,6 +789,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hyper_Gminus_simple_scatterplots/',
           'top_TFs',
           sep=''
@@ -1071,6 +1107,7 @@ step7_top_genes_simple_scatterplots_test <- function(
           paste(
             TENET_directory,
             'step7/',
+            'gene_simple_scatterplots/',
             'hyper_Gminus_simple_scatterplots/',
             subdirectory,
             sep=''
@@ -1134,6 +1171,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hypo_Gplus_simple_scatterplots',
           sep=''
         )
@@ -1144,6 +1182,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hypo_Gplus_simple_scatterplots',
           sep=''
         )
@@ -1157,6 +1196,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hypo_Gplus_simple_scatterplots/',
           'top_genes',
           sep=''
@@ -1168,6 +1208,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hypo_Gplus_simple_scatterplots/',
           'top_genes',
           sep=''
@@ -1180,6 +1221,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hypo_Gplus_simple_scatterplots/',
           'top_TFs',
           sep=''
@@ -1191,6 +1233,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hypo_Gplus_simple_scatterplots/',
           'top_TFs',
           sep=''
@@ -1508,6 +1551,7 @@ step7_top_genes_simple_scatterplots_test <- function(
           paste(
             TENET_directory,
             'step7/',
+            'gene_simple_scatterplots/',
             'hypo_Gplus_simple_scatterplots/',
             subdirectory,
             sep=''
@@ -1571,6 +1615,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hypo_Gminus_simple_scatterplots',
           sep=''
         )
@@ -1581,6 +1626,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hypo_Gminus_simple_scatterplots',
           sep=''
         )
@@ -1594,6 +1640,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hypo_Gminus_simple_scatterplots/',
           'top_genes',
           sep=''
@@ -1605,6 +1652,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hypo_Gminus_simple_scatterplots/',
           'top_genes',
           sep=''
@@ -1617,6 +1665,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hypo_Gminus_simple_scatterplots/',
           'top_TFs',
           sep=''
@@ -1628,6 +1677,7 @@ step7_top_genes_simple_scatterplots_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'gene_simple_scatterplots/',
           'hypo_Gminus_simple_scatterplots/',
           'top_TFs',
           sep=''
@@ -1945,6 +1995,7 @@ step7_top_genes_simple_scatterplots_test <- function(
           paste(
             TENET_directory,
             'step7/',
+            'gene_simple_scatterplots/',
             'hypo_Gminus_simple_scatterplots/',
             subdirectory,
             sep=''

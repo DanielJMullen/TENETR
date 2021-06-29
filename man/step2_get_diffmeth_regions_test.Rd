@@ -14,10 +14,10 @@ step2_get_diffmeth_regions_test(
   use_ext_NDR = FALSE,
   use_consensus_ENH = TRUE,
   use_consensus_NDR = TRUE,
-  methcutoff,
-  hypomethcutoff,
-  unmethcutoff,
-  hypermethcutoff,
+  methcutoff = FALSE,
+  hypomethcutoff = FALSE,
+  unmethcutoff = FALSE,
+  hypermethcutoff = FALSE,
   min_experimental_count,
   purity_directory = FALSE
 )
@@ -41,20 +41,20 @@ step2_get_diffmeth_regions_test(
 
 \item{use_consensus_NDR}{Set TRUE or FALSE depending on if you want to use DNA methylation probes in consensus nucleosome depeleted regions from the TENETR.data package and step1_make_external_datasets. These probes will be combined with probes found in user-supplied nucleosome depeleted regions if 'use_ext_NDR' is also set to TRUE. These will be overlapped with probes from regions with histone modifications or enhancer regions if either 'use_ext_HM' or 'use_consensus_ENH' are set to TRUE. Setting to TRUE requires that the user have run step1_make_external_datasets on consensus nucleosome depleted regions datasets from the TENETR.data package previously. Defaults to TRUE.}
 
-\item{methcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for methylated probes.}
+\item{methcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for methylated probes. Otherwise, will use algorithm to set optimal cutoff value. Defaults to using algorithm if no input is provided.}
 
-\item{hypomethcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for hypomethylated probes. Should be set lower than the methcutoff.}
+\item{hypomethcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for hypomethylated probes. Should be set lower than the methcutoff. Otherwise, will use algorithm to set optimal cutoff value. Defaults to using algorithm if no input is provided.}
 
-\item{unmethcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for unmethylated probes.}
+\item{unmethcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for unmethylated probes. Otherwise, will use algorithm to set optimal cutoff value. Defaults to using algorithm if no input is provided.}
 
-\item{hypermethcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes. Should be set higher than the unmethcutoff.}
+\item{hypermethcutoff}{Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes. Should be set higher than the unmethcutoff. Otherwise, will use algorithm to set optimal cutoff value. Defaults to using algorithm if no input is provided.}
 
 \item{min_experimental_count}{Set a positive integer to be the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups. Should be less than the total number of experimental/tumor groups.}
 
 \item{purity_directory}{If this user has their own datasets containing data for possible cell types that may contaminate the data, as .rda files containing a data matrix with DNA methylation values, set this as the path to the directory containing the purity .rda files. Otherwise set to FALSE. Defaults to FALSE.}
 }
 \value{
-Returns two objects, a .rda file with matrices of methylation and expression data for control/normal and experimental/tumor sample, lists of the four types of identified DNA methylation probes marking the regulatory elements of interest, the clinical data if provided, and the user-set parameters for consistency in downstream analyses. Also outputs a .txt file containing metrics on the number of probes found in the different analysis categories.
+Returns up to four objects, a .rda file with matrices of methylation and expression data for control/normal and experimental/tumor sample, lists of the four types of identified DNA methylation probes marking the regulatory elements of interest, the clinical data if provided, and the user-set parameters for consistency in downstream analyses. Also outputs a .txt file containing metrics on the number of probes found in the different analysis categories, and the specified cutoff values, a .pdf file showing where the cutoffs were positioned on the control and experimental sample mean density curves, and finally a .txt file showing which input HM and NDR datasets from step1 the probes happened to fall within.
 }
 \description{
 This is the step2 function of the TENETR package.

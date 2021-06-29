@@ -20,5 +20,9 @@ Depends:
 		parallel,
 		ggplot2,
 		RCircos,
-		survival
+		survival,
+		BSgenome.Hsapiens.UCSC.hg38,
+		seqLogo,
+		Biostrings
+		
 

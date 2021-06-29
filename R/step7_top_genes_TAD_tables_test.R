@@ -86,6 +86,29 @@ step7_top_genes_TAD_tables_test <- function(
 
   }
 
+  ## Create a subdirectory in the new step7 directory to contain the
+  ## TAD tables:
+  if(
+    !dir.exists(
+      paste(
+        TENET_directory,
+        'step7/',
+        'TAD_tables',
+        sep=''
+      )
+    )
+  ){
+
+    dir.create(
+      paste(
+        TENET_directory,
+        'step7/',
+        'TAD_tables',
+        sep=''
+      )
+    )
+  }
+
   ## Get the dataset of gencode v22 genes:
   gencode_v22_gtf <- TENETR.data::gencode_v22_annotations
 
@@ -181,8 +204,7 @@ step7_top_genes_TAD_tables_test <- function(
 
   ## Check to see if the user has supplied TAD files:
 
-  ## First check if the user has specified a "TAD" or "tad" subdirectory
-  ## in the main level of the TENET folder which will contain the TAD files:
+  ## First check if the user has specified a TAD subdirectory:
   if(
     !dir.exists(
       TAD_directory
@@ -374,6 +396,7 @@ step7_top_genes_TAD_tables_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hyper_Gplus_tad_tables',
           sep=''
         )
@@ -384,6 +407,7 @@ step7_top_genes_TAD_tables_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hyper_Gplus_tad_tables',
           sep=''
         )
@@ -550,7 +574,7 @@ step7_top_genes_TAD_tables_test <- function(
       stringsAsFactors = FALSE
     )
 
-    ## Now let's add the probe location info for hg38:
+    ## Now let's add the probe location info:
     hyper_Gplus_probe_dataset_linked_to_significant_genes$seqnames <-  hg38_manifest_no_NA_granges_df[
       hyper_Gplus_probe_dataset_linked_to_significant_genes$probe_ID,
       'chr'
@@ -803,6 +827,7 @@ step7_top_genes_TAD_tables_test <- function(
         file= paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hyper_Gplus_tad_tables/',
           'hyper_Gplus_top_genes_TAD_analysis.tsv',
           sep=''
@@ -817,6 +842,7 @@ step7_top_genes_TAD_tables_test <- function(
         file= paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hyper_Gplus_tad_tables/',
           'hyper_Gplus_top_TFs_TAD_analysis.tsv',
           sep=''
@@ -839,6 +865,7 @@ step7_top_genes_TAD_tables_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hyper_Gminus_tad_tables',
           sep=''
         )
@@ -849,6 +876,7 @@ step7_top_genes_TAD_tables_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hyper_Gminus_tad_tables',
           sep=''
         )
@@ -1015,7 +1043,7 @@ step7_top_genes_TAD_tables_test <- function(
       stringsAsFactors = FALSE
     )
 
-    ## Now let's add the probe location info for hg38:
+    ## Now let's add the probe location info:
     hyper_Gminus_probe_dataset_linked_to_significant_genes$seqnames <-  hg38_manifest_no_NA_granges_df[
       hyper_Gminus_probe_dataset_linked_to_significant_genes$probe_ID,
       'chr'
@@ -1268,6 +1296,7 @@ step7_top_genes_TAD_tables_test <- function(
         file= paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hyper_Gminus_tad_tables/',
           'hyper_Gminus_top_genes_TAD_analysis.tsv',
           sep=''
@@ -1282,6 +1311,7 @@ step7_top_genes_TAD_tables_test <- function(
         file= paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hyper_Gminus_tad_tables/',
           'hyper_Gminus_top_TFs_TAD_analysis.tsv',
           sep=''
@@ -1304,6 +1334,7 @@ step7_top_genes_TAD_tables_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hypo_Gplus_tad_tables',
           sep=''
         )
@@ -1314,6 +1345,7 @@ step7_top_genes_TAD_tables_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hypo_Gplus_tad_tables',
           sep=''
         )
@@ -1480,7 +1512,7 @@ step7_top_genes_TAD_tables_test <- function(
       stringsAsFactors = FALSE
     )
 
-    ## Now let's add the probe location info for hg38:
+    ## Now let's add the probe location info:
     hypo_Gplus_probe_dataset_linked_to_significant_genes$seqnames <-  hg38_manifest_no_NA_granges_df[
       hypo_Gplus_probe_dataset_linked_to_significant_genes$probe_ID,
       'chr'
@@ -1733,6 +1765,7 @@ step7_top_genes_TAD_tables_test <- function(
         file= paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hypo_Gplus_tad_tables/',
           'hypo_Gplus_top_genes_TAD_analysis.tsv',
           sep=''
@@ -1747,6 +1780,7 @@ step7_top_genes_TAD_tables_test <- function(
         file= paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hypo_Gplus_tad_tables/',
           'hypo_Gplus_top_TFs_TAD_analysis.tsv',
           sep=''
@@ -1769,6 +1803,7 @@ step7_top_genes_TAD_tables_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hypo_Gminus_tad_tables',
           sep=''
         )
@@ -1779,6 +1814,7 @@ step7_top_genes_TAD_tables_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hypo_Gminus_tad_tables',
           sep=''
         )
@@ -1945,7 +1981,7 @@ step7_top_genes_TAD_tables_test <- function(
       stringsAsFactors = FALSE
     )
 
-    ## Now let's add the probe location info for hg38:
+    ## Now let's add the probe location info:
     hypo_Gminus_probe_dataset_linked_to_significant_genes$seqnames <-  hg38_manifest_no_NA_granges_df[
       hypo_Gminus_probe_dataset_linked_to_significant_genes$probe_ID,
       'chr'
@@ -2198,6 +2234,7 @@ step7_top_genes_TAD_tables_test <- function(
         file= paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hypo_Gminus_tad_tables/',
           'hypo_Gminus_top_genes_TAD_analysis.tsv',
           sep=''
@@ -2212,6 +2249,7 @@ step7_top_genes_TAD_tables_test <- function(
         file= paste(
           TENET_directory,
           'step7/',
+          'TAD_tables/',
           'hypo_Gminus_tad_tables/',
           'hypo_Gminus_top_TFs_TAD_analysis.tsv',
           sep=''

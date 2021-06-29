@@ -80,6 +80,31 @@ step7_states_for_links_test <- function(
 
   }
 
+  ## Create a step7 directory to deposit the output the pdfs and other
+  ## downstream analyses if it has not been created yet:
+  if(
+    !dir.exists(
+      paste(
+        TENET_directory,
+        'step7',
+        'states_for_links',
+        sep=''
+      )
+    )
+  ){
+
+    dir.create(
+      paste(
+        TENET_directory,
+        'step7/',
+        'states_for_links',
+        sep=''
+      )
+    )
+
+  }
+
+
   ## List files containing results created by get_diffmeth_regions
   ## in step2:
   step2_files_list <- list.files(
@@ -380,6 +405,7 @@ step7_states_for_links_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'states_for_links/',
           'hyper_Gplus_states_for_links',
           sep=''
         )
@@ -390,6 +416,7 @@ step7_states_for_links_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'states_for_links/',
           'hyper_Gplus_states_for_links',
           sep=''
         )
@@ -459,6 +486,7 @@ step7_states_for_links_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'states_for_links/',
         'hyper_Gplus_states_for_links/',
         'hyper_Gplus_links_states_table.tsv',
         sep=''
@@ -478,6 +506,7 @@ step7_states_for_links_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'states_for_links/',
           'hyper_Gminus_states_for_links',
           sep=''
         )
@@ -488,6 +517,7 @@ step7_states_for_links_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'states_for_links/',
           'hyper_Gminus_states_for_links',
           sep=''
         )
@@ -557,6 +587,7 @@ step7_states_for_links_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'states_for_links/',
         'hyper_Gminus_states_for_links/',
         'hyper_Gminus_links_states_table.tsv',
         sep=''
@@ -576,6 +607,7 @@ step7_states_for_links_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'states_for_links/',
           'hypo_Gplus_states_for_links',
           sep=''
         )
@@ -586,6 +618,7 @@ step7_states_for_links_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'states_for_links/',
           'hypo_Gplus_states_for_links',
           sep=''
         )
@@ -655,6 +688,7 @@ step7_states_for_links_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'states_for_links/',
         'hypo_Gplus_states_for_links/',
         'hypo_Gplus_links_states_table.tsv',
         sep=''
@@ -674,6 +708,7 @@ step7_states_for_links_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'states_for_links/',
           'hypo_Gminus_states_for_links',
           sep=''
         )
@@ -684,6 +719,7 @@ step7_states_for_links_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'states_for_links/',
           'hypo_Gminus_states_for_links',
           sep=''
         )
@@ -753,6 +789,7 @@ step7_states_for_links_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'states_for_links/',
         'hypo_Gminus_states_for_links/',
         'hypo_Gminus_links_states_table.tsv',
         sep=''

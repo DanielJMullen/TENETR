@@ -84,6 +84,29 @@ step7_top_genes_UCSC_bed_files <- function(
 
   }
 
+  ## Create a subdirectory in the new step7 directory to contain the
+  ## peak overlap files:
+  if(
+    !dir.exists(
+      paste(
+        TENET_directory,
+        'step7/',
+        'UCSC_bed_files',
+        sep=''
+      )
+    )
+  ){
+
+    dir.create(
+      paste(
+        TENET_directory,
+        'step7/',
+        'UCSC_bed_files',
+        sep=''
+      )
+    )
+  }
+
   ## Get the dataset of gencode v22 genes:
   gencode_v22_gtf <- TENETR.data::gencode_v22_annotations
 
@@ -187,6 +210,7 @@ step7_top_genes_UCSC_bed_files <- function(
         paste(
           TENET_directory,
           'step7/',
+          'UCSC_bed_files/',
           'hyper_Gplus_ucsc_bed_files',
           sep=''
         )
@@ -197,6 +221,7 @@ step7_top_genes_UCSC_bed_files <- function(
         paste(
           TENET_directory,
           'step7/',
+          'UCSC_bed_files/',
           'hyper_Gplus_ucsc_bed_files',
           sep=''
         )
@@ -653,6 +678,7 @@ step7_top_genes_UCSC_bed_files <- function(
     top_hyper_Gplus_all_genes_bed_file_name <- paste(
       TENET_directory,
       'step7/',
+      'UCSC_bed_files/',
       'hyper_Gplus_ucsc_bed_files/',
       'top_hyper_Gplus_genes_to_enhancer_probe_links_hg38.bed',
       sep=''
@@ -661,6 +687,7 @@ step7_top_genes_UCSC_bed_files <- function(
     top_hyper_Gplus_all_TFs_bed_file_name <- paste(
       TENET_directory,
       'step7/',
+      'UCSC_bed_files/',
       'hyper_Gplus_ucsc_bed_files/',
       'top_hyper_Gplus_TFs_to_enhancer_probe_links_hg38.bed',
       sep=''
@@ -710,6 +737,7 @@ step7_top_genes_UCSC_bed_files <- function(
         paste(
           TENET_directory,
           'step7/',
+          'UCSC_bed_files/',
           'hyper_Gminus_ucsc_bed_files',
           sep=''
         )
@@ -720,6 +748,7 @@ step7_top_genes_UCSC_bed_files <- function(
         paste(
           TENET_directory,
           'step7/',
+          'UCSC_bed_files/',
           'hyper_Gminus_ucsc_bed_files',
           sep=''
         )
@@ -1176,6 +1205,7 @@ step7_top_genes_UCSC_bed_files <- function(
     top_hyper_Gminus_all_genes_bed_file_name <- paste(
       TENET_directory,
       'step7/',
+      'UCSC_bed_files/',
       'hyper_Gminus_ucsc_bed_files/',
       'top_hyper_Gminus_genes_to_enhancer_probe_links_hg38.bed',
       sep=''
@@ -1184,6 +1214,7 @@ step7_top_genes_UCSC_bed_files <- function(
     top_hyper_Gminus_all_TFs_bed_file_name <- paste(
       TENET_directory,
       'step7/',
+      'UCSC_bed_files/',
       'hyper_Gminus_ucsc_bed_files/',
       'top_hyper_Gminus_TFs_to_enhancer_probe_links_hg38.bed',
       sep=''
@@ -1233,6 +1264,7 @@ step7_top_genes_UCSC_bed_files <- function(
         paste(
           TENET_directory,
           'step7/',
+          'UCSC_bed_files/',
           'hypo_Gplus_ucsc_bed_files',
           sep=''
         )
@@ -1243,6 +1275,7 @@ step7_top_genes_UCSC_bed_files <- function(
         paste(
           TENET_directory,
           'step7/',
+          'UCSC_bed_files/',
           'hypo_Gplus_ucsc_bed_files',
           sep=''
         )
@@ -1699,6 +1732,7 @@ step7_top_genes_UCSC_bed_files <- function(
     top_hypo_Gplus_all_genes_bed_file_name <- paste(
       TENET_directory,
       'step7/',
+      'UCSC_bed_files/',
       'hypo_Gplus_ucsc_bed_files/',
       'top_hypo_Gplus_genes_to_enhancer_probe_links_hg38.bed',
       sep=''
@@ -1707,6 +1741,7 @@ step7_top_genes_UCSC_bed_files <- function(
     top_hypo_Gplus_all_TFs_bed_file_name <- paste(
       TENET_directory,
       'step7/',
+      'UCSC_bed_files/',
       'hypo_Gplus_ucsc_bed_files/',
       'top_hypo_Gplus_TFs_to_enhancer_probe_links_hg38.bed',
       sep=''
@@ -1756,6 +1791,7 @@ step7_top_genes_UCSC_bed_files <- function(
         paste(
           TENET_directory,
           'step7/',
+          'UCSC_bed_files/',
           'hypo_Gminus_ucsc_bed_files',
           sep=''
         )
@@ -1766,6 +1802,7 @@ step7_top_genes_UCSC_bed_files <- function(
         paste(
           TENET_directory,
           'step7/',
+          'UCSC_bed_files/',
           'hypo_Gminus_ucsc_bed_files',
           sep=''
         )
@@ -2222,6 +2259,7 @@ step7_top_genes_UCSC_bed_files <- function(
     top_hypo_Gminus_all_genes_bed_file_name <- paste(
       TENET_directory,
       'step7/',
+      'UCSC_bed_files/',
       'hypo_Gminus_ucsc_bed_files/',
       'top_hypo_Gminus_genes_to_enhancer_probe_links_hg38.bed',
       sep=''
@@ -2230,6 +2268,7 @@ step7_top_genes_UCSC_bed_files <- function(
     top_hypo_Gminus_all_TFs_bed_file_name <- paste(
       TENET_directory,
       'step7/',
+      'UCSC_bed_files/',
       'hypo_Gminus_ucsc_bed_files/',
       'top_hypo_Gminus_TFs_to_enhancer_probe_links_hg38.bed',
       sep=''

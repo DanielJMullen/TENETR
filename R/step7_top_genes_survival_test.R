@@ -87,6 +87,29 @@ step7_top_genes_survival_test <- function(
 
   }
 
+  ## Create a subdirectory in the new step7 directory to contain the
+  ## survival plots:
+  if(
+    !dir.exists(
+      paste(
+        TENET_directory,
+        'step7/',
+        'survival',
+        sep=''
+      )
+    )
+  ){
+
+    dir.create(
+      paste(
+        TENET_directory,
+        'step7/',
+        'survival',
+        sep=''
+      )
+    )
+  }
+
   ## Get the dataset of gencode v22 genes:
   gencode_v22_gtf <- TENETR.data::gencode_v22_annotations
 
@@ -681,6 +704,7 @@ step7_top_genes_survival_test <- function(
       main_directory <- paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hyper_Gplus_survival/',
         sep=''
       )
@@ -690,6 +714,7 @@ step7_top_genes_survival_test <- function(
       main_directory <- paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hyper_Gminus_survival/',
         sep=''
       )
@@ -699,6 +724,7 @@ step7_top_genes_survival_test <- function(
       main_directory <- paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hypo_Gplus_survival/',
         sep=''
       )
@@ -708,6 +734,7 @@ step7_top_genes_survival_test <- function(
       main_directory <- paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hypo_Gminus_survival/',
         sep=''
       )
@@ -1174,6 +1201,7 @@ step7_top_genes_survival_test <- function(
       main_directory <- paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hyper_Gplus_survival/',
         sep=''
       )
@@ -1183,6 +1211,7 @@ step7_top_genes_survival_test <- function(
       main_directory <- paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hyper_Gminus_survival/',
         sep=''
       )
@@ -1192,6 +1221,7 @@ step7_top_genes_survival_test <- function(
       main_directory <- paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hypo_Gplus_survival/',
         sep=''
       )
@@ -1201,6 +1231,7 @@ step7_top_genes_survival_test <- function(
       main_directory <- paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hypo_Gminus_survival/',
         sep=''
       )
@@ -1357,6 +1388,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hyper_Gplus_survival',
           sep=''
         )
@@ -1367,6 +1399,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hyper_Gplus_survival',
           sep=''
         )
@@ -1380,6 +1413,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hyper_Gplus_survival/',
           'top_genes',
           sep=''
@@ -1391,6 +1425,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hyper_Gplus_survival/',
           'top_genes',
           sep=''
@@ -1403,6 +1438,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hyper_Gplus_survival/',
           'top_TFs',
           sep=''
@@ -1414,6 +1450,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hyper_Gplus_survival/',
           'top_TFs',
           sep=''
@@ -1695,6 +1732,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hyper_Gplus_survival/',
         'top_genes/',
         'hyper_Gplus_top_genes_survival_info.tsv',
@@ -1710,6 +1748,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hyper_Gplus_survival/',
         'top_TFs/',
         'hyper_Gplus_top_TFs_survival_info.tsv',
@@ -1934,6 +1973,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hyper_Gplus_survival/',
         'top_genes/',
         'hyper_Gplus_top_genes_linked_probes_survival_info.tsv',
@@ -1949,6 +1989,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hyper_Gplus_survival/',
         'top_TFs/',
         'hyper_Gplus_top_TFs_linked_probes_survival_info.tsv',
@@ -2000,6 +2041,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hyper_Gminus_survival',
           sep=''
         )
@@ -2010,6 +2052,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hyper_Gminus_survival',
           sep=''
         )
@@ -2023,6 +2066,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hyper_Gminus_survival/',
           'top_genes',
           sep=''
@@ -2034,6 +2078,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hyper_Gminus_survival/',
           'top_genes',
           sep=''
@@ -2046,6 +2091,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hyper_Gminus_survival/',
           'top_TFs',
           sep=''
@@ -2057,6 +2103,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hyper_Gminus_survival/',
           'top_TFs',
           sep=''
@@ -2338,6 +2385,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hyper_Gminus_survival/',
         'top_genes/',
         'hyper_Gminus_top_genes_survival_info.tsv',
@@ -2353,6 +2401,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hyper_Gminus_survival/',
         'top_TFs/',
         'hyper_Gminus_top_TFs_survival_info.tsv',
@@ -2577,6 +2626,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hyper_Gminus_survival/',
         'top_genes/',
         'hyper_Gminus_top_genes_linked_probes_survival_info.tsv',
@@ -2592,6 +2642,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hyper_Gminus_survival/',
         'top_TFs/',
         'hyper_Gminus_top_TFs_linked_probes_survival_info.tsv',
@@ -2643,6 +2694,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hypo_Gplus_survival',
           sep=''
         )
@@ -2653,6 +2705,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hypo_Gplus_survival',
           sep=''
         )
@@ -2666,6 +2719,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hypo_Gplus_survival/',
           'top_genes',
           sep=''
@@ -2677,6 +2731,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hypo_Gplus_survival/',
           'top_genes',
           sep=''
@@ -2689,6 +2744,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hypo_Gplus_survival/',
           'top_TFs',
           sep=''
@@ -2700,6 +2756,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hypo_Gplus_survival/',
           'top_TFs',
           sep=''
@@ -2981,6 +3038,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hypo_Gplus_survival/',
         'top_genes/',
         'hypo_Gplus_top_genes_survival_info.tsv',
@@ -2996,6 +3054,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hypo_Gplus_survival/',
         'top_TFs/',
         'hypo_Gplus_top_TFs_survival_info.tsv',
@@ -3220,6 +3279,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hypo_Gplus_survival/',
         'top_genes/',
         'hypo_Gplus_top_genes_linked_probes_survival_info.tsv',
@@ -3235,6 +3295,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hypo_Gplus_survival/',
         'top_TFs/',
         'hypo_Gplus_top_TFs_linked_probes_survival_info.tsv',
@@ -3286,6 +3347,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hypo_Gminus_survival',
           sep=''
         )
@@ -3296,6 +3358,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hypo_Gminus_survival',
           sep=''
         )
@@ -3309,6 +3372,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hypo_Gminus_survival/',
           'top_genes',
           sep=''
@@ -3320,6 +3384,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hypo_Gminus_survival/',
           'top_genes',
           sep=''
@@ -3332,6 +3397,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hypo_Gminus_survival/',
           'top_TFs',
           sep=''
@@ -3343,6 +3409,7 @@ step7_top_genes_survival_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'survival/',
           'hypo_Gminus_survival/',
           'top_TFs',
           sep=''
@@ -3624,6 +3691,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hypo_Gminus_survival/',
         'top_genes/',
         'hypo_Gminus_top_genes_survival_info.tsv',
@@ -3639,6 +3707,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hypo_Gminus_survival/',
         'top_TFs/',
         'hypo_Gminus_top_TFs_survival_info.tsv',
@@ -3863,6 +3932,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hypo_Gminus_survival/',
         'top_genes/',
         'hypo_Gminus_top_genes_linked_probes_survival_info.tsv',
@@ -3878,6 +3948,7 @@ step7_top_genes_survival_test <- function(
       file= paste(
         TENET_directory,
         'step7/',
+        'survival/',
         'hypo_Gminus_survival/',
         'top_TFs/',
         'hypo_Gminus_top_TFs_linked_probes_survival_info.tsv',

@@ -517,6 +517,29 @@ step7_top_genes_met_heatmaps_test <- function(
 
   }
 
+  ## Create a subdirectory in the new step7 directory to contain the
+  ## methylation heatmap files:
+  if(
+    !dir.exists(
+      paste(
+        TENET_directory,
+        'step7/',
+        'met_heatmaps',
+        sep=''
+      )
+    )
+  ){
+
+    dir.create(
+      paste(
+        TENET_directory,
+        'step7/',
+        'met_heatmaps',
+        sep=''
+      )
+    )
+  }
+
   ## Get the dataset of gencode v22 genes:
   gencode_v22_gtf <- TENETR.data::gencode_v22_annotations
 
@@ -740,6 +763,7 @@ step7_top_genes_met_heatmaps_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'met_heatmaps/',
           'hyper_Gplus_met_heatmaps',
           sep=''
         )
@@ -750,6 +774,7 @@ step7_top_genes_met_heatmaps_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'met_heatmaps/',
           'hyper_Gplus_met_heatmaps',
           sep=''
         )
@@ -901,15 +926,19 @@ step7_top_genes_met_heatmaps_test <- function(
     ]
 
     ## Get the list of probes linked to the significant genes/TFs:
-    top_gene_CpGs_linked <- hyper_Gplus_sig_link_zscores[
-      hyper_Gplus_sig_link_zscores$geneID %in% top_hyper_Gplus_all_gene_ENSG,
-      'probeID'
-    ]
+    top_gene_CpGs_linked <- unique(
+      hyper_Gplus_sig_link_zscores[
+        hyper_Gplus_sig_link_zscores$geneID %in% top_hyper_Gplus_all_gene_ENSG,
+        'probeID'
+      ]
+    )
 
-    top_TF_CpGs_linked <- hyper_Gplus_sig_link_zscores[
-      hyper_Gplus_sig_link_zscores$geneID %in% top_hyper_Gplus_all_TF_ENSG,
-      'probeID'
-    ]
+    top_TF_CpGs_linked <- unique(
+      hyper_Gplus_sig_link_zscores[
+        hyper_Gplus_sig_link_zscores$geneID %in% top_hyper_Gplus_all_TF_ENSG,
+        'probeID'
+      ]
+    )
 
     ## Create methylation datasets from the tumor samples of interest:
     top_gene_CpGs_methylation <- as.matrix(
@@ -1032,6 +1061,7 @@ step7_top_genes_met_heatmaps_test <- function(
     top_hyper_Gplus_all_gene_heatmap_title <- paste(
       TENET_directory,
       'step7/',
+      'met_heatmaps/',
       'hyper_Gplus_met_heatmaps/',
       'hyper_Gplus_top_genes_linked_probe_methylation_heatmap.pdf',
       sep=''
@@ -1040,6 +1070,7 @@ step7_top_genes_met_heatmaps_test <- function(
     top_hyper_Gplus_all_TF_heatmap_title <- paste(
       TENET_directory,
       'step7/',
+      'met_heatmaps/',
       'hyper_Gplus_met_heatmaps/',
       'hyper_Gplus_top_TFs_linked_probe_methylation_heatmap.pdf',
       sep=''
@@ -1120,6 +1151,7 @@ step7_top_genes_met_heatmaps_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'met_heatmaps/',
           'hyper_Gminus_met_heatmaps',
           sep=''
         )
@@ -1130,6 +1162,7 @@ step7_top_genes_met_heatmaps_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'met_heatmaps/',
           'hyper_Gminus_met_heatmaps',
           sep=''
         )
@@ -1281,15 +1314,19 @@ step7_top_genes_met_heatmaps_test <- function(
     ]
 
     ## Get the list of probes linked to the significant genes/TFs:
-    top_gene_CpGs_linked <- hyper_Gminus_sig_link_zscores[
-      hyper_Gminus_sig_link_zscores$geneID %in% top_hyper_Gminus_all_gene_ENSG,
-      'probeID'
-    ]
+    top_gene_CpGs_linked <- unique(
+      hyper_Gminus_sig_link_zscores[
+        hyper_Gminus_sig_link_zscores$geneID %in% top_hyper_Gminus_all_gene_ENSG,
+        'probeID'
+      ]
+    )
 
-    top_TF_CpGs_linked <- hyper_Gminus_sig_link_zscores[
-      hyper_Gminus_sig_link_zscores$geneID %in% top_hyper_Gminus_all_TF_ENSG,
-      'probeID'
-    ]
+    top_TF_CpGs_linked <- unique(
+      hyper_Gminus_sig_link_zscores[
+        hyper_Gminus_sig_link_zscores$geneID %in% top_hyper_Gminus_all_TF_ENSG,
+        'probeID'
+      ]
+    )
 
     ## Create methylation datasets from the tumor samples of interest:
     top_gene_CpGs_methylation <- as.matrix(
@@ -1412,6 +1449,7 @@ step7_top_genes_met_heatmaps_test <- function(
     top_hyper_Gminus_all_gene_heatmap_title <- paste(
       TENET_directory,
       'step7/',
+      'met_heatmaps/',
       'hyper_Gminus_met_heatmaps/',
       'hyper_Gminus_top_genes_linked_probe_methylation_heatmap.pdf',
       sep=''
@@ -1420,6 +1458,7 @@ step7_top_genes_met_heatmaps_test <- function(
     top_hyper_Gminus_all_TF_heatmap_title <- paste(
       TENET_directory,
       'step7/',
+      'met_heatmaps/',
       'hyper_Gminus_met_heatmaps/',
       'hyper_Gminus_top_TFs_linked_probe_methylation_heatmap.pdf',
       sep=''
@@ -1500,6 +1539,7 @@ step7_top_genes_met_heatmaps_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'met_heatmaps/',
           'hypo_Gplus_met_heatmaps',
           sep=''
         )
@@ -1510,6 +1550,7 @@ step7_top_genes_met_heatmaps_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'met_heatmaps/',
           'hypo_Gplus_met_heatmaps',
           sep=''
         )
@@ -1661,15 +1702,19 @@ step7_top_genes_met_heatmaps_test <- function(
     ]
 
     ## Get the list of probes linked to the significant genes/TFs:
-    top_gene_CpGs_linked <- hypo_Gplus_sig_link_zscores[
-      hypo_Gplus_sig_link_zscores$geneID %in% top_hypo_Gplus_all_gene_ENSG,
-      'probeID'
-    ]
+    top_gene_CpGs_linked <- unique(
+      hypo_Gplus_sig_link_zscores[
+        hypo_Gplus_sig_link_zscores$geneID %in% top_hypo_Gplus_all_gene_ENSG,
+        'probeID'
+      ]
+    )
 
-    top_TF_CpGs_linked <- hypo_Gplus_sig_link_zscores[
-      hypo_Gplus_sig_link_zscores$geneID %in% top_hypo_Gplus_all_TF_ENSG,
-      'probeID'
-    ]
+    top_TF_CpGs_linked <- unique(
+      hypo_Gplus_sig_link_zscores[
+        hypo_Gplus_sig_link_zscores$geneID %in% top_hypo_Gplus_all_TF_ENSG,
+        'probeID'
+      ]
+    )
 
     ## Create methylation datasets from the tumor samples of interest:
     top_gene_CpGs_methylation <- as.matrix(
@@ -1792,6 +1837,7 @@ step7_top_genes_met_heatmaps_test <- function(
     top_hypo_Gplus_all_gene_heatmap_title <- paste(
       TENET_directory,
       'step7/',
+      'met_heatmaps/',
       'hypo_Gplus_met_heatmaps/',
       'hypo_Gplus_top_genes_linked_probe_methylation_heatmap.pdf',
       sep=''
@@ -1800,6 +1846,7 @@ step7_top_genes_met_heatmaps_test <- function(
     top_hypo_Gplus_all_TF_heatmap_title <- paste(
       TENET_directory,
       'step7/',
+      'met_heatmaps/',
       'hypo_Gplus_met_heatmaps/',
       'hypo_Gplus_top_TFs_linked_probe_methylation_heatmap.pdf',
       sep=''
@@ -1880,6 +1927,7 @@ step7_top_genes_met_heatmaps_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'met_heatmaps/',
           'hypo_Gminus_met_heatmaps',
           sep=''
         )
@@ -1890,6 +1938,7 @@ step7_top_genes_met_heatmaps_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'met_heatmaps/',
           'hypo_Gminus_met_heatmaps',
           sep=''
         )
@@ -2041,15 +2090,19 @@ step7_top_genes_met_heatmaps_test <- function(
     ]
 
     ## Get the list of probes linked to the significant genes/TFs:
-    top_gene_CpGs_linked <- hypo_Gminus_sig_link_zscores[
-      hypo_Gminus_sig_link_zscores$geneID %in% top_hypo_Gminus_all_gene_ENSG,
-      'probeID'
-    ]
+    top_gene_CpGs_linked <- unique(
+      hypo_Gminus_sig_link_zscores[
+        hypo_Gminus_sig_link_zscores$geneID %in% top_hypo_Gminus_all_gene_ENSG,
+        'probeID'
+      ]
+    )
 
-    top_TF_CpGs_linked <- hypo_Gminus_sig_link_zscores[
-      hypo_Gminus_sig_link_zscores$geneID %in% top_hypo_Gminus_all_TF_ENSG,
-      'probeID'
-    ]
+    top_TF_CpGs_linked <- unique(
+      hypo_Gminus_sig_link_zscores[
+        hypo_Gminus_sig_link_zscores$geneID %in% top_hypo_Gminus_all_TF_ENSG,
+        'probeID'
+      ]
+    )
 
     ## Create methylation datasets from the tumor samples of interest:
     top_gene_CpGs_methylation <- as.matrix(
@@ -2172,6 +2225,7 @@ step7_top_genes_met_heatmaps_test <- function(
     top_hypo_Gminus_all_gene_heatmap_title <- paste(
       TENET_directory,
       'step7/',
+      'met_heatmaps/',
       'hypo_Gminus_met_heatmaps/',
       'hypo_Gminus_top_genes_linked_probe_methylation_heatmap.pdf',
       sep=''
@@ -2180,6 +2234,7 @@ step7_top_genes_met_heatmaps_test <- function(
     top_hypo_Gminus_all_TF_heatmap_title <- paste(
       TENET_directory,
       'step7/',
+      'met_heatmaps/',
       'hypo_Gminus_met_heatmaps/',
       'hypo_Gminus_top_TFs_linked_probe_methylation_heatmap.pdf',
       sep=''

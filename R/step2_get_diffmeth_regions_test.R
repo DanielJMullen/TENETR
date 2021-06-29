@@ -21,13 +21,13 @@
 #' @param use_ext_NDR Set TRUE or FALSE depending on if you want to use DNA methylation probes in user-supplied nucleosome depeleted regions datasets from the step1_make_external_datasets function. These probes will be combined with probes found in the consensus nucleosome depeleted regions if 'use_consensus_NDR' is also set to TRUE. These will be overlapped with probes from regions with histone modifications or enhancer regions if either 'use_ext_HM' or 'use_consensus_ENH' are set to TRUE. Setting to TRUE requires that the user have run the step1_make_external_datasets function on user-supplied nucleosome depleted regions datasets previously. Defaults to FALSE.
 #' @param use_consensus_ENH Set TRUE or FALSE depending on if you want to use DNA methylation probes in consensus enhancer regions from the TENETR.data package and step1_make_external_datasets. These probes will be combined with probes found in user-supplied histone modification regions if 'use_ext_HM' is also set to TRUE. These will be overlapped with probes in nucleosome depleted regions if either 'use_ext_NDR' or 'use_consensus_NDR' are set to TRUE. Setting to TRUE requires that the user have run step1_make_external_datasets on consensus enhancer datasets from the TENETR.data package previously. Defaults to TRUE.
 #' @param use_consensus_NDR Set TRUE or FALSE depending on if you want to use DNA methylation probes in consensus nucleosome depeleted regions from the TENETR.data package and step1_make_external_datasets. These probes will be combined with probes found in user-supplied nucleosome depeleted regions if 'use_ext_NDR' is also set to TRUE. These will be overlapped with probes from regions with histone modifications or enhancer regions if either 'use_ext_HM' or 'use_consensus_ENH' are set to TRUE. Setting to TRUE requires that the user have run step1_make_external_datasets on consensus nucleosome depleted regions datasets from the TENETR.data package previously. Defaults to TRUE.
-#' @param methcutoff Set a number from 0 to 1 to be the beta-value cutoff for methylated probes.
-#' @param hypomethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypomethylated probes. Should be set lower than the methcutoff.
-#' @param unmethcutoff Set a number from 0 to 1 to be the beta-value cutoff for unmethylated probes.
-#' @param hypermethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes. Should be set higher than the unmethcutoff.
+#' @param methcutoff Set a number from 0 to 1 to be the beta-value cutoff for methylated probes. Otherwise, will use algorithm to set optimal cutoff value. Defaults to using algorithm if no input is provided.
+#' @param hypomethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypomethylated probes. Should be set lower than the methcutoff. Otherwise, will use algorithm to set optimal cutoff value. Defaults to using algorithm if no input is provided.
+#' @param unmethcutoff Set a number from 0 to 1 to be the beta-value cutoff for unmethylated probes. Otherwise, will use algorithm to set optimal cutoff value. Defaults to using algorithm if no input is provided.
+#' @param hypermethcutoff Set a number from 0 to 1 to be the beta-value cutoff for hypermethylated probes. Should be set higher than the unmethcutoff. Otherwise, will use algorithm to set optimal cutoff value. Defaults to using algorithm if no input is provided.
 #' @param min_experimental_count Set a positive integer to be the minimum number of experimental/tumor samples to be considered for the hypo/hypermethylated groups. Should be less than the total number of experimental/tumor groups.
 #' @param purity_directory If this user has their own datasets containing data for possible cell types that may contaminate the data, as .rda files containing a data matrix with DNA methylation values, set this as the path to the directory containing the purity .rda files. Otherwise set to FALSE. Defaults to FALSE.
-#' @return Returns two objects, a .rda file with matrices of methylation and expression data for control/normal and experimental/tumor sample, lists of the four types of identified DNA methylation probes marking the regulatory elements of interest, the clinical data if provided, and the user-set parameters for consistency in downstream analyses. Also outputs a .txt file containing metrics on the number of probes found in the different analysis categories.
+#' @return Returns up to four objects, a .rda file with matrices of methylation and expression data for control/normal and experimental/tumor sample, lists of the four types of identified DNA methylation probes marking the regulatory elements of interest, the clinical data if provided, and the user-set parameters for consistency in downstream analyses. Also outputs a .txt file containing metrics on the number of probes found in the different analysis categories, and the specified cutoff values, a .pdf file showing where the cutoffs were positioned on the control and experimental sample mean density curves, and finally a .txt file showing which input HM and NDR datasets from step1 the probes happened to fall within.
 #' @export
 
 step2_get_diffmeth_regions_test <- function(
@@ -40,10 +40,10 @@ step2_get_diffmeth_regions_test <- function(
   use_ext_NDR=FALSE,
   use_consensus_ENH=TRUE,
   use_consensus_NDR=TRUE,
-  methcutoff,
-  hypomethcutoff,
-  unmethcutoff,
-  hypermethcutoff,
+  methcutoff=FALSE,
+  hypomethcutoff=FALSE,
+  unmethcutoff=FALSE,
+  hypermethcutoff=FALSE,
   min_experimental_count,
   purity_directory= FALSE
 ){
@@ -97,7 +97,6 @@ step2_get_diffmeth_regions_test <- function(
 
     load(methylation_expression_dataset)
   }
-
 
   ## Next check to make sure the methylation and expression datasets
   ## are present:
@@ -575,7 +574,7 @@ step2_get_diffmeth_regions_test <- function(
       ## Get the HM probes listed:
       if(length(HM_probelist_files)>0){
 
-        HM_raw_probes <- character()
+        HM_raw_probes_list <- list()
 
         for(i in HM_probelist_files){
 
@@ -587,10 +586,7 @@ step2_get_diffmeth_regions_test <- function(
           )
 
           ## Add the probes to the probelist:
-          HM_raw_probes <- c(
-            HM_raw_probes,
-            probelist_HM_placeholder$V1
-          )
+          HM_raw_probes_list[[i]] <- probelist_HM_placeholder$V1
 
         }
       }
@@ -598,7 +594,7 @@ step2_get_diffmeth_regions_test <- function(
       ## Get the NDR probes listed:
       if(length(NDR_probelist_files)>0){
 
-        NDR_raw_probes <- character()
+        NDR_raw_probes_list <- list()
 
         for(i in NDR_probelist_files){
 
@@ -610,13 +606,22 @@ step2_get_diffmeth_regions_test <- function(
           )
 
           ## Add the probes to the probelist:
-          NDR_raw_probes <- c(
-            NDR_raw_probes,
-            probelist_NDR_placeholder$V1
-          )
+          NDR_raw_probes_list[[i]] <- probelist_NDR_placeholder$V1
 
         }
       }
+
+      ## Get the probes from each list and combine them into a single
+      ## HM and NDR vector:
+      HM_raw_probes <- Reduce(
+        c,
+        HM_raw_probes_list
+      )
+
+      NDR_raw_probes <- Reduce(
+        c,
+        NDR_raw_probes_list
+      )
 
       ## Now get the unique probes from each dataset:
 
@@ -682,6 +687,95 @@ step2_get_diffmeth_regions_test <- function(
         "The step1 folder containing results from the step1_make_external_datasets function was not found in the specified 'TENET_directory'. Please ensure the step1_make_external_datasets function was run on the specified hisone modification, nucleosome depleted regions, or enhancer datasets and the step1 subdirectory containing further subdirectories with .probelist files is present in the 'TENET_directory'."
       )
     }
+
+    ## For each of the probes of interest, let's identify which dataset called it:
+
+    ## First combine the HM and NDR probes lists if they exist:
+    if(
+      exists("HM_raw_probes_list") & exists("NDR_raw_probes_list")
+    ){
+
+      raw_probes_list <- c(
+        HM_raw_probes_list,
+        NDR_raw_probes_list
+      )
+
+    } else if(
+      exists("HM_raw_probes_list")
+    ){
+
+      raw_probes_list <- c(
+        HM_raw_probes_list
+      )
+
+    } else if(
+      exists("NDR_raw_probes_list")
+    ){
+
+      raw_probes_list <- c(
+        NDR_raw_probes_list
+      )
+    }
+
+    ## Write a function to return TRUE/FALSE to identify if each probe is found
+    ## in each dataset in the dataset:
+    probe_dataset_calling_function <- function(
+      probelist
+    ){
+
+      TRUE_FALSE_return <- c()
+
+      for(i in 1:length(raw_probes_list)){
+
+        if(
+          probelist %in% raw_probes_list[[i]]
+        ){
+
+          TRUE_FALSE_return <- c(
+            TRUE_FALSE_return,
+            TRUE
+          )
+
+        } else{
+
+          TRUE_FALSE_return <- c(
+            TRUE_FALSE_return,
+            FALSE
+          )
+        }
+      }
+
+      return(TRUE_FALSE_return)
+    }
+
+    probe_dataset_calling_df <- as.data.frame(
+      t(
+        sapply(
+          probes_of_interest,
+          probe_dataset_calling_function
+        )
+      )
+    )
+
+    colnames(probe_dataset_calling_df) <- basename(
+      names(
+        raw_probes_list
+      )
+    )
+
+    ## Save the file in the step2 directory:
+    write.table(
+      probe_dataset_calling_df,
+      paste(
+        TENET_directory,
+        'step2/',
+        "probes_called_by_dataset.txt",
+        sep=''
+      ),
+      sep='\t',
+      quote= FALSE,
+      col.names = FALSE
+    )
 
   } else{
 
@@ -831,7 +925,7 @@ step2_get_diffmeth_regions_test <- function(
       stringsAsFactors = FALSE
     )
 
-    probelist_df$mean_normal <- apply(
+    probelist_df$mean_control <- apply(
       metDataN[
         probes_of_interest_matched,
       ],
@@ -840,7 +934,7 @@ step2_get_diffmeth_regions_test <- function(
       na.rm=T
     )
 
-    probelist_df$mean_tumor <- apply(
+    probelist_df$mean_experimental <- apply(
       metDataT[
         probes_of_interest_matched,
       ],
@@ -863,6 +957,599 @@ step2_get_diffmeth_regions_test <- function(
       probelist_df_present$probe,
     ]
 
+    ## Let's use an algorithm to set the cutoffs not selected by the user:
+    if(
+      (methcutoff==FALSE) | (hypomethcutoff==FALSE) | (unmethcutoff==FALSE) | (hypermethcutoff==FALSE)
+    ){
+
+      ## If at least one of these cutoffs is set to FALSE, use the algorithm to
+      ## set the cutoffs:
+
+      ## First let's calculate the density of the mean probe methylation values
+      ## for the enhancer probes in the control and experimental samples.
+      ## and calculate the turnpoints in the density line:
+
+      ## Control:
+      control_mean_density <- density(
+        apply(
+          metDataN_present,
+          1,
+          mean,
+          na.rm=TRUE
+        )
+      )
+      control_mean_density_y_series <- ts(control_mean_density$y)
+      control_mean_tp <- pastecs::turnpoints(control_mean_density_y_series)
+
+      ## Experimental:
+      experimental_mean_density <- density(
+        apply(
+          metDataT_present,
+          1,
+          mean,
+          na.rm=TRUE
+        )
+      )
+      experimental_mean_density_y_series <- ts(experimental_mean_density$y)
+      experimental_mean_tp <- pastecs::turnpoints(experimental_mean_density_y_series)
+
+      ## Next, define functions to calculate densities of all probes in each
+      ## tumor sample, and grab the mean density values for the top n samples
+
+      ## Get y values for the density of a given plot
+      density_y <- function(input_vector, overall_density){
+
+        test <- density(input_vector, from=min(overall_density$x), to=max(overall_density$x), na.rm=TRUE)
+
+        return(test$y)
+      }
+
+      ## For each of the top n density values for each block within a group of samples,
+      ## get their mean values:
+      top_n_mean_graber <- function(data_frame, top_n){
+
+        ## sort the values in the vector from largest to smallest:
+        block_values <- sort(
+          data_frame,
+          decreasing = TRUE
+        )
+
+        ## Get the mean of the largest top_n:
+        mean_values <- mean(
+          block_values[1:top_n]
+        )
+
+        ## return the mean value:
+        return(
+          mean(
+            block_values[1:top_n]
+          )
+        )
+      }
+
+      ## Calculate density curves for the enhancer probes methylation values
+      ## in each of the experimental samples:
+      experimental_sample_densities <- apply(
+        metDataT_present,
+        2,
+        density_y,
+        overall_density= experimental_mean_density
+      )
+
+      ## Identify the mean density values for the top n experimental samples, where n
+      ## is the min_experimental_count value plus one, then identify the turning
+      ## points in those values:
+      experimental_top_bound_values <- apply(
+        experimental_sample_densities,
+        1,
+        top_n_mean_graber,
+        top_n= (min_experimental_count+1)
+      )
+
+      experimental_top_bound_values_ts <- ts(experimental_top_bound_values)
+      experimental_top_bound_values_tp <- pastecs::turnpoints(experimental_top_bound_values_ts)
+
+      ## Index a pdf to be saved to the step2 folder showing the selected cutoffs:
+      pdf(
+        paste(
+          TENET_directory,
+          'step2/',
+          'TENET_cutoff_selection_plot.pdf',
+          sep=''
+        ),
+        height= 7,
+        width= 10
+      )
+
+      ## Create a plot with the densities of the mean enhancer probe values in
+      ## the normal samples
+      plot(
+        control_mean_density,
+        ylim=range(experimental_top_bound_values),
+        main="TENET Cutoffs Selection Plot",
+        xlab="Methylation Beta Value",
+        ylab="Relative Density"
+      )
+
+      ## Add back the mean density line for the control samples in blue:
+      lines(
+        control_mean_density,
+        col='blue',
+        lwd=2
+      )
+
+      ## Add back the mean density line for the experimental samples in red:
+      lines(
+        experimental_mean_density,
+        col='red',
+        lwd=2
+      )
+
+      ## Now let's calculate the two points in the control mean density line
+      ## where the slope changes the quickest. These will be the unmeth
+      ## and meth cutoffs:
+
+      ## Identify the positions of the first and last pits and peaks
+      ## in the control mean density plots:
+
+      ## Check to make sure there are at least 3 turnpoints in the normal mean
+      ## density, indicating this is a normal methylation distriubtion with at least
+      ## two peaks and one trough.
+      if(
+        length(control_mean_tp$tppos)>=3
+      ){
+
+        ## Identify the blocks (from 1 to 512) and x values
+        ## where the first and last peaks are
+        ## as well as the next troughs that follow and precede them respectively:
+        control_mean_peak_1_block <- control_mean_tp$tppos[1]
+        control_mean_peak_1_x <- control_mean_density$x[control_mean_peak_1_block]
+
+        control_mean_pit_1_block <- control_mean_tp$tppos[2]
+        control_mean_pit_1_x <- control_mean_density$x[control_mean_pit_1_block]
+
+        control_mean_pit_2_block <- control_mean_tp$tppos[
+          (length(control_mean_tp$tppos)-1)
+        ]
+        control_mean_pit_2_x <- control_mean_density$x[control_mean_pit_2_block]
+
+        control_mean_peak_2_block <- control_mean_tp$tppos[
+          length(control_mean_tp$tppos)
+        ]
+        control_mean_peak_2_x <- control_mean_density$x[control_mean_peak_2_block]
+
+        ## Calculate a mean block between the two peaks:
+        ## rounded to a whole number up:
+        control_mean_peak_block_average <- round(
+          (control_mean_peak_1_block + control_mean_peak_2_block)/2
+        )
+
+      } else{
+
+        ## Return an error message:
+        stop(
+          'density distribution of mean DNA methylation values for identified enhancer probes does not follow a typical distribution of methylation values with larger numbers of low- and highly-methylated peaks a relative lack of probes with middling methylation. You will want to examine the distribution of methylation values across your samples and set your own cutoffs for this analysis.'
+        )
+      }
+
+      ## Create a vector of relative density values in the mean control samples:
+      ## Get the distribution of densities across the blocks
+      control_mean_distribution <- control_mean_density$y
+      names(control_mean_distribution) <- c(
+        1:length(control_mean_distribution)
+      )
+
+      ## Get the parts of the distribution after the first control peak
+      ## and the midpoint between the first and last control peak:
+      control_mean_distribution_first <-  control_mean_distribution[
+        control_mean_peak_1_block:(control_mean_peak_block_average-1)
+      ]
+
+      control_mean_distribution_second <-  control_mean_distribution[
+        control_mean_peak_block_average:control_mean_peak_2_block
+      ]
+
+      ## Get the rate of change across the first control mean distribution
+      control_mean_distribution_first_D1 <- c()
+
+      for(i in 1:length(control_mean_distribution_first)){
+
+        if(i<(5+1)){
+
+          ## if i is less than 6, add 0:
+          control_mean_distribution_first_D1 <- c(
+            control_mean_distribution_first_D1,
+            NA
+          )
+
+        } else if(i>(length(control_mean_distribution_first)-(5))){
+
+          ## if i is greater than 5 less than the length of the vector, add 0:
+          control_mean_distribution_first_D1 <- c(
+            control_mean_distribution_first_D1,
+            NA
+          )
+
+        } else{
+
+          ## Otherwise let's compare slopes before and after the line:
+
+          ## Get the value of the i-5 point and i-1 point:
+          minus_five_point <- control_mean_distribution_first[i-5]
+          minus_one_point <- control_mean_distribution_first[i-1]
+
+          ## Get the value of the point itself and the i+4 point:
+          plus_zero_point <- control_mean_distribution_first[i+1]
+          plus_four_point <- control_mean_distribution_first[i+(5)]
+
+          ## Calculate the difference between the minus points:
+          minus_point_difference <- (minus_one_point-minus_five_point)
+          plus_point_difference <- (plus_four_point-plus_zero_point)
+
+          ## Find the difference between the two:
+          plus_minus_difference <- (plus_point_difference-minus_point_difference)
+
+          ## Add that value to the vector:
+          control_mean_distribution_first_D1 <- c(
+            control_mean_distribution_first_D1,
+            plus_minus_difference
+          )
+        }
+      }
+
+      ## Get the rate of change across the first control mean distribution
+      control_mean_distribution_first_D2 <- c()
+
+      for(i in 1:length(control_mean_distribution_first_D1)){
+
+        if(i<((5*2)+1)){
+
+          ## if i is less than 6, add 0:
+          control_mean_distribution_first_D2 <- c(
+            control_mean_distribution_first_D2,
+            NA
+          )
+
+        } else if(i>(length(control_mean_distribution_first_D1)-((5*2)))){
+
+          ## if i is greater than 5 less than the length of the vector, add 0:
+          control_mean_distribution_first_D2 <- c(
+            control_mean_distribution_first_D2,
+            NA
+          )
+
+        } else{
+
+          ## Otherwise let's compare slopes before and after the line:
+
+          ## Get the value of the i-5 point and i-1 point:
+          minus_five_point <- control_mean_distribution_first_D1[i-5]
+          minus_one_point <- control_mean_distribution_first_D1[i-1]
+
+          ## Get the value of the point itself and the i+4 point:
+          plus_zero_point <- control_mean_distribution_first_D1[i+1]
+          plus_four_point <- control_mean_distribution_first_D1[i+(5)]
+
+          ## Calculate the difference between the minus points:
+          minus_point_difference <- (minus_one_point-minus_five_point)
+          plus_point_difference <- (plus_four_point-plus_zero_point)
+
+          ## Find the difference between the two:
+          plus_minus_difference <- (plus_point_difference-minus_point_difference)
+
+          ## Add that value to the vector:
+          control_mean_distribution_first_D2 <- c(
+            control_mean_distribution_first_D2,
+            plus_minus_difference
+          )
+        }
+      }
+
+      ## Get the rate of change across the second control mean distribution
+      control_mean_distribution_second_D1 <- c()
+
+      for(i in 1:length(control_mean_distribution_second)){
+
+        if(i<(5+1)){
+
+          ## if i is less than 6, add 0:
+          control_mean_distribution_second_D1 <- c(
+            control_mean_distribution_second_D1,
+            NA
+          )
+
+        } else if(i>(length(control_mean_distribution_second)-(5))){
+
+          ## if i is greater than 5 less than the length of the vector, add 0:
+          control_mean_distribution_second_D1 <- c(
+            control_mean_distribution_second_D1,
+            NA
+          )
+
+        } else{
+
+          ## Otherwise let's compare slopes before and after the line:
+
+          ## Get the value of the i-5 point and i-1 point:
+          minus_five_point <- control_mean_distribution_second[i-5]
+          minus_one_point <- control_mean_distribution_second[i-1]
+
+          ## Get the value of the point itself and the i+4 point:
+          plus_zero_point <- control_mean_distribution_second[i+1]
+          plus_four_point <- control_mean_distribution_second[i+(5)]
+
+          ## Calculate the difference between the minus points:
+          minus_point_difference <- (minus_one_point-minus_five_point)
+          plus_point_difference <- (plus_four_point-plus_zero_point)
+
+          ## Find the difference between the two:
+          plus_minus_difference <- (plus_point_difference-minus_point_difference)
+
+          ## Add that value to the vector:
+          control_mean_distribution_second_D1 <- c(
+            control_mean_distribution_second_D1,
+            plus_minus_difference
+          )
+        }
+      }
+
+      ## Get the rate of change across the second control mean distribution
+      control_mean_distribution_second_D2 <- c()
+
+      for(i in 1:length(control_mean_distribution_second_D1)){
+
+        if(i<((5*2)+1)){
+
+          ## if i is less than 6, add 0:
+          control_mean_distribution_second_D2 <- c(
+            control_mean_distribution_second_D2,
+            NA
+          )
+
+        } else if(i>(length(control_mean_distribution_second_D1)-((5*2)))){
+
+          ## if i is greater than 5 less than the length of the vector, add 0:
+          control_mean_distribution_second_D2 <- c(
+            control_mean_distribution_second_D2,
+            NA
+          )
+
+        } else{
+
+          ## Otherwise let's compare slopes before and after the line:
+
+          ## Get the value of the i-5 point and i-1 point:
+          minus_five_point <- control_mean_distribution_second_D1[i-5]
+          minus_one_point <- control_mean_distribution_second_D1[i-1]
+
+          ## Get the value of the point itself and the i+4 point:
+          plus_zero_point <- control_mean_distribution_second_D1[i+1]
+          plus_four_point <- control_mean_distribution_second_D1[i+(5)]
+
+          ## Calculate the difference between the minus points:
+          minus_point_difference <- (minus_one_point-minus_five_point)
+          plus_point_difference <- (plus_four_point-plus_zero_point)
+
+          ## Find the difference between the two:
+          plus_minus_difference <- (plus_point_difference-minus_point_difference)
+
+          ## Add that value to the vector:
+          control_mean_distribution_second_D2 <- c(
+            control_mean_distribution_second_D2,
+            plus_minus_difference
+          )
+        }
+      }
+
+      unmeth_block_value <- control_mean_pit_1_block
+
+      meth_block_value <- as.numeric(
+        names(control_mean_distribution_second[1])
+      ) + which(
+        control_mean_distribution_second_D2==max(control_mean_distribution_second_D2, na.rm=TRUE)
+      )
+
+      ## Now plot those turning points on the graph
+      ## and set them as the unmeth and meth cutoffs:
+      ## Rounded to the hundreths value:
+      points(
+        control_mean_density$x[
+          unmeth_block_value
+        ],
+        control_mean_density$y[
+          unmeth_block_value
+        ],
+        col="darkgreen",
+        pch=16
+      )
+
+      points(
+        control_mean_density$x[
+          meth_block_value
+        ],
+        control_mean_density$y[
+          meth_block_value
+        ],
+        col="green",
+        pch=16
+      )
+
+      abline(
+        v=c(
+          control_mean_density$x[
+            unmeth_block_value
+          ],
+          control_mean_density$x[
+            meth_block_value
+          ]
+        ),
+        col=c(
+          'darkgreen',
+          'green'
+        )
+      )
+
+      methcutoff <- round(
+        control_mean_density$x[
+          meth_block_value
+        ],
+        digits= 2
+      )
+
+      unmethcutoff <- round(
+        control_mean_density$x[
+          unmeth_block_value
+        ],
+        digits= 2
+      )
+
+      ## Now let's identify the crossing over points where the mean density curves
+      ## for the tumor and normal samples intersect between the control mean peaks:
+      experimental_mean_density_relative_to_control <- c()
+
+      for(i in c(control_mean_peak_1_block:control_mean_peak_2_block)){
+
+        if(i==1){
+
+          experimental_mean_density_relative_to_control <- c(
+            experimental_mean_density_relative_to_control,
+            NA
+          )
+
+        } else if(i==length(control_mean_density$y)){
+
+          experimental_mean_density_relative_to_control <- c(
+            experimental_mean_density_relative_to_control,
+            NA
+          )
+
+        } else{
+
+          if(
+            (experimental_mean_density$y[i])>(control_mean_density$y[i])
+          ){
+
+            experimental_mean_density_relative_to_control <- c(
+              experimental_mean_density_relative_to_control,
+              "Greater"
+            )
+
+          } else{
+
+            experimental_mean_density_relative_to_control <- c(
+              experimental_mean_density_relative_to_control,
+              "Less"
+            )
+
+          }
+        }
+      }
+
+      ## Now identify the block values for the first and last positions
+      ## where the tumor mean density is greater than the normal mean density
+      ## as the crossing points:
+      first_experimental_greater_block_value <- (
+        min(
+          which(
+            experimental_mean_density_relative_to_control=='Greater'
+          )
+        ) +
+          control_mean_peak_1_block
+      )
+
+      last_experimental_greater_block_value <- (
+        max(
+          which(
+            experimental_mean_density_relative_to_control=='Greater'
+          )
+        ) +
+          control_mean_peak_1_block
+      )
+
+      ## Find the number of blocks equal to 1/10th of the block difference:
+      first_experimental_greater_x_value <- control_mean_density$x[first_experimental_greater_block_value]
+
+      last_experimental_greater_x_value <- control_mean_density$x[last_experimental_greater_block_value]
+
+      ten_percent_experimental_greater_block_value <- (
+        (last_experimental_greater_block_value-first_experimental_greater_block_value)/10
+      )
+
+      ## Calculate the block values for the hyper and hypometh cutoffs by setting
+      ## them to the unmeth and meth cutoff block values plus and minus, respectively,
+      ## the ten_percent_experimental_greater_block_value:
+
+      ## Get the block values of the turning points:
+      hypermeth_block_value <- as.numeric(
+        round(
+          unmeth_block_value+ten_percent_experimental_greater_block_value
+        )
+      )
+
+      hypometh_block_value <- as.numeric(
+        round(
+          meth_block_value-ten_percent_experimental_greater_block_value
+        )
+      )
+
+      ## Now plot those turning points on the graph
+      ## and set them as the unmeth and meth cutoffs:
+      ## Rounded to the hundreths value:
+      points(
+        experimental_mean_density$x[
+          hypermeth_block_value
+        ],
+        experimental_mean_density$y[
+          hypermeth_block_value
+        ],
+        col="red",
+        pch=16
+      )
+
+      points(
+        experimental_mean_density$x[
+          hypometh_block_value
+        ],
+        experimental_mean_density$y[
+          hypometh_block_value
+        ],
+        col="pink",
+        pch=16
+      )
+
+      abline(
+        v=c(
+          experimental_mean_density$x[
+            hypermeth_block_value
+          ],
+          experimental_mean_density$x[
+            hypometh_block_value
+          ]
+        ),
+        col=c(
+          'red',
+          'pink'
+        )
+      )
+
+      hypermethcutoff <- round(
+        experimental_mean_density$x[
+          hypermeth_block_value
+        ],
+        digits= 2
+      )
+
+      hypomethcutoff <- round(
+        experimental_mean_density$x[
+          hypometh_block_value
+        ],
+        digits= 2
+      )
+
+      ## Now stop the plot to save it:
+      dev.off()
+    }
+
     ## Now let's get the methylated quadrant probes:
 
     ## First get a copy of the experimental (tumor) data for probes
@@ -872,7 +1559,7 @@ step2_get_diffmeth_regions_test <- function(
       match(
         probelist_df_present[
           which(
-            probelist_df_present$mean_normal>methcutoff & probelist_df_present$mean_tumor>methcutoff
+            probelist_df_present$mean_control>methcutoff & probelist_df_present$mean_experimental>methcutoff
           ),
           'probe'
         ],
@@ -926,7 +1613,7 @@ step2_get_diffmeth_regions_test <- function(
       match(
         probelist_df_present[
           which(
-            probelist_df_present$mean_normal>methcutoff
+            probelist_df_present$mean_control>methcutoff
           ),
           'probe'
         ],
@@ -980,7 +1667,7 @@ step2_get_diffmeth_regions_test <- function(
       match(
         probelist_df_present[
           which(
-            probelist_df_present$mean_normal<unmethcutoff & probelist_df_present$mean_tumor<unmethcutoff
+            probelist_df_present$mean_control<unmethcutoff & probelist_df_present$mean_experimental<unmethcutoff
           ),
           'probe'
         ],
@@ -1034,7 +1721,7 @@ step2_get_diffmeth_regions_test <- function(
       match(
         probelist_df_present[
           which(
-            probelist_df_present$mean_normal<unmethcutoff
+            probelist_df_present$mean_control<unmethcutoff
           ),
           'probe'
         ],
@@ -1233,7 +1920,7 @@ step2_get_diffmeth_regions_test <- function(
         stringsAsFactors = FALSE
       )
 
-      probelist_df$mean_normal <- apply(
+      probelist_df$mean_control <- apply(
         metDataN[
           matched_probes_three_datasets,
         ],
@@ -1242,7 +1929,7 @@ step2_get_diffmeth_regions_test <- function(
         na.rm=T
       )
 
-      probelist_df$mean_tumor <- apply(
+      probelist_df$mean_experimental <- apply(
         metDataT[
           matched_probes_three_datasets,
         ],
@@ -1295,6 +1982,599 @@ step2_get_diffmeth_regions_test <- function(
         probelist_df_present$probe,
       ]
 
+      ## Let's use an algorithm to set the cutoffs not selected by the user:
+      if(
+        (methcutoff==FALSE) | (hypomethcutoff==FALSE) | (unmethcutoff==FALSE) | (hypermethcutoff==FALSE)
+      ){
+
+        ## If at least one of these cutoffs is set to FALSE, use the algorithm to
+        ## set the cutoffs:
+
+        ## First let's calculate the density of the mean probe methylation values
+        ## for the enhancer probes in the control and experimental samples.
+        ## and calculate the turnpoints in the density line:
+
+        ## Control:
+        control_mean_density <- density(
+          apply(
+            metDataN_present,
+            1,
+            mean,
+            na.rm=TRUE
+          )
+        )
+        control_mean_density_y_series <- ts(control_mean_density$y)
+        control_mean_tp <- pastecs::turnpoints(control_mean_density_y_series)
+
+        ## Experimental:
+        experimental_mean_density <- density(
+          apply(
+            metDataT_present,
+            1,
+            mean,
+            na.rm=TRUE
+          )
+        )
+        experimental_mean_density_y_series <- ts(experimental_mean_density$y)
+        experimental_mean_tp <- pastecs::turnpoints(experimental_mean_density_y_series)
+
+        ## Next, define functions to calculate densities of all probes in each
+        ## tumor sample, and grab the mean density values for the top n samples
+
+        ## Get y values for the density of a given plot
+        density_y <- function(input_vector, overall_density){
+
+          test <- density(input_vector, from=min(overall_density$x), to=max(overall_density$x), na.rm=TRUE)
+
+          return(test$y)
+        }
+
+        ## For each of the top n density values for each block within a group of samples,
+        ## get their mean values:
+        top_n_mean_graber <- function(data_frame, top_n){
+
+          ## sort the values in the vector from largest to smallest:
+          block_values <- sort(
+            data_frame,
+            decreasing = TRUE
+          )
+
+          ## Get the mean of the largest top_n:
+          mean_values <- mean(
+            block_values[1:top_n]
+          )
+
+          ## return the mean value:
+          return(
+            mean(
+              block_values[1:top_n]
+            )
+          )
+        }
+
+        ## Calculate density curves for the enhancer probes methylation values
+        ## in each of the experimental samples:
+        experimental_sample_densities <- apply(
+          metDataT_present,
+          2,
+          density_y,
+          overall_density= experimental_mean_density
+        )
+
+        ## Identify the mean density values for the top n experimental samples, where n
+        ## is the min_experimental_count value plus one, then identify the turning
+        ## points in those values:
+        experimental_top_bound_values <- apply(
+          experimental_sample_densities,
+          1,
+          top_n_mean_graber,
+          top_n= (min_experimental_count+1)
+        )
+
+        experimental_top_bound_values_ts <- ts(experimental_top_bound_values)
+        experimental_top_bound_values_tp <- pastecs::turnpoints(experimental_top_bound_values_ts)
+
+        ## Index a pdf to be saved to the step2 folder showing the selected cutoffs:
+        pdf(
+          paste(
+            TENET_directory,
+            'step2/',
+            'TENET_cutoff_selection_plot.pdf',
+            sep=''
+          ),
+          height= 7,
+          width= 10
+        )
+
+        ## Create a plot with the densities of the mean enhancer probe values in
+        ## the normal samples
+        plot(
+          control_mean_density,
+          ylim=range(experimental_top_bound_values),
+          main="TENET Cutoffs Selection Plot",
+          xlab="Methylation Beta Value",
+          ylab="Relative Density"
+        )
+
+        ## Add back the mean density line for the control samples in blue:
+        lines(
+          control_mean_density,
+          col='blue',
+          lwd=2
+        )
+
+        ## Add back the mean density line for the experimental samples in red:
+        lines(
+          experimental_mean_density,
+          col='red',
+          lwd=2
+        )
+
+        ## Now let's calculate the two points in the control mean density line
+        ## where the slope changes the quickest. These will be the unmeth
+        ## and meth cutoffs:
+
+        ## Identify the positions of the first and last pits and peaks
+        ## in the control mean density plots:
+
+        ## Check to make sure there are at least 3 turnpoints in the normal mean
+        ## density, indicating this is a normal methylation distriubtion with at least
+        ## two peaks and one trough.
+        if(
+          length(control_mean_tp$tppos)>=3
+        ){
+
+          ## Identify the blocks (from 1 to 512) and x values
+          ## where the first and last peaks are
+          ## as well as the next troughs that follow and precede them respectively:
+          control_mean_peak_1_block <- control_mean_tp$tppos[1]
+          control_mean_peak_1_x <- control_mean_density$x[control_mean_peak_1_block]
+
+          control_mean_pit_1_block <- control_mean_tp$tppos[2]
+          control_mean_pit_1_x <- control_mean_density$x[control_mean_pit_1_block]
+
+          control_mean_pit_2_block <- control_mean_tp$tppos[
+            (length(control_mean_tp$tppos)-1)
+          ]
+          control_mean_pit_2_x <- control_mean_density$x[control_mean_pit_2_block]
+
+          control_mean_peak_2_block <- control_mean_tp$tppos[
+            length(control_mean_tp$tppos)
+          ]
+          control_mean_peak_2_x <- control_mean_density$x[control_mean_peak_2_block]
+
+          ## Calculate a mean block between the two peaks:
+          ## rounded to a whole number up:
+          control_mean_peak_block_average <- round(
+            (control_mean_peak_1_block + control_mean_peak_2_block)/2
+          )
+
+        } else{
+
+          ## Return an error message:
+          stop(
+            'density distribution of mean DNA methylation values for identified enhancer probes does not follow a typical distribution of methylation values with larger numbers of low- and highly-methylated peaks a relative lack of probes with middling methylation. You will want to examine the distribution of methylation values across your samples and set your own cutoffs for this analysis.'
+          )
+        }
+
+        ## Create a vector of relative density values in the mean control samples:
+        ## Get the distribution of densities across the blocks
+        control_mean_distribution <- control_mean_density$y
+        names(control_mean_distribution) <- c(
+          1:length(control_mean_distribution)
+        )
+
+        ## Get the parts of the distribution after the first control peak
+        ## and the midpoint between the first and last control peak:
+        control_mean_distribution_first <-  control_mean_distribution[
+          control_mean_peak_1_block:(control_mean_peak_block_average-1)
+        ]
+
+        control_mean_distribution_second <-  control_mean_distribution[
+          control_mean_peak_block_average:control_mean_peak_2_block
+        ]
+
+        ## Get the rate of change across the first control mean distribution
+        control_mean_distribution_first_D1 <- c()
+
+        for(i in 1:length(control_mean_distribution_first)){
+
+          if(i<(5+1)){
+
+            ## if i is less than 6, add 0:
+            control_mean_distribution_first_D1 <- c(
+              control_mean_distribution_first_D1,
+              NA
+            )
+
+          } else if(i>(length(control_mean_distribution_first)-(5))){
+
+            ## if i is greater than 5 less than the length of the vector, add 0:
+            control_mean_distribution_first_D1 <- c(
+              control_mean_distribution_first_D1,
+              NA
+            )
+
+          } else{
+
+            ## Otherwise let's compare slopes before and after the line:
+
+            ## Get the value of the i-5 point and i-1 point:
+            minus_five_point <- control_mean_distribution_first[i-5]
+            minus_one_point <- control_mean_distribution_first[i-1]
+
+            ## Get the value of the point itself and the i+4 point:
+            plus_zero_point <- control_mean_distribution_first[i+1]
+            plus_four_point <- control_mean_distribution_first[i+(5)]
+
+            ## Calculate the difference between the minus points:
+            minus_point_difference <- (minus_one_point-minus_five_point)
+            plus_point_difference <- (plus_four_point-plus_zero_point)
+
+            ## Find the difference between the two:
+            plus_minus_difference <- (plus_point_difference-minus_point_difference)
+
+            ## Add that value to the vector:
+            control_mean_distribution_first_D1 <- c(
+              control_mean_distribution_first_D1,
+              plus_minus_difference
+            )
+          }
+        }
+
+        ## Get the rate of change across the first control mean distribution
+        control_mean_distribution_first_D2 <- c()
+
+        for(i in 1:length(control_mean_distribution_first_D1)){
+
+          if(i<((5*2)+1)){
+
+            ## if i is less than 6, add 0:
+            control_mean_distribution_first_D2 <- c(
+              control_mean_distribution_first_D2,
+              NA
+            )
+
+          } else if(i>(length(control_mean_distribution_first_D1)-((5*2)))){
+
+            ## if i is greater than 5 less than the length of the vector, add 0:
+            control_mean_distribution_first_D2 <- c(
+              control_mean_distribution_first_D2,
+              NA
+            )
+
+          } else{
+
+            ## Otherwise let's compare slopes before and after the line:
+
+            ## Get the value of the i-5 point and i-1 point:
+            minus_five_point <- control_mean_distribution_first_D1[i-5]
+            minus_one_point <- control_mean_distribution_first_D1[i-1]
+
+            ## Get the value of the point itself and the i+4 point:
+            plus_zero_point <- control_mean_distribution_first_D1[i+1]
+            plus_four_point <- control_mean_distribution_first_D1[i+(5)]
+
+            ## Calculate the difference between the minus points:
+            minus_point_difference <- (minus_one_point-minus_five_point)
+            plus_point_difference <- (plus_four_point-plus_zero_point)
+
+            ## Find the difference between the two:
+            plus_minus_difference <- (plus_point_difference-minus_point_difference)
+
+            ## Add that value to the vector:
+            control_mean_distribution_first_D2 <- c(
+              control_mean_distribution_first_D2,
+              plus_minus_difference
+            )
+          }
+        }
+
+        ## Get the rate of change across the second control mean distribution
+        control_mean_distribution_second_D1 <- c()
+
+        for(i in 1:length(control_mean_distribution_second)){
+
+          if(i<(5+1)){
+
+            ## if i is less than 6, add 0:
+            control_mean_distribution_second_D1 <- c(
+              control_mean_distribution_second_D1,
+              NA
+            )
+
+          } else if(i>(length(control_mean_distribution_second)-(5))){
+
+            ## if i is greater than 5 less than the length of the vector, add 0:
+            control_mean_distribution_second_D1 <- c(
+              control_mean_distribution_second_D1,
+              NA
+            )
+
+          } else{
+
+            ## Otherwise let's compare slopes before and after the line:
+
+            ## Get the value of the i-5 point and i-1 point:
+            minus_five_point <- control_mean_distribution_second[i-5]
+            minus_one_point <- control_mean_distribution_second[i-1]
+
+            ## Get the value of the point itself and the i+4 point:
+            plus_zero_point <- control_mean_distribution_second[i+1]
+            plus_four_point <- control_mean_distribution_second[i+(5)]
+
+            ## Calculate the difference between the minus points:
+            minus_point_difference <- (minus_one_point-minus_five_point)
+            plus_point_difference <- (plus_four_point-plus_zero_point)
+
+            ## Find the difference between the two:
+            plus_minus_difference <- (plus_point_difference-minus_point_difference)
+
+            ## Add that value to the vector:
+            control_mean_distribution_second_D1 <- c(
+              control_mean_distribution_second_D1,
+              plus_minus_difference
+            )
+          }
+        }
+
+        ## Get the rate of change across the second control mean distribution
+        control_mean_distribution_second_D2 <- c()
+
+        for(i in 1:length(control_mean_distribution_second_D1)){
+
+          if(i<((5*2)+1)){
+
+            ## if i is less than 6, add 0:
+            control_mean_distribution_second_D2 <- c(
+              control_mean_distribution_second_D2,
+              NA
+            )
+
+          } else if(i>(length(control_mean_distribution_second_D1)-((5*2)))){
+
+            ## if i is greater than 5 less than the length of the vector, add 0:
+            control_mean_distribution_second_D2 <- c(
+              control_mean_distribution_second_D2,
+              NA
+            )
+
+          } else{
+
+            ## Otherwise let's compare slopes before and after the line:
+
+            ## Get the value of the i-5 point and i-1 point:
+            minus_five_point <- control_mean_distribution_second_D1[i-5]
+            minus_one_point <- control_mean_distribution_second_D1[i-1]
+
+            ## Get the value of the point itself and the i+4 point:
+            plus_zero_point <- control_mean_distribution_second_D1[i+1]
+            plus_four_point <- control_mean_distribution_second_D1[i+(5)]
+
+            ## Calculate the difference between the minus points:
+            minus_point_difference <- (minus_one_point-minus_five_point)
+            plus_point_difference <- (plus_four_point-plus_zero_point)
+
+            ## Find the difference between the two:
+            plus_minus_difference <- (plus_point_difference-minus_point_difference)
+
+            ## Add that value to the vector:
+            control_mean_distribution_second_D2 <- c(
+              control_mean_distribution_second_D2,
+              plus_minus_difference
+            )
+          }
+        }
+
+        unmeth_block_value <- control_mean_pit_1_block
+
+        meth_block_value <- as.numeric(
+          names(control_mean_distribution_second[1])
+        ) + which(
+          control_mean_distribution_second_D2==max(control_mean_distribution_second_D2, na.rm=TRUE)
+        )
+
+        ## Now plot those turning points on the graph
+        ## and set them as the unmeth and meth cutoffs:
+        ## Rounded to the hundreths value:
+        points(
+          control_mean_density$x[
+            unmeth_block_value
+          ],
+          control_mean_density$y[
+            unmeth_block_value
+          ],
+          col="darkgreen",
+          pch=16
+        )
+
+        points(
+          control_mean_density$x[
+            meth_block_value
+          ],
+          control_mean_density$y[
+            meth_block_value
+          ],
+          col="green",
+          pch=16
+        )
+
+        abline(
+          v=c(
+            control_mean_density$x[
+              unmeth_block_value
+            ],
+            control_mean_density$x[
+              meth_block_value
+            ]
+          ),
+          col=c(
+            'darkgreen',
+            'green'
+          )
+        )
+
+        methcutoff <- round(
+          control_mean_density$x[
+            meth_block_value
+          ],
+          digits= 2
+        )
+
+        unmethcutoff <- round(
+          control_mean_density$x[
+            unmeth_block_value
+          ],
+          digits= 2
+        )
+
+        ## Now let's identify the crossing over points where the mean density curves
+        ## for the tumor and normal samples intersect between the control mean peaks:
+        experimental_mean_density_relative_to_control <- c()
+
+        for(i in c(control_mean_peak_1_block:control_mean_peak_2_block)){
+
+          if(i==1){
+
+            experimental_mean_density_relative_to_control <- c(
+              experimental_mean_density_relative_to_control,
+              NA
+            )
+
+          } else if(i==length(control_mean_density$y)){
+
+            experimental_mean_density_relative_to_control <- c(
+              experimental_mean_density_relative_to_control,
+              NA
+            )
+
+          } else{
+
+            if(
+              (experimental_mean_density$y[i])>(control_mean_density$y[i])
+            ){
+
+              experimental_mean_density_relative_to_control <- c(
+                experimental_mean_density_relative_to_control,
+                "Greater"
+              )
+
+            } else{
+
+              experimental_mean_density_relative_to_control <- c(
+                experimental_mean_density_relative_to_control,
+                "Less"
+              )
+
+            }
+          }
+        }
+
+        ## Now identify the block values for the first and last positions
+        ## where the tumor mean density is greater than the normal mean density
+        ## as the crossing points:
+        first_experimental_greater_block_value <- (
+          min(
+            which(
+              experimental_mean_density_relative_to_control=='Greater'
+            )
+          ) +
+            control_mean_peak_1_block
+        )
+
+        last_experimental_greater_block_value <- (
+          max(
+            which(
+              experimental_mean_density_relative_to_control=='Greater'
+            )
+          ) +
+            control_mean_peak_1_block
+        )
+
+        ## Find the number of blocks equal to 1/10th of the block difference:
+        first_experimental_greater_x_value <- control_mean_density$x[first_experimental_greater_block_value]
+
+        last_experimental_greater_x_value <- control_mean_density$x[last_experimental_greater_block_value]
+
+        ten_percent_experimental_greater_block_value <- (
+          (last_experimental_greater_block_value-first_experimental_greater_block_value)/10
+        )
+
+        ## Calculate the block values for the hyper and hypometh cutoffs by setting
+        ## them to the unmeth and meth cutoff block values plus and minus, respectively,
+        ## the ten_percent_experimental_greater_block_value:
+
+        ## Get the block values of the turning points:
+        hypermeth_block_value <- as.numeric(
+          round(
+            unmeth_block_value+ten_percent_experimental_greater_block_value
+          )
+        )
+
+        hypometh_block_value <- as.numeric(
+          round(
+            meth_block_value-ten_percent_experimental_greater_block_value
+          )
+        )
+
+        ## Now plot those turning points on the graph
+        ## and set them as the unmeth and meth cutoffs:
+        ## Rounded to the hundreths value:
+        points(
+          experimental_mean_density$x[
+            hypermeth_block_value
+          ],
+          experimental_mean_density$y[
+            hypermeth_block_value
+          ],
+          col="red",
+          pch=16
+        )
+
+        points(
+          experimental_mean_density$x[
+            hypometh_block_value
+          ],
+          experimental_mean_density$y[
+            hypometh_block_value
+          ],
+          col="pink",
+          pch=16
+        )
+
+        abline(
+          v=c(
+            experimental_mean_density$x[
+              hypermeth_block_value
+            ],
+            experimental_mean_density$x[
+              hypometh_block_value
+            ]
+          ),
+          col=c(
+            'red',
+            'pink'
+          )
+        )
+
+        hypermethcutoff <- round(
+          experimental_mean_density$x[
+            hypermeth_block_value
+          ],
+          digits= 2
+        )
+
+        hypomethcutoff <- round(
+          experimental_mean_density$x[
+            hypometh_block_value
+          ],
+          digits= 2
+        )
+
+        ## Now stop the plot to save it:
+        dev.off()
+      }
+
       ## First let's get the methylated quadrant probes:
 
       ## First get a copy of the experimental (tumor) data for probes
@@ -1304,7 +2584,7 @@ step2_get_diffmeth_regions_test <- function(
         match(
           probelist_df_present[
             which(
-              probelist_df_present$mean_normal>methcutoff & probelist_df_present$mean_tumor>methcutoff
+              probelist_df_present$mean_control>methcutoff & probelist_df_present$mean_experimental>methcutoff
             ),
             'probe'
           ],
@@ -1348,7 +2628,7 @@ step2_get_diffmeth_regions_test <- function(
         match(
           probelist_df_present[
             which(
-              probelist_df_present$mean_normal>methcutoff & probelist_df_present$mean_purity>methcutoff
+              probelist_df_present$mean_control>methcutoff & probelist_df_present$mean_purity>methcutoff
             ),
             'probe'
           ],
@@ -1392,7 +2672,7 @@ step2_get_diffmeth_regions_test <- function(
         match(
           probelist_df_present[
             which(
-              probelist_df_present$mean_normal<unmethcutoff & probelist_df_present$mean_tumor<unmethcutoff
+              probelist_df_present$mean_control<unmethcutoff & probelist_df_present$mean_experimental<unmethcutoff
             ),
             'probe'
           ],
@@ -1436,7 +2716,7 @@ step2_get_diffmeth_regions_test <- function(
         match(
           probelist_df_present[
             which(
-              probelist_df_present$mean_normal<unmethcutoff & probelist_df_present$mean_purity<unmethcutoff
+              probelist_df_present$mean_control<unmethcutoff & probelist_df_present$mean_purity<unmethcutoff
             ),
             'probe'
           ],
@@ -1626,6 +2906,10 @@ step2_get_diffmeth_regions_test <- function(
   ## as well as the total number of genes and probes analyzed
   ## and create a metadata table for it:
   names <- c(
+    'unmeth_cutoff',
+    'meth_cutoff',
+    'hypermeth_cutoff',
+    'hypometh_cutoff',
     'unmeth_probes',
     'hypermeth_probes',
     'meth_probes',
@@ -1636,6 +2920,10 @@ step2_get_diffmeth_regions_test <- function(
   )
 
   values <- c(
+    unmethcutoff,
+    methcutoff,
+    hypermethcutoff,
+    hypomethcutoff,
     nrow(unmethDataN),
     nrow(hypermethDataN),
     nrow(methDataN),

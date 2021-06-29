@@ -76,6 +76,30 @@ step7_top_genes_histograms <- function(
 
   }
 
+  ## Create a subdirectory in the new step7 directory to contain the
+  ## histogram files
+  if(
+    !dir.exists(
+      paste(
+        TENET_directory,
+        'step7/',
+        'histograms',
+        sep=''
+      )
+    )
+  ){
+
+    dir.create(
+      paste(
+        TENET_directory,
+        'step7/',
+        'histograms',
+        sep=''
+      )
+    )
+
+  }
+
   ## Generate results for hypermeth Gplus probes:
   if(hypermeth_Gplus_analysis==TRUE){
 
@@ -86,6 +110,7 @@ step7_top_genes_histograms <- function(
         paste(
           TENET_directory,
           'step7/',
+          'histograms/',
           'hyper_Gplus_histograms',
           sep=''
         )
@@ -96,6 +121,7 @@ step7_top_genes_histograms <- function(
         paste(
           TENET_directory,
           'step7/',
+          'histograms/',
           'hyper_Gplus_histograms',
           sep=''
         )
@@ -199,6 +225,7 @@ step7_top_genes_histograms <- function(
       filename= paste(
         TENET_directory,
         'step7/',
+        'histograms/',
         'hyper_Gplus_histograms/',
         'hyper_Gplus_links_all_gene_freq_histogram.pdf',
         sep=''
@@ -243,6 +270,7 @@ step7_top_genes_histograms <- function(
       filename= paste(
         TENET_directory,
         'step7/',
+        'histograms/',
         'hyper_Gplus_histograms/',
         'hyper_Gplus_links_TF_gene_freq_histogram.pdf',
         sep=''
@@ -264,6 +292,7 @@ step7_top_genes_histograms <- function(
         paste(
           TENET_directory,
           'step7/',
+          'histograms/',
           'hyper_Gminus_histograms',
           sep=''
         )
@@ -274,6 +303,7 @@ step7_top_genes_histograms <- function(
         paste(
           TENET_directory,
           'step7/',
+          'histograms/',
           'hyper_Gminus_histograms',
           sep=''
         )
@@ -377,6 +407,7 @@ step7_top_genes_histograms <- function(
       filename= paste(
         TENET_directory,
         'step7/',
+        'histograms/',
         'hyper_Gminus_histograms/',
         'hyper_Gminus_links_all_gene_freq_histogram.pdf',
         sep=''
@@ -421,6 +452,7 @@ step7_top_genes_histograms <- function(
       filename= paste(
         TENET_directory,
         'step7/',
+        'histograms/',
         'hyper_Gminus_histograms/',
         'hyper_Gminus_links_TF_gene_freq_histogram.pdf',
         sep=''
@@ -442,6 +474,7 @@ step7_top_genes_histograms <- function(
         paste(
           TENET_directory,
           'step7/',
+          'histograms/',
           'hypo_Gplus_histograms',
           sep=''
         )
@@ -452,6 +485,7 @@ step7_top_genes_histograms <- function(
         paste(
           TENET_directory,
           'step7/',
+          'histograms/',
           'hypo_Gplus_histograms',
           sep=''
         )
@@ -555,6 +589,7 @@ step7_top_genes_histograms <- function(
       filename= paste(
         TENET_directory,
         'step7/',
+        'histograms/',
         'hypo_Gplus_histograms/',
         'hypo_Gplus_links_all_gene_freq_histogram.pdf',
         sep=''
@@ -599,6 +634,7 @@ step7_top_genes_histograms <- function(
       filename= paste(
         TENET_directory,
         'step7/',
+        'histograms/',
         'hypo_Gplus_histograms/',
         'hypo_Gplus_links_TF_gene_freq_histogram.pdf',
         sep=''
@@ -620,6 +656,7 @@ step7_top_genes_histograms <- function(
         paste(
           TENET_directory,
           'step7/',
+          'histograms/',
           'hypo_Gminus_histograms',
           sep=''
         )
@@ -630,6 +667,7 @@ step7_top_genes_histograms <- function(
         paste(
           TENET_directory,
           'step7/',
+          'histograms/',
           'hypo_Gminus_histograms',
           sep=''
         )
@@ -733,6 +771,7 @@ step7_top_genes_histograms <- function(
       filename= paste(
         TENET_directory,
         'step7/',
+        'histograms/',
         'hypo_Gminus_histograms/',
         'hypo_Gminus_links_all_gene_freq_histogram.pdf',
         sep=''
@@ -777,6 +816,7 @@ step7_top_genes_histograms <- function(
       filename= paste(
         TENET_directory,
         'step7/',
+        'histograms/',
         'hypo_Gminus_histograms/',
         'hypo_Gminus_links_TF_gene_freq_histogram.pdf',
         sep=''

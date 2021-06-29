@@ -80,6 +80,29 @@ step7_top_genes_circos_test <- function(
 
   }
 
+  ## Create a subdirectory in the new step7 subdirectory to contain the
+  ## circos plots:
+  if(
+    !dir.exists(
+      paste(
+        TENET_directory,
+        'step7/',
+        'circos',
+        sep=''
+      )
+    )
+  ){
+
+    dir.create(
+      paste(
+        TENET_directory,
+        'step7/',
+        'ciros',
+        sep=''
+      )
+    )
+  }
+
   ## Load the hg38 DNA methylation annotations:
   ## Written in by Zexun Wu
   if (DNA_methylation_manifest == "HM450") {
@@ -217,6 +240,7 @@ step7_top_genes_circos_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'ciros/',
           'hyper_Gplus_circos',
           sep=''
         )
@@ -227,6 +251,7 @@ step7_top_genes_circos_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'ciros/',
           'hyper_Gplus_circos',
           sep=''
         )
@@ -428,6 +453,7 @@ step7_top_genes_circos_test <- function(
       path_to_folder <- paste(
         TENET_directory,
         'step7/',
+        'circos/',
         'hyper_Gplus_circos',
         sep=''
       )
@@ -457,11 +483,7 @@ step7_top_genes_circos_test <- function(
         chr = circos_start_chromosome,
       	start = (circos_start_position-1),
       	end = (circos_start_position+1),
-      	name = paste(
-      	  gene_name,
-      	  gene_ENSG,
-      	  sep = "|"
-      	 )
+      	name = ''
       )
 
       ## Combine the probe and gene dataframes:
@@ -570,6 +592,7 @@ step7_top_genes_circos_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'ciros/',
           'hyper_Gminus_circos',
           sep=''
         )
@@ -580,6 +603,7 @@ step7_top_genes_circos_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'ciros/',
           'hyper_Gminus_circos',
           sep=''
         )
@@ -781,6 +805,7 @@ step7_top_genes_circos_test <- function(
       path_to_folder <- paste(
         TENET_directory,
         'step7/',
+        'circos/',
         'hyper_Gminus_circos',
         sep=''
       )
@@ -922,6 +947,7 @@ step7_top_genes_circos_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'ciros/',
           'hypo_Gplus_circos',
           sep=''
         )
@@ -932,6 +958,7 @@ step7_top_genes_circos_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'ciros/',
           'hypo_Gplus_circos',
           sep=''
         )
@@ -1133,6 +1160,7 @@ step7_top_genes_circos_test <- function(
       path_to_folder <- paste(
         TENET_directory,
         'step7/',
+        'circos/',
         'hypo_Gplus_circos',
         sep=''
       )
@@ -1275,6 +1303,7 @@ step7_top_genes_circos_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'ciros/',
           'hypo_Gminus_circos',
           sep=''
         )
@@ -1285,6 +1314,7 @@ step7_top_genes_circos_test <- function(
         paste(
           TENET_directory,
           'step7/',
+          'ciros/',
           'hypo_Gminus_circos',
           sep=''
         )
@@ -1486,6 +1516,7 @@ step7_top_genes_circos_test <- function(
       path_to_folder <- paste(
         TENET_directory,
         'step7/',
+        'circos/',
         'hypo_Gminus_circos',
         sep=''
       )
