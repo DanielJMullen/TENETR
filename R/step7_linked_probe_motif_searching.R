@@ -22,9 +22,9 @@
 #'
 #' @examples
 #' # Show available motifs for example TF FOXM1:
-#' names(query(MotifDb,"FOXM1")
+#' names(MotifDb::query(MotifDb::MotifDb,"FOXM1")
 #' # Once you've selected a PWM for use, you can specify it using the following:
-#' motif_PCM_PWM= query(MotifDb, motif_name)[[3]]
+#' motif_PCM_PWM= MotifDb::query(MotifDb::MotifDb, motif_name)[[3]]
 
 step7_linked_probe_motif_searching <- function(
   TENET_directory,
@@ -394,9 +394,6 @@ step7_linked_probe_motif_searching <- function(
     ## Set the rownames to be the probe IDs:
     rownames(hyper_Gplus_probe_dataset_linked_to_TF) <- hyper_Gplus_probe_dataset_linked_to_TF$probe_ID
 
-    ## TESTING ONLY, REMOVE LATER:
-    # linked_probes <- rownames(hyper_Gplus_probe_dataset_linked_to_TF)[2]
-
     ## Write a function to find the motif occurences in the specified vicinity
     ## of each linked probe
     motif_finder_in_peaks <- function(
@@ -428,10 +425,10 @@ step7_linked_probe_motif_searching <- function(
         ]
       )
 
-      ## Subtract and add the buffer specified by the user with the distance_from_probe
+      ## Subtract and add the buffer specified by the user with the distance_from_probes
       ## argument from the start and end values:
-      start_buffer <- start-distance_from_probe+1
-      end_buffer <- end+distance_from_probe
+      start_buffer <- start-distance_from_probes+1
+      end_buffer <- end+distance_from_probes
 
       ## Get the DNA string sequence for that segment from the human genome:
       DNA_string <- genome[[chr]][
@@ -634,9 +631,6 @@ step7_linked_probe_motif_searching <- function(
     ## Set the rownames to be the probe IDs:
     rownames(hyper_Gminus_probe_dataset_linked_to_TF) <- hyper_Gminus_probe_dataset_linked_to_TF$probe_ID
 
-    ## TESTING ONLY, REMOVE LATER:
-    # linked_probes <- rownames(hyper_Gminus_probe_dataset_linked_to_TF)[2]
-
     ## Write a function to find the motif occurences in the specified vicinity
     ## of each linked probe
     motif_finder_in_peaks <- function(
@@ -668,10 +662,10 @@ step7_linked_probe_motif_searching <- function(
         ]
       )
 
-      ## Subtract and add the buffer specified by the user with the distance_from_probe
+      ## Subtract and add the buffer specified by the user with the distance_from_probes
       ## argument from the start and end values:
-      start_buffer <- start-distance_from_probe+1
-      end_buffer <- end+distance_from_probe
+      start_buffer <- start-distance_from_probes+1
+      end_buffer <- end+distance_from_probes
 
       ## Get the DNA string sequence for that segment from the human genome:
       DNA_string <- genome[[chr]][
@@ -874,9 +868,6 @@ step7_linked_probe_motif_searching <- function(
     ## Set the rownames to be the probe IDs:
     rownames(hypo_Gplus_probe_dataset_linked_to_TF) <- hypo_Gplus_probe_dataset_linked_to_TF$probe_ID
 
-    ## TESTING ONLY, REMOVE LATER:
-    # linked_probes <- rownames(hypo_Gplus_probe_dataset_linked_to_TF)[2]
-
     ## Write a function to find the motif occurences in the specified vicinity
     ## of each linked probe
     motif_finder_in_peaks <- function(
@@ -908,10 +899,10 @@ step7_linked_probe_motif_searching <- function(
         ]
       )
 
-      ## Subtract and add the buffer specified by the user with the distance_from_probe
+      ## Subtract and add the buffer specified by the user with the distance_from_probes
       ## argument from the start and end values:
-      start_buffer <- start-distance_from_probe+1
-      end_buffer <- end+distance_from_probe
+      start_buffer <- start-distance_from_probes+1
+      end_buffer <- end+distance_from_probes
 
       ## Get the DNA string sequence for that segment from the human genome:
       DNA_string <- genome[[chr]][
@@ -1114,9 +1105,6 @@ step7_linked_probe_motif_searching <- function(
     ## Set the rownames to be the probe IDs:
     rownames(hypo_Gminus_probe_dataset_linked_to_TF) <- hypo_Gminus_probe_dataset_linked_to_TF$probe_ID
 
-    ## TESTING ONLY, REMOVE LATER:
-    # linked_probes <- rownames(hypo_Gminus_probe_dataset_linked_to_TF)[2]
-
     ## Write a function to find the motif occurences in the specified vicinity
     ## of each linked probe
     motif_finder_in_peaks <- function(
@@ -1148,10 +1136,10 @@ step7_linked_probe_motif_searching <- function(
         ]
       )
 
-      ## Subtract and add the buffer specified by the user with the distance_from_probe
+      ## Subtract and add the buffer specified by the user with the distance_from_probes
       ## argument from the start and end values:
-      start_buffer <- start-distance_from_probe+1
-      end_buffer <- end+distance_from_probe
+      start_buffer <- start-distance_from_probes+1
+      end_buffer <- end+distance_from_probes
 
       ## Get the DNA string sequence for that segment from the human genome:
       DNA_string <- genome[[chr]][

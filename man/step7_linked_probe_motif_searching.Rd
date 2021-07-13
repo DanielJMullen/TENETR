@@ -53,7 +53,7 @@ a user-specified vicinity of each probe linked to the TF.
 }
 \examples{
 # Show available motifs for example TF FOXM1:
-names(query(MotifDb,"FOXM1")
+names(MotifDb::query(MotifDb::MotifDb,"FOXM1")
 # Once you've selected a PWM for use, you can specify it using the following:
-motif_PCM_PWM= query(MotifDb, motif_name)[[3]]
+motif_PCM_PWM= MotifDb::query(MotifDb::MotifDb, motif_name)[[3]]
 }
