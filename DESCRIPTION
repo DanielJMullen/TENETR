@@ -19,6 +19,7 @@ biocViews:
 		S4Vectors,
 		GenomicRanges,
 		parallel,
+		pastecs,
 		ggplot2,
 		RCircos,
 		survival,
