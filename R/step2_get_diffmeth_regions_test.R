@@ -859,25 +859,25 @@ step2_get_diffmeth_regions_test <- function(
   if(length(matched_genes_control)==0 & length(matched_genes_experimental)==0){
 
     stop(
-      "No GENCODE v22-annotated genes were found in the expression datasets. /nPlease reload the expression datasets with GENCODE v22-annotated Ensembl gene IDs in the rownames."
+      "No GENCODE v22-annotated genes were found in the expression datasets. \nPlease reload the expression datasets with GENCODE v22-annotated Ensembl gene IDs in the rownames."
     )
 
   } else if(length(matched_genes_control)==0){
 
     stop(
-      "No GENCODE v22-annotated genes were found in the control (normal) expression dataset. /nPlease reload the expression dataset with GENCODE v22-annotated Ensembl gene IDs in the rownames."
+      "No GENCODE v22-annotated genes were found in the control (normal) expression dataset. \nPlease reload the expression dataset with GENCODE v22-annotated Ensembl gene IDs in the rownames."
     )
 
   } else if(length(matched_genes_experimental)==0){
 
     stop(
-      "No GENCODE v22-annotated genes were found in the experimental (tumor) expression dataset. /nPlease reload the expression dataset with GENCODE v22-annotated Ensembl gene IDs in the rownames."
+      "No GENCODE v22-annotated genes were found in the experimental (tumor) expression dataset. \nPlease reload the expression dataset with GENCODE v22-annotated Ensembl gene IDs in the rownames."
     )
 
   } else if(length(matched_genes)==0){
 
     stop(
-      "No matched GENCODE v22-annotated genes were found between the two expression datasets. /nPlease reload the expression datasets with GENCODE v22-annotated Ensembl gene IDs in the rownames."
+      "No matched GENCODE v22-annotated genes were found between the two expression datasets. \nPlease reload the expression datasets with GENCODE v22-annotated Ensembl gene IDs in the rownames."
     )
 
   }
@@ -885,25 +885,25 @@ step2_get_diffmeth_regions_test <- function(
   if(length(matched_probes_control)==0 & length(matched_probes_experimental)==0){
 
     stop(
-      "No DNA methylation probes of the specified array were found in the methylation datasets. /nPlease reload the methylation datasets with HM450 probe IDs in the rownames."
+      "No DNA methylation probes of the specified array were found in the methylation datasets. \nPlease reload the methylation datasets with HM450 probe IDs in the rownames."
     )
 
   } else if(length(matched_probes_control)==0){
 
     stop(
-      "No DNA methylation probes of the specified array were found in the control (normal) methylation dataset. /nPlease reload the methylation dataset with HM450 probe IDs in the rownames."
+      "No DNA methylation probes of the specified array were found in the control (normal) methylation dataset. \nPlease reload the methylation dataset with HM450 probe IDs in the rownames."
     )
 
   } else if(length(matched_probes_experimental)==0){
 
     stop(
-      "No DNA methylation probes of the specified array were found in the experimental (tumor) methylation dataset. /nPlease reload the methylation dataset with HM450 probe IDs in the rownames."
+      "No DNA methylation probes of the specified array were found in the experimental (tumor) methylation dataset. \nPlease reload the methylation dataset with HM450 probe IDs in the rownames."
     )
 
   } else if(length(matched_probes)==0){
 
     stop(
-      "No matched DNA methylation probes of the specified array were found between the two methylation datasets. /nPlease reload the methylation datasets with HM450 probe IDs in the rownames."
+      "No matched DNA methylation probes of the specified array were found between the two methylation datasets. \nPlease reload the methylation datasets with HM450 probe IDs in the rownames."
     )
 
   }
@@ -1876,7 +1876,7 @@ step2_get_diffmeth_regions_test <- function(
           paste(
             'No DNA methylation probes of the specified array were found in the',
             purity_file_list_trunc[i],
-            'purity dataset. /nPlease reload the purity dataset with HM450 probe IDs in the rownames.',
+            'purity dataset. \nPlease reload the purity dataset with HM450 probe IDs in the rownames.',
             sep=' '
           )
         )
@@ -1906,7 +1906,7 @@ step2_get_diffmeth_regions_test <- function(
           paste(
             'No DNA methylation probes of the specified array were found overlapping between the',
             purity_file_list_trunc[i],
-            'purity dataset, and the uploaded control (normal) experimental (tumor) methylation datasets. /nPlease check these datasets, which should include HM450 probe IDs in the rownames.',
+            'purity dataset, and the uploaded control (normal) experimental (tumor) methylation datasets. \nPlease check these datasets, which should include HM450 probe IDs in the rownames.',
             sep=' '
           )
         )
@@ -1961,7 +1961,7 @@ step2_get_diffmeth_regions_test <- function(
           paste(
             'No non-NA DNA methylation probes of the specified array were found overlapping between the',
             purity_file_list_trunc[i],
-            'purity dataset, and the uploaded control (normal) experimental (tumor) methylation datasets. /nPlease check these datasets, making sure the probes have non-NA values and HM450 probe IDs in the rownames.',
+            'purity dataset, and the uploaded control (normal) experimental (tumor) methylation datasets. \nPlease check these datasets, making sure the probes have non-NA values and HM450 probe IDs in the rownames.',
             sep=' '
           )
         )
